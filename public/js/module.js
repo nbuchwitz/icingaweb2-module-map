@@ -111,8 +111,7 @@
             markers = new L.MarkerClusterGroup();
             hostMarkers = {};
 
-            // TODO: move coordinates to configuration
-            map = L.map('map').setView([52.50146, 13.37096], 6);
+            map = L.map('map').setView([map_default_lat, map_default_long], map_default_zoom);
 
             map.on('click', function(e) {
                 console.log("clicked on "+e.latlng);
@@ -121,8 +120,8 @@
             var osm = L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
                 subdomains: ['a','b','c'],
-                maxZoom: 19,
-                minZoom: 5,
+                maxZoom: map_max_zoom,
+                minZoom: map_min_zoom,
             });
 
             osm.addTo(map);
