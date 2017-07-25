@@ -41,15 +41,17 @@
                         $.each( result, function( id, data ) {
                             var info = '<table>';
                             $.each( data['nodes'], function( hostname, node ) {
-                            var services = node['services'].length
-                            info += '<tr><th colspan="2">'+hostname+'</th></tr>';
-                            info += '<tr><td>Services:</td><td>'+services+'</td>';
+                                var services = node['services'].length
+                                info += '<tr><th colspan="2">'+hostname+'</th></tr>';
+                                info += '<tr><td>Services:</td><td>'+services+'</td>';
                             });
 
                             info += '</table>';
+
                             var markerIcon = L.icon({
-                            iconUrl: '../img/map/marker-icon.png',
-                            shadowUrl: '../img/map/marker-shadow.png',});
+                                iconUrl: 'img/map/marker-icon.png',
+                                shadowUrl: 'img/map/marker-shadow.png',}
+                            );
 
                             var marker = L.marker(data['coordinates'], {icon: markerIcon}).addTo(markers);
                             marker.bindPopup(info);
@@ -63,8 +65,11 @@
         },
 
         onRenderedContainer: function(event) {
-            //markers = new L.FeatureGroup();
-            markers = new L.MarkerClusterGroup();
+            markers = new L.MarkerClusterGroup({
+               // iconCreateFunction: function(cluster) {
+               //     return L.divIcon({ html: '<b>' + cluster.getChildCount() + '</b>' });
+               // }
+            });
             // TODO: move coordinates to configuration
             map = L.map('map').setView([52.50146, 13.37096], 6);
 
