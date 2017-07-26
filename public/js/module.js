@@ -117,7 +117,7 @@
                 console.log("clicked on "+e.latlng);
             });
 
-            var osm = L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            var osm = L.tileLayer( '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
                 subdomains: ['a','b','c'],
                 maxZoom: map_max_zoom,
