@@ -11,7 +11,6 @@ $this->provideCssFile('third-party/MarkerCluster.Default.css');
 // javascript libraries
 $this->provideJsFile('third-party/leaflet.js');
 $this->provideJsFile('third-party/leaflet.markercluster.js');
-$this->provideJsFile('icons.js');
 
 // configuration menu
 $this->provideConfigTab('config', array(

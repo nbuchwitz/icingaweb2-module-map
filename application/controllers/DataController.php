@@ -7,31 +7,6 @@ use Icinga\Module\Monitoring\Controller;
 class DataController extends Controller
 {
 
-    private function hostStatus($hostname)
-    {
-        $status = $this->backend
-            ->select()
-            ->from('hoststatus', array(
-                'host_name',
-                'host_display_name',
-                'host_acknowledged',
-                'host_state',
-                'host_last_state_change',
-                'host_hard_state',
-                'host_last_hard_state_change',
-                'host_in_downtime'))
-            ->where('host_name', $hostname);
-
-        $this->applyRestriction('monitoring/filter/objects', $status);
-
-        if ($status->count()) {
-            return $status->fetchRow();
-            
-        } else {
-            return array();
-        }
-    }
-
     private function hostData($hostname)
     {
         $host = array();
@@ -39,6 +14,8 @@ class DataController extends Controller
             ->select()
             ->from('hoststatus', array(
                 'host_display_name',
+                'host_icon_image',
+                'host_icon_image_alt',
                 'host_acknowledged',
                 'host_state',
                 'host_last_state_change',
@@ -107,7 +84,7 @@ class DataController extends Controller
 
             foreach ($query as $row) {
                 $hostname = $row->host_name;
-				$coordinates = explode(",", $row->varvalue);
+                $coordinates = explode(",", $row->varvalue);
                 $host = $this->hostData($hostname);
 
                 $point = array_merge(

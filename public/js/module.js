@@ -31,8 +31,25 @@
         },
 
         updateMapData: function () {
+            function showHost(hostname) {
+                if(hostMarkers[hostname]) {
+                    el = hostMarkers[hostname]
+                    latLng = el.getLatLng();
+                    markers.zoomToShowLayer(el, function() {
+                        el.openPopup();
+                    })
+                }
+            }
+
+            function colorMarker(color) {
+                return L.icon({
+                    iconUrl: img_base_url + 'marker-icon-'+color+'.png',
+                    shadowUrl: img_base_url + 'marker-shadow.png',}
+                );
+            }
+            
             xhr = new XMLHttpRequest();
-            xhr.open('GET', 'map/data/points', true);
+            xhr.open('GET', map_base_url + 'data/points', true);
             xhr.onreadystatechange = function(e) {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
@@ -52,13 +69,13 @@
 
                             switch(hard_state) {
                                 case 0:
-                                    icon = greenMarker;
+                                    icon = colorMarker("green");
                                     break;
                                 case 1:
-                                    icon = redMarker;
+                                    icon = colorMarker("red");
                                     break;
                                 default:
-                                    icon = blueMarker;
+                                    icon = colorMarker("blue");
                             }
 
                             var service_status = {};
@@ -81,8 +98,18 @@
                             });
                             services += '</table>';
 
+                            var host_icon ="";
+
+                            if(data['host_icon_image'] != "") {
+                                host_icon = '<img src="../img/icons/'
+                                + data['host_icon_image']
+                                + '"'
+                                + (( data['host_icon_image_alt'] != "" ) ? ' alt="' + data['host_icon_image_alt'] + '"' : '')
+                                + ' class="host-icon-image icon">';
+                            }
+
                             var info = '<div class="map_host_detail">';
-                            info += '<p><a href="monitoring/host/show?host='+hostname+'">'+hostname+'</a></p>'
+                            info += '<p>'+host_icon+'<a href="monitoring/host/show?host='+hostname+'">'+hostname+'</a></p>'
                             info += services;
                             info += '</div>';
 
@@ -100,6 +127,10 @@
                             marker.bindPopup(info);
                         });
 
+                        if(map_show_host != "") {
+                            showHost(map_show_host);
+                            map_show_host = "";
+                        }
                     }
                 }
             };
@@ -128,6 +159,7 @@
 
             this.updateMapData();
             this.registerTimer();
+
         },
     };
 

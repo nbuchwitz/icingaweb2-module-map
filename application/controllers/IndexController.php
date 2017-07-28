@@ -1,13 +1,14 @@
 <?php
 namespace Icinga\Module\Map\Controllers;
 
-use Icinga\Data\Filter\Filter;
 use Icinga\Web\Controller\ModuleActionController;
  
 class IndexController extends ModuleActionController
 {
     public function indexAction()
     {
+        $this->view->host = $this->params->get("host");
+
         $config = $this->Config();
         $this->view->default_zoom = $config->get('map', 'default_zoom', '6');
         $this->view->default_long = $config->get('map', 'default_long', '13.409779');
