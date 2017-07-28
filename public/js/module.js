@@ -9,7 +9,16 @@
 
     var map;
     var markers;
+    var hostData;
     var hostMarkers;
+
+    // TODO: Translate
+    var service_status = {};
+    service_status[0] = "ok";
+    service_status[1] = "warning";
+    service_status[2] = "critical";
+    service_status[3] = "unknown";
+    service_status[99] = "pending";
 
     Map.prototype = {
         initialize: function()
@@ -79,26 +88,41 @@
                                 default:
                                     icon = colorMarker("blue");
                             }
+                            
 
-                            var service_status = {};
-                            service_status[0] = "OK";
-                            service_status[1] = "WARN";
-                            service_status[2] = "CRIT";
-                            service_status[3] = "UNKOWN";
-                            service_status[99] = "PENDING";
+                            var services;
 
-                            var services = '<table>';
-                            services += '<tr><th colspan="2">Service overview</th></tr>';
+                            services = '<div class="map-popup-services">'; 
+                            services += '<h1><span class="icon-services"></span> Services</h1>';
+                            services += '<div class="scroll-view">'; 
+                            services += '<table class="icinga-module module-monitoring">';
+                            services += '<tbody>'; 
+
                             $.each( data['services'], function( service_display_name, service ) {
-                                services += '<tr><td class="map_service_state map_service_state'
-                                    + service['service_hard_state']
-                                    + '">'
-                                    + service_status[service['service_hard_state']]
-                                    + '</td><td class="map_service_name">'
-                                    + service_display_name
-                                    + '</td></tr>'
+                                services += '<tr>';
+
+                                services += '<td class="';
+                                services += "state-col";
+                                services += " state-"+service_status[service['service_hard_state']];
+                                services += "" + (service['service_acknowledged'] == 1 ? " handled" : "")
+                                services += '">';
+                                services += '<div class="state-label">';
+                                services += service_status[service['service_hard_state']].toUpperCase();
+                                services += '</div>';
+                                services += '</td>';
+
+                                services += '<td>';
+                                services += '<div class="state-header">';
+                                services += service_display_name;
+                                services += '</td>';
+
+                                services += '</tr>';
                             });
+
+                            services += '</tbody>';
                             services += '</table>';
+                            services += '</div>';
+                            services += '</div>';
 
                             var host_icon ="";
 
@@ -110,8 +134,18 @@
                                 + ' class="host-icon-image icon">';
                             }
 
-                            var info = '<div class="map_host_detail">';
-                            info += host_icon+'<span><a class="rowAction" href="'+icinga.config.baseUrl+'/monitoring/host/show?host='+hostname+'">'+hostname+'</a></span>'
+                            var info = '<div class="map-popup">';
+                            info += '<h1>' 
+                            info += '<a class="rowAction" href="'
+                                    + icinga.config.baseUrl
+                                    + '/monitoring/host/show?host='
+                                    + hostname
+                                    + '">'
+                            info += ' <span class="icon-eye"></span> '
+                            info += '</a>'
+                            info += hostname + '</h1>'
+
+
                             info += services;
                             info += '</div>';
 
@@ -120,14 +154,21 @@
                             if(hostMarkers[hostname]) {
                                 marker = hostMarkers[hostname]; 
                             } else {
-                                marker = L.marker(data['coordinates'], {icon: icon, title: hostname}).addTo(markers);
+                                marker = L.marker(data['coordinates'],
+                                    {
+                                        icon: icon,
+                                        title: hostname,
+                                        id: hostname
+                                    }).addTo(markers);
+
                                 hostMarkers[hostname] = marker
-                                markers.addTo(map);
+                                hostData[hostname] = data
                             }
 
                             marker.setIcon(icon);
                             marker.bindPopup(info);
                         });
+
 
                         if(map_show_host != "") {
                             showHost(map_show_host);
@@ -143,6 +184,7 @@
             // TODO: initialize once and only update
             markers = new L.MarkerClusterGroup();
             hostMarkers = {};
+            hostData = {};
 
             map = L.map('map').setView([map_default_lat, map_default_long], map_default_zoom);
 
@@ -158,6 +200,7 @@
             });
 
             osm.addTo(map);
+            markers.addTo(map);
 
             this.updateMapData();
             this.registerTimer();
