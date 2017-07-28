@@ -2,12 +2,25 @@ Map - Icinga Web 2 module
 ========================================
 
 ## About
-Display hosts on OpenStreetMap using http://leafletjs.com/. 
+
+This plugins displays icinga2 host-objects as markers on a openstreetmap using leaflet.js. If more than one host-object is defined with the same coordinates (like servers in a datacenter) a clustered view is used.
 
 ![Clustered map](https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/clustered-map.png)
 ![Clustered map 2](https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/clustered-map2.png)
 ![Detailed map](https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/detailed-map.png)
-![Host detail view](https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/host-detail.png)
+
+To find a specific host on the map, you can use the custom host action:
+
+![Detailed map](https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/detailed-map.png)
+
+The map plugin integrates into the icingaweb2-tab-view:
+
+![Host detail view](https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/host-action.png)
+
+If the host-marker is clicked, a popup shows a service list and their current hardstates
+
+![Host detail view](https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/host-details.png)
+
 
 ## Requirements
 
@@ -35,16 +48,21 @@ icingacli module enable map
 
 ## Configuration
 
-### Map
+### Plugin
 
-Go to Configuration -> Modules -> map  and click on the Configuration tab.
+To configure the default coordinates and the zoom levels go to Configuration -> Modules -> map  and click on the tab Configuration.
 
 ![Configuration Tab](https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/configuration-tab.png)
 
-### Hosts
+### Add coordinates to a host-object
 
-You have to add a custom geolocation variable to every host, you want to show on the map:
+For every host you want to display on the map, you have to add a custom variable named geolocation with the WGS84-coordinates:
 
 ```
 vars.geolocation = "<longitude>,<latitude>"
 ```
+
+
+
+
+
