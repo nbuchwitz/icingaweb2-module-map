@@ -1,13 +1,5 @@
 <script type="text/javascript">
 <?php
-use Icinga\Web\Url;
-
-$url_img = Url::fromPath('img/map/', array());
-$url_map = Url::fromPath('map/', array());
-
-echo 'var map_base_url = "' . $url_map  .'";' . "\n";
-echo 'var img_base_url = "' . $url_img  .'";' . "\n";
-
 // values from config.ini
 echo 'var map_default_zoom = ' . $this->default_zoom . ";\n";
 echo 'var map_default_long = ' . $this->default_long . ";\n";

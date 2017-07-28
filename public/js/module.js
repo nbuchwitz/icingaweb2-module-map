@@ -42,14 +42,16 @@
             }
 
             function colorMarker(color) {
+                img_base = icinga.config.baseUrl + '/img/map/';
+
                 return L.icon({
-                    iconUrl: img_base_url + 'marker-icon-'+color+'.png',
-                    shadowUrl: img_base_url + 'marker-shadow.png',}
+                    iconUrl: img_base + 'marker-icon-'+color+'.png',
+                    shadowUrl: img_base + 'marker-shadow.png',}
                 );
             }
             
             xhr = new XMLHttpRequest();
-            xhr.open('GET', map_base_url + 'data/points', true);
+            xhr.open('GET', icinga.config.baseUrl + '/map/data/points', true);
             xhr.onreadystatechange = function(e) {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
@@ -101,7 +103,7 @@
                             var host_icon ="";
 
                             if(data['host_icon_image'] != "") {
-                                host_icon = '<img src="../img/icons/'
+                                host_icon = '<img src="'+icinga.config.baseUrl+'/img/icons/'
                                 + data['host_icon_image']
                                 + '"'
                                 + (( data['host_icon_image_alt'] != "" ) ? ' alt="' + data['host_icon_image_alt'] + '"' : '')
@@ -109,7 +111,7 @@
                             }
 
                             var info = '<div class="map_host_detail">';
-                            info += '<p>'+host_icon+'<a href="monitoring/host/show?host='+hostname+'">'+hostname+'</a></p>'
+                            info += host_icon+'<span><a class="rowAction" href="'+icinga.config.baseUrl+'/monitoring/host/show?host='+hostname+'">'+hostname+'</a></span>'
                             info += services;
                             info += '</div>';
 
