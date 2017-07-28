@@ -91,7 +91,7 @@
                             if(hostMarkers[hostname]) {
                                 marker = hostMarkers[hostname]; 
                             } else {
-                                marker = L.marker(data['coordinates'], {icon: icon}).addTo(markers);
+                                marker = L.marker(data['coordinates'], {icon: icon, title: hostname}).addTo(markers);
                                 hostMarkers[hostname] = marker
                                 markers.addTo(map);
                             }
