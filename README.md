@@ -62,7 +62,4 @@ For every host you want to display on the map, you have to add a custom variable
 vars.geolocation = "<longitude>,<latitude>"
 ```
 
-
-
-
-
+To show a popup with the coordinates click on the desired location on the map and hold the CTRL-key while clicking on the map.

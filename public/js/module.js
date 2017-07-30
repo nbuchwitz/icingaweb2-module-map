@@ -212,8 +212,16 @@
 
             map = L.map('map').setView([map_default_lat, map_default_long], map_default_zoom);
 
+            map.on('keypress', function(e) {
+                console.log(e);
+            });
+
             map.on('click', function(e) {
-                console.log("clicked on "+e.latlng);
+                console.log(e);
+                if (e.originalEvent.ctrlKey) {
+                    var coord = 'vars.geolocation = "'+e.latlng.lat.toFixed(6)+','+e.latlng.lng.toFixed(6)+'"'
+                    alert(coord);
+                }
             });
 
             var osm = L.tileLayer( '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
