@@ -77,20 +77,9 @@
                         $.each( result, function( hostname, data ) {
                             var hard_state = data['host_hard_state'];
                             var icon;
-
-                            switch(hard_state) {
-                                case 0:
-                                    icon = colorMarker("green");
-                                    break;
-                                case 1:
-                                    icon = colorMarker("red");
-                                    break;
-                                default:
-                                    icon = colorMarker("blue");
-                            }
-                            
-
                             var services;
+
+                            var worstState = (hard_state == 1 ? 2 : hard_state );
 
                             services = '<div class="map-popup-services">'; 
                             services += '<h1><span class="icon-services"></span> Services</h1>';
@@ -99,6 +88,12 @@
                             services += '<tbody>'; 
 
                             $.each( data['services'], function( service_display_name, service ) {
+                                var state = service['service_hard_state']
+
+                                if(state < 3 && state > worstState) {
+                                    worstState = service['service_hard_state']
+                                }
+
                                 services += '<tr>';
 
                                 services += '<td class="';
@@ -124,8 +119,21 @@
                             services += '</div>';
                             services += '</div>';
 
-                            var host_icon ="";
+                            switch(worstState) {
+                                case 0:
+                                    icon = colorMarker("green");
+                                    break;
+                                case 1:
+                                    icon = colorMarker("orange");
+                                    break;
+                                case 2:
+                                    icon = colorMarker("red");
+                                    break;
+                                default:
+                                    icon = colorMarker("blue");
+                            }
 
+                            var host_icon ="";
                             if(data['host_icon_image'] != "") {
                                 host_icon = '<img src="'+icinga.config.baseUrl+'/img/icons/'
                                 + data['host_icon_image']
@@ -145,7 +153,6 @@
                             info += '</a>'
                             info += hostname + '</h1>'
 
-
                             info += services;
                             info += '</div>';
 
@@ -153,12 +160,14 @@
 
                             if(hostMarkers[hostname]) {
                                 marker = hostMarkers[hostname]; 
+                                marker.options.state = worstState;
                             } else {
                                 marker = L.marker(data['coordinates'],
                                     {
                                         icon: icon,
                                         title: hostname,
-                                        id: hostname
+                                        id: hostname,
+                                        state: worstState,
                                     }).addTo(markers);
 
                                 hostMarkers[hostname] = marker
@@ -168,7 +177,6 @@
                             marker.setIcon(icon);
                             marker.bindPopup(info);
                         });
-
 
                         if(map_show_host != "") {
                             showHost(map_show_host);
@@ -182,7 +190,23 @@
 
         onRenderedContainer: function(event) {
             // TODO: initialize once and only update
-            markers = new L.MarkerClusterGroup();
+            markers = new L.MarkerClusterGroup({
+                iconCreateFunction: function(cluster) {
+                    var childCount = cluster.getChildCount();
+
+                    var worstState = 0;
+                    $.each(cluster.getAllChildMarkers(), function(id, el) {
+                        if(el.options.state > worstState) {
+                            worstState = el.options.state
+                        }
+                    });
+
+                    var c = ' marker-cluster-'+worstState;
+
+
+                    return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
+                }
+            });
             hostMarkers = {};
             hostData = {};
 
