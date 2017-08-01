@@ -23,7 +23,7 @@ Please consider our [roadmap](https://github.com/nbuchwitz/icingaweb2-module-map
 [open issues](https://github.com/nbuchwitz/icingaweb2-module-map/issues) when you start contributing
 to the project.
 
-Before starting your work on this Icinga Web 2 for Grafana, you should [fork the project](https://help.github.com/articles/fork-a-repo/)
+Before starting your work on this Map module for Icinga Web 2, you should [fork the project](https://help.github.com/articles/fork-a-repo/)
 to your GitHub account. This allows you to freely experiment with your changes.
 When your changes are complete, submit a [pull request](https://help.github.com/articles/using-pull-requests/).
 All pull requests will be reviewed and merged if they suit some general guidelines:
