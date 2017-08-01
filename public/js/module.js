@@ -20,7 +20,17 @@
     service_status[3] = "unknown";
     service_status[99] = "pending";
 
+    function colorMarker(color) {
+        img_base = icinga.config.baseUrl + '/img/map/';
+
+        return L.icon({
+            iconUrl: img_base + 'marker-icon-'+color+'.png',
+            shadowUrl: img_base + 'marker-shadow.png',}
+        );
+    }
+
     Map.prototype = {
+            
         initialize: function()
         {
             this.module.on('rendered', this.onRenderedContainer);
@@ -50,15 +60,6 @@
                 }
             }
 
-            function colorMarker(color) {
-                img_base = icinga.config.baseUrl + '/img/map/';
-
-                return L.icon({
-                    iconUrl: img_base + 'marker-icon-'+color+'.png',
-                    shadowUrl: img_base + 'marker-shadow.png',}
-                );
-            }
-            
             xhr = new XMLHttpRequest();
             xhr.open('GET', icinga.config.baseUrl + '/map/data/points', true);
             xhr.onreadystatechange = function(e) {
@@ -217,10 +218,19 @@
             });
 
             map.on('click', function(e) {
-                console.log(e);
                 if (e.originalEvent.ctrlKey) {
                     var coord = 'vars.geolocation = "'+e.latlng.lat.toFixed(6)+','+e.latlng.lng.toFixed(6)+'"'
-                    alert(coord);
+                    //alert(coord);
+
+                    marker = L.marker(e.latlng, { icon: colorMarker("blue") })
+                    marker.bindPopup("<h1>selected coordinates:</h1><pre>"+coord+"</pre>")
+                    marker.addTo(markers);
+                    marker.on('popupclose', function(evt) {
+                        markers.removeLayer(marker);
+                    });
+                    markers.zoomToShowLayer(marker, function() {
+                        marker.openPopup();
+                    })
                 }
             });
 
