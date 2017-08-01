@@ -123,3 +123,6 @@ This module borrows a lot from https://github.com/Mikesch-mp/icingaweb2-module-g
 There are many ways to contribute to the Icinga Web module for Maps --
 whether it be sending patches, testing, reporting bugs, or reviewing and
 updating the documentation. Every contribution is appreciated!
+
+
+Please continue reading in the [contributing chapter](CONTRIBUTING.md).
