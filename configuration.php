@@ -1,5 +1,5 @@
 <?php
-$this->menuSection('Hostmap')
+$this->menuSection('Host Map')
 	->setUrl('map')
 	->setIcon('globe');
 
