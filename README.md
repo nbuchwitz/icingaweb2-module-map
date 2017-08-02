@@ -18,17 +18,17 @@ This module displays host objects as markers on [openstreetmap](https://www.open
 
 <img src="https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/clustered-map.png" alt="Clustered map" height="300">
 
-<img src="https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/clustered-map2.png" alt="Clustered map 2" height="300">
+<img src="https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/clustered-map2.png" alt="Clustered map" height="300">
 
 <img src="https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/detailed-map.png" alt="Detailed map" height="300">
 
 In order to locate a specific host on the map, you can use the custom host action:
 
-<img src="https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/detailed-map.png" alt="Detailed map" height="300">
+<img src="https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/host-action.png" alt="Host action" height="300">
 
 The map module is directly integrated into the detail view in Icinga Web 2:
 
-<img src="https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/host-action.png" alt="Host detail view" height="100">
+<img src="https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/tab-view.png" alt="Host detail view" height="100">
 
 If you click on the host marker, a popup shows a service list and their current hard states.
 
