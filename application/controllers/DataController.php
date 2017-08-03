@@ -77,8 +77,6 @@ class DataController extends Controller
                 'varvalue'))
             ->where('varname', 'geolocation');
 
-        $this->applyRestriction('monitoring/filter/objects', $query);
-
         if (count($query->fetchAll()) > 0 ) {
             $points = array();
 
@@ -86,6 +84,11 @@ class DataController extends Controller
                 $hostname = $row->host_name;
                 $coordinates = explode(",", $row->varvalue);
                 $host = $this->hostData($hostname);
+        
+                # skip this host, if the user lacks sufficient permission to fetch host data
+                if(empty($host)) {
+                    continue;
+                }
 
                 $point = array_merge(
                     array(
