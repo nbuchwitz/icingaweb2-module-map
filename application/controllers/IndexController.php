@@ -2,12 +2,21 @@
 namespace Icinga\Module\Map\Controllers;
 
 use Icinga\Web\Controller\ModuleActionController;
+use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Application\Icinga;
+use Icinga\Web\Controller;
+use Icinga\Web\Widget;
  
 class IndexController extends ModuleActionController
 {
     public function indexAction()
     {
         $this->view->host = $this->params->get("host");
+
+        $this->getTabs()->add('map', array(
+            'label' => $this->translate('Host map'),
+            'url'   => $this->getRequest()->getUrl()
+        ))->activate('map')->extend(new DashboardAction());
 
         $config = $this->Config();
         $this->view->default_zoom = $config->get('map', 'default_zoom', '6');

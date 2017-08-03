@@ -10,4 +10,13 @@ echo 'var map_min_zoom = ' . $this->min_zoom . ";\n";
 echo 'var map_show_host = "' . $this->host . "\";\n";
 ?>
 </script>
-<div id="map"></div>
+<div class="controls">
+<?php if (! $this->compact): ?>
+<?= $this->tabs ?>
+<?php endif ?>
+</div>
+<div class="content">
+<div id="map"<?php if ($this->compact): ?>
+class="compact"
+<?php endif ?>></div>
+</div>

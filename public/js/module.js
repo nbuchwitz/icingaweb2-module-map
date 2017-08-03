@@ -204,7 +204,6 @@
 
                     var c = ' marker-cluster-'+worstState;
 
-
                     return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
                 }
             });
@@ -213,14 +212,9 @@
 
             map = L.map('map').setView([map_default_lat, map_default_long], map_default_zoom);
 
-            map.on('keypress', function(e) {
-                console.log(e);
-            });
-
             map.on('click', function(e) {
                 if (e.originalEvent.ctrlKey) {
                     var coord = 'vars.geolocation = "'+e.latlng.lat.toFixed(6)+','+e.latlng.lng.toFixed(6)+'"'
-                    //alert(coord);
 
                     marker = L.marker(e.latlng, { icon: colorMarker("blue") })
                     marker.bindPopup("<h1>selected coordinates:</h1><pre>"+coord+"</pre>")
