@@ -1,7 +1,9 @@
 <?php
-$this->menuSection('Host Map')
-	->setUrl('map')
-	->setIcon('globe');
+$section = $this->menuSection(N_('Maps'))
+    ->setIcon('globe')
+    ->add($this->translate('Host Map'))
+    ->setUrl('map')
+    ->setIcon('globe');
 
 // stylesheets
 $this->provideCssFile('third-party/leaflet.css');
