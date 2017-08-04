@@ -62,18 +62,17 @@ cd /usr/share/icingaweb2/modules
 git clone https://github.com/nbuchwitz/icingaweb2-module-map.git map
 ```
 
-<!-- until there are any github releases, leave this out
 
 Tarball download (latest [release](https://github.com/nbuchwitz/icingaweb2-module-map/releases/latest)):
 
 ```
 cd /usr/share/icingaweb2/modules
-wget https://github.com/nbuchwitz/icingaweb2-module-map/archive/v1.1.0.zip
-unzip v1.1.0.zip
-mv icingaweb2-module-map-1.1.0 map
+wget https://github.com/nbuchwitz/icingaweb2-module-map/archive/v1.0.0.zip
+unzip v1.0.0.zip
+mv icingaweb2-module-map-1.0.0 map
 ```
 
--->
+### Enable Icinga Web 2 module
 
 Enable the module in the Icinga Web 2 frontend in `Configuration -> Modules -> map -> enable`.
 You can also enable the module by using the `icingacli` command:
