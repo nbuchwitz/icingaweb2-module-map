@@ -120,7 +120,7 @@
                             services += '</div>';
                             services += '</div>';
 
-                            switch(worstState) {
+                            switch(parseInt(worstState)) {
                                 case 0:
                                     icon = colorMarker("green");
                                     break;
