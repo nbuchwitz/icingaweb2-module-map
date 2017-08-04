@@ -8,6 +8,10 @@ echo 'var map_max_zoom = ' . $this->max_zoom . ";\n";
 echo 'var map_min_zoom = ' . $this->min_zoom . ";\n";
 
 echo 'var map_show_host = "' . $this->host . "\";\n";
+
+$mapId = uniqid();
+echo 'var id = "'.$mapId."\";\n";
+
 ?>
 </script>
 <div class="controls">
@@ -16,7 +20,7 @@ echo 'var map_show_host = "' . $this->host . "\";\n";
 <?php endif ?>
 </div>
 <div class="content">
-<div id="map"<?php if ($this->compact): ?>
-class="compact"
-<?php endif ?>></div>
+<div id="map-<?php echo $mapId; ?>" class="map<?php if ($this->compact): ?>
+ compact
+<?php endif ?>"></div>
 </div>

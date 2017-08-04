@@ -1,24 +1,4 @@
 (function(Icinga) {
-    var Map = function(module) {
-        this.module = module;
-        this.idCache = {};
-        this.initialize();
-        this.timer;
-        this.module.icinga.logger.debug('Map module loaded');
-    };
-
-    var map;
-    var markers;
-    var hostData;
-    var hostMarkers;
-
-    // TODO: Translate
-    var service_status = {};
-    service_status[0] = "ok";
-    service_status[1] = "warning";
-    service_status[2] = "critical";
-    service_status[3] = "unknown";
-    service_status[99] = "pending";
 
     function colorMarker(color) {
         img_base = icinga.config.baseUrl + '/img/map/';
@@ -29,49 +9,77 @@
         );
     }
 
+    var cache = {};
+
+    // TODO: Translate
+    var service_status = {};
+    service_status[0] = "ok";
+    service_status[1] = "warning";
+    service_status[2] = "critical";
+    service_status[3] = "unknown";
+    service_status[99] = "pending";
+
+    var Map = function(module) {
+        this.module = module;
+        this.initialize();
+        this.timer;
+        this.module.icinga.logger.debug('Map module loaded');
+    };
+
     Map.prototype = {
             
         initialize: function()
         {
+            this.timer = {}
             this.module.on('rendered', this.onRenderedContainer);
-            this.module.icinga.logger.debug('Map module initialized');
+            this.registerTimer()
         },
 
-        registerTimer: function () {
-            if(this.timer) {
-                this.module.icinga.timer.unregister(this.timer); 
-            }
+        registerTimer: function (id) {
+            //if(this.timer) {
+            //    this.module.icinga.timer.unregister(this.timer); 
+            //}
             this.timer = this.module.icinga.timer.register(
-                this.updateMapData,
+                this.updateAllMapData,
                 this,
                 10000
             );
             return this;
         },
 
-        updateMapData: function () {
+        updateAllMapData: function()
+        {
+            var _this = this
+
+            $.each(cache, function(id) {
+                console.info("update for map " + id)
+                _this.updateMapData(id)
+            }); 
+        },
+
+        updateMapData: function (id, show_host = "") {
             function showHost(hostname) {
-                if(hostMarkers[hostname]) {
-                    el = hostMarkers[hostname]
+                if(cache[id].hostMarkers[hostname]) {
+                    el = cache[id].hostMarkers[hostname]
                     latLng = el.getLatLng();
-                    markers.zoomToShowLayer(el, function() {
+                    cache[id].markers.zoomToShowLayer(el, function() {
                         el.openPopup();
                     })
                 }
             }
 
+            var xhr;
             xhr = new XMLHttpRequest();
             xhr.open('GET', icinga.config.baseUrl + '/map/data/points', true);
             xhr.onreadystatechange = function(e) {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
                         var result = JSON.parse(xhr.responseText);
-
                         // remove old markers
-                        $.each( hostMarkers, function( hostname, d ) {
+                        $.each(cache[id].hostMarkers, function( hostname, d ) {
                             if(!result[hostname]) {
-                                markers.removeLayer(d);
-                                delete hostMarkers[hostname];
+                                cache[id].markers.removeLayer(d);
+                                delete cache[id].hostMarkers[hostname];
                             }
                         });
 
@@ -159,8 +167,8 @@
 
                             var marker;
 
-                            if(hostMarkers[hostname]) {
-                                marker = hostMarkers[hostname]; 
+                            if(cache[id].hostMarkers[hostname]) {
+                                marker = cache[id].hostMarkers[hostname]; 
                                 marker.options.state = worstState;
                             } else {
                                 marker = L.marker(data['coordinates'],
@@ -169,19 +177,18 @@
                                         title: hostname,
                                         id: hostname,
                                         state: worstState,
-                                    }).addTo(markers);
+                                    }).addTo(cache[id].markers);
 
-                                hostMarkers[hostname] = marker
-                                hostData[hostname] = data
+                                cache[id].hostMarkers[hostname] = marker
+                                cache[id].hostData[hostname] = data
                             }
 
                             marker.setIcon(icon);
                             marker.bindPopup(info);
                         });
 
-                        if(map_show_host != "") {
-                            showHost(map_show_host);
-                            map_show_host = "";
+                        if(show_host != "") {
+                            showHost(show_host);
                         }
                     }
                 }
@@ -190,8 +197,10 @@
         },
 
         onRenderedContainer: function(event) {
+            cache[id] = {}
+
             // TODO: initialize once and only update
-            markers = new L.MarkerClusterGroup({
+            cache[id].markers = new L.MarkerClusterGroup({
                 iconCreateFunction: function(cluster) {
                     var childCount = cluster.getChildCount();
 
@@ -207,25 +216,34 @@
                     return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
                 }
             });
-            hostMarkers = {};
-            hostData = {};
 
-            map = L.map('map').setView([map_default_lat, map_default_long], map_default_zoom);
+            cache[id].hostMarkers = {};
+            cache[id].hostData = {};
+
+            cache[id].map = L.map('map-'+id).setView([map_default_lat, map_default_long], map_default_zoom);
+
             L.control.locate({
                 icon: 'icon-pin' 
-            }).addTo(map);
+            }).addTo(cache[id].map);
 
-            map.on('click', function(e) {
+            cache[id].map.on('click', function(e) {
+                // TODO: any other way?
+                var id = e.target._container.id.replace('map-','');
+
                 if (e.originalEvent.ctrlKey) {
-                    var coord = 'vars.geolocation = "'+e.latlng.lat.toFixed(6)+','+e.latlng.lng.toFixed(6)+'"'
-
+                    var coord = 'vars.geolocation = "'
+                        + e.latlng.lat.toFixed(6)
+                        + ','
+                        + e.latlng.lng.toFixed(6)
+                        + '"'
+                    var marker;
                     marker = L.marker(e.latlng, { icon: colorMarker("blue") })
-                    marker.bindPopup("<h1>selected coordinates:</h1><pre>"+coord+"</pre>")
-                    marker.addTo(markers);
+                    marker.bindPopup("<h1>selected coordinates:</h1><pre>" + coord + "</pre>")
+                    marker.addTo(cache[id].markers);
                     marker.on('popupclose', function(evt) {
-                        markers.removeLayer(marker);
+                        cache[id].markers.removeLayer(marker);
                     });
-                    markers.zoomToShowLayer(marker, function() {
+                    cache[id].markers.zoomToShowLayer(marker, function() {
                         marker.openPopup();
                     })
                 }
@@ -238,12 +256,10 @@
                 minZoom: map_min_zoom,
             });
 
-            osm.addTo(map);
-            markers.addTo(map);
-
-            this.updateMapData();
-            this.registerTimer();
-
+            osm.addTo(cache[id].map);
+            cache[id].markers.addTo(cache[id].map);
+            
+            this.updateMapData(id, map_show_host)
         },
     };
 
