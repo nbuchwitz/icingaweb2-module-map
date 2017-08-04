@@ -34,6 +34,10 @@ If you click on the host marker, a popup shows a service list and their current 
 
 <img src="https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/host-details.png" alt="Host detail view" height="300">
 
+You could also integrate a map as dashlet into your dashboards:
+
+<img src="https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/dashboard.png" alt="Map as a dashlet" height="300">
+
 ## License
 
 Icinga Web 2 and this Icinga Web 2 module are licensed under the terms of the GNU General Public License Version 2, you will find a copy of this license in the LICENSE file included in the source package.
