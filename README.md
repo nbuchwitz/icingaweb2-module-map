@@ -108,9 +108,13 @@ object Host "db-in-la" {
 }
 ```
 
-
-
 ## FAQ
+
+### Change default parameters per map
+
+It's possible to change the parameters ``default_zoom``, ``default_long`` and ``default_lat`` for a map by adding the parameters to the url:
+
+```map?default_zoom=20&default_long=13.370324&default_lat=52.500859```
 
 ### Show host coordinates inside the map
 
