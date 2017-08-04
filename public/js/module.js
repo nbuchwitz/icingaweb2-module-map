@@ -211,6 +211,9 @@
             hostData = {};
 
             map = L.map('map').setView([map_default_lat, map_default_long], map_default_zoom);
+            L.control.locate({
+                icon: 'icon-pin' 
+            }).addTo(map);
 
             map.on('click', function(e) {
                 if (e.originalEvent.ctrlKey) {
