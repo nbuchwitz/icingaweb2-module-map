@@ -145,7 +145,7 @@
 
                             var info = '<div class="map-popup">';
                             info += '<h1>' 
-                            info += '<a class="rowAction" href="'
+                            info += '<a data-base-target="_next" href="'
                                     + icinga.config.baseUrl
                                     + '/monitoring/host/show?host='
                                     + hostname
