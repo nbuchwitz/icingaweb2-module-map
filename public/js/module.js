@@ -36,9 +36,6 @@
         },
 
         registerTimer: function (id) {
-            //if(this.timer) {
-            //    this.module.icinga.timer.unregister(this.timer); 
-            //}
             this.timer = this.module.icinga.timer.register(
                 this.updateAllMapData,
                 this,
@@ -51,9 +48,17 @@
         {
             var _this = this
 
+            if (cache.length == 0) {
+                this.module.icinga.timer.unregister(this.timer)
+                return this
+            }
+
             $.each(cache, function(id) {
-                console.info("update for map " + id)
-                _this.updateMapData(id)
+                if (!$('#map-' + id).length) {
+                    delete cache[id]
+                } else {
+                    _this.updateMapData(id)
+                }
             }); 
         },
 
