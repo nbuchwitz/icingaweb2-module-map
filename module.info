@@ -1,4 +1,4 @@
 Module: map
-Version: 0.0.1
+Version: 1.0.1
 Description: Map visualization
  This is a simple map for visualization of host based status information based on Openstreetmap.
