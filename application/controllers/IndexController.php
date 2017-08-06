@@ -25,5 +25,7 @@ class IndexController extends ModuleActionController
 
         $this->view->min_zoom = $this->params->get("min_zoom") ? $this->params->get("min_zoom") : $config->get('map', 'min_zoom', '5');
         $this->view->max_zoom = $this->params->get("max_zoom") ? $this->params->get("max_zoom") : $config->get('map', 'max_zoom', '19');
+
+        $this->view->dashletHeight = $config->get('map', 'dashlet_height', '300');
     }
 }

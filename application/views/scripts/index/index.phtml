@@ -23,7 +23,7 @@ service_status[99] = '<?= $this->translate('PENDING', 'icinga.state') ?>';
 <?php endif ?>
 </div>
 <div class="content">
-<div id="map-<?php echo $mapId; ?>" class="map<?php if ($this->compact): ?>
+<div <?=($this->compact ? 'style="height:'.$this->dashletHeight.'px;" ' : ""); ?>id="map-<?php echo $mapId; ?>" class="map<?php if ($this->compact): ?>
  compact
 <?php endif ?>"></div>
 </div>

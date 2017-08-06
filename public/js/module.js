@@ -80,11 +80,11 @@
                         });
 
                         $.each( result, function( hostname, data ) {
-                            var hard_state = data['host_hard_state'];
+                            var hostState = data['host_state'];
                             var icon;
                             var services;
 
-                            var worstState = (hard_state == 1 ? 2 : hard_state );
+                            var worstState = (hostState == 1 ? 2 : hostState );
 
                             services = '<div class="map-popup-services">'; 
                             services += '<h1><span class="icon-services"></span> Services</h1>';
@@ -93,21 +93,21 @@
                             services += '<tbody>'; 
 
                             $.each( data['services'], function( service_display_name, service ) {
-                                var state = service['service_hard_state']
+                                var serviceState = service['service_state']
 
-                                if(state < 3 && state > worstState) {
-                                    worstState = service['service_hard_state']
+                                if(serviceState < 3 && serviceState > worstState) {
+                                    worstState = service['service_state']
                                 }
 
                                 services += '<tr>';
 
                                 services += '<td class="';
                                 services += "state-col";
-                                services += " state-"+service_status[service['service_hard_state']].toLowerCase();
+                                services += " state-"+service_status[service['service_state']].toLowerCase();
                                 services += "" + (service['service_acknowledged'] == 1 ? " handled" : "")
                                 services += '">';
                                 services += '<div class="state-label">';
-                                services += service_status[service['service_hard_state']];
+                                services += service_status[service['service_state']];
                                 services += '</div>';
                                 services += '</td>';
 

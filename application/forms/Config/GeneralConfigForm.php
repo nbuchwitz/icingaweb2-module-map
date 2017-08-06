@@ -26,7 +26,7 @@ class GeneralConfigForm extends ConfigForm
             'map_default_lat',
             array(
                 'placeholder' => '52.520645',
-                'label' => $this->translate('Latitude'),
+                'label' => $this->translate('Default latitude (WGS84)'),
                 'description' => $this->translate('Default map position (latitude)'),
                 'required' => false
             )
@@ -36,7 +36,7 @@ class GeneralConfigForm extends ConfigForm
             'map_default_long',
             array(
                 'placeholder' => '13.409779',
-                'label' => $this->translate('Longitude'),
+                'label' => $this->translate('Default longitude (WGS84)'),
                 'description' => $this->translate('Default map position (longitude)'),
                 'required' => false
             )
@@ -46,8 +46,8 @@ class GeneralConfigForm extends ConfigForm
             'map_default_zoom',
             array(
                 'placeholder' => '6',
-                'label' => $this->translate('Default Zoom'),
-                'description' => $this->translate('Default zoom'),
+                'label' => $this->translate('Default zoom level'),
+                'description' => $this->translate('Default zoom level of the map'),
                 'required' => false
             )
         );
@@ -56,8 +56,8 @@ class GeneralConfigForm extends ConfigForm
             'map_max_zoom',
             array(
                 'placeholder' => '19',
-                'label' => $this->translate('Max Zoom'),
-                'description' => $this->translate('Max zoom'),
+                'label' => $this->translate('Maximum zoom level'),
+                'description' => $this->translate('Maximum zoom level of the map'),
                 'required' => false
             )
         );
@@ -66,9 +66,31 @@ class GeneralConfigForm extends ConfigForm
             'map_min_zoom',
             array(
                 'placeholder' => '5',
-                'label' => $this->translate('Min Zoom'),
-                'description' => $this->translate('Min zoom'),
+                'label' => $this->translate('Minimal zoom level'),
+                'description' => $this->translate('Minimal zoom level of the map'),
                 'required' => false
+            )
+        );
+        $this->addElement(
+            'text',
+            'map_dashlet_height',
+            array(
+                'placeholder' => '300',
+                'label' => $this->translate('Dashlet height'),
+                'description' => $this->translate('Dashlet height'),
+                'required' => false
+            )
+        );
+        $this->addElement(
+            'select',
+            'map_stateType',
+            array(
+                'label' => $this->translate('State type'),
+                'description' => $this->translate('State type for status indication'),
+                'multiOptions' => array(
+                    'soft' => 'soft',
+                    'hard' => 'hard'
+                ),
             )
         );
         
