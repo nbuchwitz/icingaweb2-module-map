@@ -7,8 +7,8 @@ use Icinga\Module\Monitoring\Controller;
 class DataController extends Controller
 {
 
-        private $stateColumn;
-        private $stateChangeColumn;
+    private $stateColumn;
+    private $stateChangeColumn;
 
     private function hostData($hostname)
     {
@@ -20,8 +20,8 @@ class DataController extends Controller
                 'host_icon_image',
                 'host_icon_image_alt',
                 'host_acknowledged',
-                'host_state' => $this->stateColumn,
-                'host_last_state_change' => $this->stateChangeColumn,
+                'host_state' => 'host_' . $this->stateColumn,
+                'host_last_state_change' => 'host_' . $this->stateChangeColumn,
                 'host_in_downtime'))
             ->where('host_name', $hostname);
 
@@ -46,8 +46,8 @@ class DataController extends Controller
             ->from('servicestatus', array(
                 'service_display_name',
                 'service_acknowledged',
-                'service_state' => $this->stateColumn,
-                'service_last_state_change' => $this->stateChangeColumn,
+                'service_state' => 'service_' . $this->stateColumn,
+                'service_last_state_change' => 'service_' . $this->stateChangeColumn,
                 'service_in_downtime'))
             ->where('host_name', $hostname);
 
@@ -77,11 +77,11 @@ class DataController extends Controller
         ));
 
         if ($stateType === 'hard') {
-            $this->stateColumn = 'host_hard_state';
-            $this->stateChangeColumn = 'host_last_hard_state_change';
+            $this->stateColumn = 'hard_state';
+            $this->stateChangeColumn = 'last_hard_state_change';
         } else {
-            $this->stateColumn = 'host_state';
-            $this->stateChangeColumn = 'host_last_state_change';
+            $this->stateColumn = 'state';
+            $this->stateChangeColumn = 'last_state_change';
         }
 
         $query = $this->backend
