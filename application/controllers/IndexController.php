@@ -14,7 +14,7 @@ class IndexController extends ModuleActionController
         $this->view->host = $this->params->get("host");
 
         $this->getTabs()->add('map', array(
-            'label' => $this->translate('Host map'),
+            'label' => $this->translate('Host Map'),
             'url'   => $this->getRequest()->getUrl()
         ))->activate('map')->extend(new DashboardAction());
 
@@ -23,7 +23,7 @@ class IndexController extends ModuleActionController
         $this->view->default_long = $this->params->get("default_long") ? $this->params->get("default_long") : $config->get('map', 'default_long', '13.409779');
         $this->view->default_lat = $this->params->get("default_lat") ? $this->params->get("default_lat") : $config->get('map', 'default_lat', '52.520645');
 
-        $this->view->min_zoom = $config->get('map', 'min_zoom', '5');
-        $this->view->max_zoom = $config->get('map', 'max_zoom', '19');
+        $this->view->min_zoom = $this->params->get("min_zoom") ? $this->params->get("min_zoom") : $config->get('map', 'min_zoom', '5');
+        $this->view->max_zoom = $this->params->get("max_zoom") ? $this->params->get("max_zoom") : $config->get('map', 'max_zoom', '19');
     }
 }
