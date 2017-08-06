@@ -1,7 +1,7 @@
 <script type="text/javascript">
 <?php
-// values from config.ini
-
+$mapId = uniqid();
+echo 'var id = "'.$mapId."\";\n";
 echo 'var map_default_zoom = ' . $this->default_zoom . ";\n";
 echo 'var map_default_long = ' . $this->default_long . ";\n";
 echo 'var map_default_lat = ' . $this->default_lat . ";\n";
@@ -9,11 +9,13 @@ echo 'var map_max_zoom = ' . $this->max_zoom . ";\n";
 echo 'var map_min_zoom = ' . $this->min_zoom . ";\n";
 
 echo 'var map_show_host = "' . $this->host . "\";\n";
-
-$mapId = uniqid();
-echo 'var id = "'.$mapId."\";\n";
-
 ?>
+var service_status = {};
+service_status[0] = '<?= $this->translate('OK', 'icinga.state') ?>';
+service_status[1] = '<?= $this->translate('WARNING', 'icinga.state') ?>';
+service_status[2] = '<?= $this->translate('CRITICAL', 'icinga.state') ?>';
+service_status[3] = '<?= $this->translate('UNKNOWN', 'icinga.state') ?>';
+service_status[99] = '<?= $this->translate('PENDING', 'icinga.state') ?>';
 </script>
 <div class="controls">
 <?php if (! $this->compact): ?>

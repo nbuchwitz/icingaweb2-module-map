@@ -17,8 +17,8 @@ $this->provideJsFile('third-party/L.Control.Locate.min.js');
 
 // configuration menu
 $this->provideConfigTab('config', array(
-	'title' => 'Configure the map module',
-	'label'	=> 'Configuration',
+	'title' => $this->translate('Configure the map module'),
+	'label'	=> $this->translate('Configuration'),
 	'url'	=> 'config'
 ));
 ?>

@@ -11,14 +11,6 @@
 
     var cache = {};
 
-    // TODO: Translate
-    var service_status = {};
-    service_status[0] = "ok";
-    service_status[1] = "warning";
-    service_status[2] = "critical";
-    service_status[3] = "unknown";
-    service_status[99] = "pending";
-
     var Map = function(module) {
         this.module = module;
         this.initialize();
@@ -65,8 +57,7 @@
         updateMapData: function (id, show_host = "") {
             function showHost(hostname) {
                 if(cache[id].hostMarkers[hostname]) {
-                    el = cache[id].hostMarkers[hostname]
-                    latLng = el.getLatLng();
+                    var el = cache[id].hostMarkers[hostname]
                     cache[id].markers.zoomToShowLayer(el, function() {
                         el.openPopup();
                     })
@@ -112,11 +103,11 @@
 
                                 services += '<td class="';
                                 services += "state-col";
-                                services += " state-"+service_status[service['service_hard_state']];
+                                services += " state-"+service_status[service['service_hard_state']].toLowerCase();
                                 services += "" + (service['service_acknowledged'] == 1 ? " handled" : "")
                                 services += '">';
                                 services += '<div class="state-label">';
-                                services += service_status[service['service_hard_state']].toUpperCase();
+                                services += service_status[service['service_hard_state']];
                                 services += '</div>';
                                 services += '</td>';
 
@@ -194,6 +185,7 @@
 
                         if(show_host != "") {
                             showHost(show_host);
+                            show_host = ""
                         }
                     }
                 }
