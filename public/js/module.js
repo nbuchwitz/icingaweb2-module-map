@@ -5,6 +5,8 @@
 
         return L.icon({
             iconUrl: img_base + 'marker-icon-'+color+'.png',
+            //iconSize: [20, 20],
+            //shadowSize: [25, 18],
             shadowUrl: img_base + 'marker-shadow.png',}
         );
     }
@@ -19,10 +21,10 @@
     };
 
     Map.prototype = {
-            
+
         initialize: function()
         {
-            this.timer = {}
+            this.timer = {};
             this.module.on('rendered', this.onRenderedContainer);
             this.registerTimer()
         },
@@ -38,10 +40,10 @@
 
         updateAllMapData: function()
         {
-            var _this = this
+            var _this = this;
 
             if (cache.length == 0) {
-                this.module.icinga.timer.unregister(this.timer)
+                this.module.icinga.timer.unregister(this.timer);
                 return this
             }
 
@@ -49,15 +51,18 @@
                 if (!$('#map-' + id).length) {
                     delete cache[id]
                 } else {
-                    _this.updateMapData(id)
+                    _this.updateMapData({id: id})
                 }
-            }); 
+            });
         },
 
-        updateMapData: function (id, show_host = "") {
+        updateMapData: function (parameters) {
+            var id = parameters.id;
+            var show_host = parameters.show_host;
+
             function showHost(hostname) {
                 if(cache[id].hostMarkers[hostname]) {
-                    var el = cache[id].hostMarkers[hostname]
+                    var el = cache[id].hostMarkers[hostname];
                     cache[id].markers.zoomToShowLayer(el, function() {
                         el.openPopup();
                     })
@@ -86,14 +91,14 @@
 
                             var worstState = (hostState == 1 ? 2 : hostState );
 
-                            services = '<div class="map-popup-services">'; 
+                            services = '<div class="map-popup-services">';
                             services += '<h1><span class="icon-services"></span> Services</h1>';
-                            services += '<div class="scroll-view">'; 
+                            services += '<div class="scroll-view">';
                             services += '<table class="icinga-module module-monitoring">';
-                            services += '<tbody>'; 
+                            services += '<tbody>';
 
                             $.each( data['services'], function( service_display_name, service ) {
-                                var serviceState = service['service_state']
+                                var serviceState = service['service_state'];
 
                                 if(serviceState < 3 && serviceState > worstState) {
                                     worstState = service['service_state']
@@ -104,7 +109,7 @@
                                 services += '<td class="';
                                 services += "state-col";
                                 services += " state-"+service_status[service['service_state']].toLowerCase();
-                                services += "" + (service['service_acknowledged'] == 1 ? " handled" : "")
+                                services += "" + (service['service_acknowledged'] == 1 ? " handled" : "");
                                 services += '">';
                                 services += '<div class="state-label">';
                                 services += service_status[service['service_state']];
@@ -148,15 +153,15 @@
                             }
 
                             var info = '<div class="map-popup">';
-                            info += '<h1>' 
+                            info += '<h1>';
                             info += '<a data-base-target="_next" href="'
                                     + icinga.config.baseUrl
                                     + '/monitoring/host/show?host='
                                     + hostname
-                                    + '">'
-                            info += ' <span class="icon-eye"></span> '
-                            info += '</a>'
-                            info += hostname + '</h1>'
+                                    + '">';
+                            info += ' <span class="icon-eye"></span> ';
+                            info += '</a>';
+                            info += hostname + '</h1>';
 
                             info += services;
                             info += '</div>';
@@ -164,7 +169,7 @@
                             var marker;
 
                             if(cache[id].hostMarkers[hostname]) {
-                                marker = cache[id].hostMarkers[hostname]; 
+                                marker = cache[id].hostMarkers[hostname];
                                 marker.options.state = worstState;
                             } else {
                                 marker = L.marker(data['coordinates'],
@@ -175,7 +180,7 @@
                                         state: worstState,
                                     }).addTo(cache[id].markers);
 
-                                cache[id].hostMarkers[hostname] = marker
+                                cache[id].hostMarkers[hostname] = marker;
                                 cache[id].hostData[hostname] = data
                             }
 
@@ -194,7 +199,7 @@
         },
 
         onRenderedContainer: function(event) {
-            cache[id] = {}
+            cache[id] = {};
 
             // TODO: initialize once and only update
             cache[id].markers = new L.MarkerClusterGroup({
@@ -220,7 +225,7 @@
             cache[id].map = L.map('map-'+id).setView([map_default_lat, map_default_long], map_default_zoom);
 
             L.control.locate({
-                icon: 'icon-pin' 
+                icon: 'icon-pin'
             }).addTo(cache[id].map);
 
             cache[id].map.on('click', function(e) {
@@ -232,10 +237,10 @@
                         + e.latlng.lat.toFixed(6)
                         + ','
                         + e.latlng.lng.toFixed(6)
-                        + '"'
+                        + '"';
                     var marker;
-                    marker = L.marker(e.latlng, { icon: colorMarker("blue") })
-                    marker.bindPopup("<h1>selected coordinates:</h1><pre>" + coord + "</pre>")
+                    marker = L.marker(e.latlng, { icon: colorMarker("blue") });
+                    marker.bindPopup("<h1>selected coordinates:</h1><pre>" + coord + "</pre>");
                     marker.addTo(cache[id].markers);
                     marker.on('popupclose', function(evt) {
                         cache[id].markers.removeLayer(marker);
@@ -255,8 +260,8 @@
 
             osm.addTo(cache[id].map);
             cache[id].markers.addTo(cache[id].map);
-            
-            this.updateMapData(id, map_show_host)
+
+            this.updateMapData({id: id, show_host: map_show_host})
         },
     };
 

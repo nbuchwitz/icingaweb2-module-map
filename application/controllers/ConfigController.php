@@ -2,8 +2,8 @@
 
 namespace Icinga\Module\Map\Controllers;
 
-use Icinga\Web\Controller;
 use Icinga\Module\Map\Forms\Config\GeneralConfigForm;
+use Icinga\Web\Controller;
 
 class ConfigController extends Controller
 {

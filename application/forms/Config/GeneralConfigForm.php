@@ -82,6 +82,16 @@ class GeneralConfigForm extends ConfigForm
             )
         );
         $this->addElement(
+            'text',
+            'map_marker_size',
+            array(
+                'placeholder' => '15',
+                'label' => $this->translate('Marker size'),
+                'description' => $this->translate('Size of the host markers'),
+                'required' => false
+            )
+        );
+        $this->addElement(
             'select',
             'map_stateType',
             array(
