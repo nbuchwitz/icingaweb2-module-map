@@ -3,13 +3,21 @@
 namespace Icinga\Module\Map\Controllers;
  
 use Icinga\Module\Monitoring\Controller;
- 
+
 class DataController extends Controller
 {
 
     private $stateColumn;
     private $stateChangeColumn;
 
+    /**
+     * Fetch host state data for given hostname
+     *
+     * Method returns empty array if hostname is not found or user lacks permissions
+     *
+     * @param string $hostname
+     * @return array host state data
+     */
     private function hostData($hostname)
     {
         $host = array();
@@ -38,6 +46,14 @@ class DataController extends Controller
         return $host;
     }
 
+    /**
+     * Fetch services states for given hostname
+     *
+     * Method returns empty array if hostname is not found or user lacks permissions
+     *
+     * @param $hostname
+     * @return array service states
+     */
     private function hostServiceData($hostname)
     {
         $services = array();
@@ -67,10 +83,14 @@ class DataController extends Controller
         return $services;
     }
 
+
+    /**
+     * Get JSON state objects
+     */
     public function pointsAction()
     {
-        # borrowed from monitoring module
-        # Handle soft and hard states
+        // Borrowed from monitoring module
+        // Handle soft and hard states
         $config = $this->config();
         $stateType = strtolower($this->params->shift('stateType',
             $config->get('map', 'stateType', 'soft')
@@ -98,8 +118,8 @@ class DataController extends Controller
                 $hostname = $row->host_name;
                 $coordinates = explode(",", $row->varvalue);
                 $host = $this->hostData($hostname);
-        
-                # skip this host, if the user lacks sufficient permission to fetch host data
+
+                // skip this host, if the user lacks sufficient permission to fetch host data
                 if(empty($host)) {
                     continue;
                 }
@@ -111,7 +131,7 @@ class DataController extends Controller
                     ), $host
                 );
 
-                $points[$hostname] = $point;    
+                $points[$hostname] = $point;
             }
         }
 
