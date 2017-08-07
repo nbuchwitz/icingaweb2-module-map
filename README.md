@@ -42,6 +42,12 @@ You could also integrate a map as dashlet into your dashboards:
 
 Icinga Web 2 and this Icinga Web 2 module are licensed under the terms of the GNU General Public License Version 2, you will find a copy of this license in the LICENSE file included in the source package.
 
+This module uses Leaflet and several plugins:
+
+* [Leaflet](https://github.com/Leaflet/Leaflet) - BSD 2-clause "Simplified" License
+* [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster) - MIT license
+* [Leaflet.Locate](https://github.com/domoritz/leaflet-locatecontrol) - MIT license
+
 ## Support
 
 Join the [Icinga community channels](https://www.icinga.com/community/get-involved/) for questions.
