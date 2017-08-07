@@ -91,9 +91,9 @@ class DataController extends Controller
                 'varvalue'))
             ->where('varname', 'geolocation');
 
-        if (count($query->fetchAll()) > 0 ) {
-            $points = array();
+        $points = array();
 
+        if (count($query->fetchAll()) > 0) {
             foreach ($query as $row) {
                 $hostname = $row->host_name;
                 $coordinates = explode(",", $row->varvalue);
