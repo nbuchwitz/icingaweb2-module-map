@@ -12,9 +12,10 @@
     }
 
     function getWorstState(states) {
-        var worstState = 0;
-        var allPending = -1;
-        var allUnknown = -1;
+        var worstState = 0
+        var allPending = -1
+        var allUnknown = -1
+        var last = -1
 
         for (var i=0, len=states.length; i < len; i++) {
             var state = states[i]
@@ -28,12 +29,12 @@
 
             if(state > 2) {
                 // PENDING
-                if(state == 99 && allPending < 0) {
+                if(state == 99 && allPending < 0 && last < 0) {
                     allPending = 1
                 }
 
                 // UNKNOWN
-                if(state == 3 && allUnknown < 0) {
+                if(state == 3 && allUnknown < 0 && last < 0) {
                     allUnknown = 1
                 }
 
@@ -44,6 +45,8 @@
             if(state > worstState) {
                 worstState = state
             }
+
+            last = state
         }
 
         if(allPending == 1) {
