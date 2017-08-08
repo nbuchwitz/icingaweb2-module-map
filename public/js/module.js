@@ -11,6 +11,52 @@
         );
     }
 
+    function getWorstState(states) {
+        var worstState = 0;
+        var allPending = -1;
+        var allUnknown = -1;
+
+        for (var i=0, len=states.length; i < len; i++) {
+            var state = states[i]
+            if(state < 3) {
+                if(allPending == 1) {
+                    allPending = 0
+                } else if (allUnknown == 1) {
+                    allUnknown = 0
+                }
+            }
+
+            if(state > 2) {
+                // PENDING
+                if(state == 99 && allPending < 0) {
+                    allPending = 1
+                }
+
+                // UNKNOWN
+                if(state == 3 && allUnknown < 0) {
+                    allUnknown = 1
+                }
+
+                // treat PENDING and UNKNOWN at the moment as OK
+                state = 0
+            }
+
+            if(state > worstState) {
+                worstState = state
+            }
+        }
+
+        if(allPending == 1) {
+            worstState = 99
+        }
+
+        if(allUnknown == 1) {
+            worstState = 3
+        }
+
+        return worstState;
+    }
+
     var cache = {};
 
     var Map = function(module) {
@@ -88,8 +134,9 @@
                             var hostState = data['host_state'];
                             var icon;
                             var services;
+                            var states = []
 
-                            var worstState = (hostState == 1 ? 2 : hostState );
+                            states.push((hostState == 1 ? 2 : hostState ))
 
                             services = '<div class="map-popup-services">';
                             services += '<h1><span class="icon-services"></span> Services</h1>';
@@ -98,11 +145,7 @@
                             services += '<tbody>';
 
                             $.each( data['services'], function( service_display_name, service ) {
-                                var serviceState = service['service_state'];
-
-                                if(serviceState < 3 && serviceState > worstState) {
-                                    worstState = service['service_state']
-                                }
+                                states.push(service['service_state'])
 
                                 services += '<tr>';
 
@@ -129,18 +172,22 @@
                             services += '</div>';
                             services += '</div>';
 
+                            var worstState = getWorstState(states)
                             switch(parseInt(worstState)) {
                                 case 0:
-                                    icon = colorMarker("green");
-                                    break;
+                                    icon = colorMarker("green")
+                                    break
                                 case 1:
-                                    icon = colorMarker("orange");
-                                    break;
+                                    icon = colorMarker("orange")
+                                    break
                                 case 2:
-                                    icon = colorMarker("red");
-                                    break;
+                                    icon = colorMarker("red")
+                                    break
+                                case 3:
+                                    icon = colorMarker("violet")
+                                    break
                                 default:
-                                    icon = colorMarker("blue");
+                                    icon = colorMarker("blue")
                             }
 
                             var host_icon ="";
@@ -206,13 +253,12 @@
                 iconCreateFunction: function(cluster) {
                     var childCount = cluster.getChildCount();
 
-                    var worstState = 0;
+                    var states = []
                     $.each(cluster.getAllChildMarkers(), function(id, el) {
-                        if(el.options.state > worstState) {
-                            worstState = el.options.state
-                        }
-                    });
+                        states.push(el.options.state)
+                    })
 
+                    var worstState = getWorstState(states)
                     var c = ' marker-cluster-'+worstState;
 
                     return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
