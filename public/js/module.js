@@ -277,6 +277,40 @@
                 icon: 'icon-pin'
             }).addTo(cache[id].map);
 
+            cache[id].map.on('zoomend', function(e) {
+                var zoomLevel = cache[id].map.getZoom()
+
+                var params = {};
+                var link = window.location.href.replace(/(map\?|map\/\?|&)+([^=&]+)=([^&#]*)/gi, function(m, prefix, key, value) {
+                    params[key] = value;
+                    if(key == "default_zoom") {
+                        value = zoomLevel
+                    }
+                    return prefix + key+"="+value
+                });
+
+                if (! ("default_zoom" in params)) {
+                    link = window.location.href.replace(/(map$|map\?|map\/\?|&)+([^#]*)/gi, function(m, prefix, list) {
+
+                        if(prefix.charAt(prefix.length-1) == "p") {
+                            prefix += "?"
+                        }
+
+                        // url without parameters and ? => append ?
+                        var param = ""
+                        if (list != "") {
+                           param = list + "&"
+                        }
+
+                        param += "default_zoom="+zoomLevel
+
+                        return prefix + param
+                    });
+                }
+
+                window.history.replaceState(history.state, "Icinga2", link)
+            })
+
             cache[id].map.on('click', function(e) {
                 // TODO: any other way?
                 var id = e.target._container.id.replace('map-','');
