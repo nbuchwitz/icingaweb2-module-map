@@ -11,6 +11,43 @@
         );
     }
 
+    function updateUrl(pkey, pvalue) {
+        // don't update url if in dashlet mode
+        if(dashlet) {
+            return;
+        }
+
+        var params = {};
+        var link = window.location.href.replace(/(map\?|map\/\?|&)+([^=&]+)=([^&#]*)/gi, function(m, prefix, key, value) {
+            params[key] = value;
+            if(key == pkey) {
+                value = pvalue
+            }
+            return prefix + key+"="+value
+        });
+
+        if (! (pkey in params)) {
+            link = window.location.href.replace(/(map$|map\?|map\/\?|&)+([^#]*)/gi, function(m, prefix, list) {
+
+                if(prefix.charAt(prefix.length-1) == "p") {
+                    prefix += "?"
+                }
+
+                // url without parameters and ? => append ?
+                var param = ""
+                if (list != "") {
+                   param = list + "&"
+                }
+
+                param += pkey + "=" + pvalue
+
+                return prefix + param
+            });
+        }
+
+        window.history.replaceState(history.state, "Icinga2", link)
+    }
+
     function getWorstState(states) {
         var worstState = 0
         var allPending = -1
@@ -277,38 +314,19 @@
                 icon: 'icon-pin'
             }).addTo(cache[id].map);
 
+            cache[id].map.on('moveend', function(e) {
+                var center = cache[id].map.getCenter()
+
+                var lat = center.lat
+                var lng = center.lng
+
+                updateUrl('default_lat', lat)
+                updateUrl('default_long', lng)
+            })
+
             cache[id].map.on('zoomend', function(e) {
                 var zoomLevel = cache[id].map.getZoom()
-
-                var params = {};
-                var link = window.location.href.replace(/(map\?|map\/\?|&)+([^=&]+)=([^&#]*)/gi, function(m, prefix, key, value) {
-                    params[key] = value;
-                    if(key == "default_zoom") {
-                        value = zoomLevel
-                    }
-                    return prefix + key+"="+value
-                });
-
-                if (! ("default_zoom" in params)) {
-                    link = window.location.href.replace(/(map$|map\?|map\/\?|&)+([^#]*)/gi, function(m, prefix, list) {
-
-                        if(prefix.charAt(prefix.length-1) == "p") {
-                            prefix += "?"
-                        }
-
-                        // url without parameters and ? => append ?
-                        var param = ""
-                        if (list != "") {
-                           param = list + "&"
-                        }
-
-                        param += "default_zoom="+zoomLevel
-
-                        return prefix + param
-                    });
-                }
-
-                window.history.replaceState(history.state, "Icinga2", link)
+                updateUrl('default_zoom', zoomLevel)
             })
 
             cache[id].map.on('click', function(e) {

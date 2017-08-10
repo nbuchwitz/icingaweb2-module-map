@@ -16,6 +16,8 @@ service_status[1] = '<?= $this->translate('WARNING', 'icinga.state') ?>';
 service_status[2] = '<?= $this->translate('CRITICAL', 'icinga.state') ?>';
 service_status[3] = '<?= $this->translate('UNKNOWN', 'icinga.state') ?>';
 service_status[99] = '<?= $this->translate('PENDING', 'icinga.state') ?>';
+
+var dashlet = <?= $this->compact ? 'true' : 'false' ?>
 </script>
 <div class="controls">
 <?php if (! $this->compact): ?>
