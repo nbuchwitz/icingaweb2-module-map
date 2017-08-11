@@ -9,11 +9,13 @@ $this->provideCssFile('vendor/leaflet.css');
 $this->provideCssFile('vendor/MarkerCluster.css');
 $this->provideCssFile('vendor/MarkerCluster.Default.css');
 $this->provideCssFile('vendor/L.Control.Locate.min.css');
+$this->provideCssFile('vendor/easy-button.css');
 
 // javascript libraries
 $this->provideJsFile('vendor/leaflet.js');
 $this->provideJsFile('vendor/leaflet.markercluster.js');
 $this->provideJsFile('vendor/L.Control.Locate.min.js');
+$this->provideJsFile('vendor/easy-button.js');
 
 // configuration menu
 $this->provideConfigTab('config', array(
