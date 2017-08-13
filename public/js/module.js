@@ -274,6 +274,8 @@
                             marker.bindPopup(info);
                         });
 
+                        cache[id].markers.refreshClusters()
+
                         if (show_host != "") {
                             showHost(show_host);
                             show_host = ""

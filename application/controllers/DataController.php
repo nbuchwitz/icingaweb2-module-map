@@ -1,7 +1,7 @@
 <?php
 
 namespace Icinga\Module\Map\Controllers;
- 
+
 use Icinga\Module\Monitoring\Controller;
 
 class DataController extends Controller
@@ -83,7 +83,6 @@ class DataController extends Controller
         return $services;
     }
 
-
     /**
      * Get JSON state objects
      */
@@ -120,14 +119,14 @@ class DataController extends Controller
                 $host = $this->hostData($hostname);
 
                 // skip this host, if the user lacks sufficient permission to fetch host data
-                if(empty($host)) {
+                if (empty($host)) {
                     continue;
                 }
 
                 $point = array_merge(
                     array(
                         "coordinates" => $coordinates,
-                        "services"    => $this->hostServiceData($hostname)
+                        "services" => $this->hostServiceData($hostname)
                     ), $host
                 );
 
