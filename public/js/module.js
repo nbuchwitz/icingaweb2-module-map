@@ -282,7 +282,7 @@
                         if (show_host != "") {
                             showHost(show_host);
                             show_host = ""
-                        } else {
+                        } else if(!dashlet) {
                             zoomAll(id)
                         }
                     }
