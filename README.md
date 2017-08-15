@@ -47,6 +47,7 @@ This module uses Leaflet and several plugins:
 * [Leaflet](https://github.com/Leaflet/Leaflet) - BSD 2-clause "Simplified" License
 * [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster) - MIT license
 * [Leaflet.Locate](https://github.com/domoritz/leaflet-locatecontrol) - MIT license
+* [Leaflet.EasyButton](https://github.com/CliffCloud/Leaflet.EasyButton) - MIT license
 
 ## Support
 
