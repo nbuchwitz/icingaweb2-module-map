@@ -12,6 +12,10 @@
         );
     }
 
+    function zoomAll(id) {
+        cache[id].map.fitBounds(cache[id].markers.getBounds(), {padding: [15, 15]});
+    }
+
     function updateUrl(pkey, pvalue) {
         // don't update url if in dashlet mode
         if (dashlet) {
@@ -278,6 +282,8 @@
                         if (show_host != "") {
                             showHost(show_host);
                             show_host = ""
+                        } else {
+                            zoomAll(id)
                         }
                     }
                 }
@@ -329,7 +335,7 @@
                 L.easyButton({
                     states: [{
                         icon: 'icon-resize-full', title: 'Show all', onClick: function (btn, map) {
-                            map.fitBounds(cache[id].markers.getBounds());
+                            zoomAll(id)
                         }
                     },]
                 }).addTo(cache[id].map);
