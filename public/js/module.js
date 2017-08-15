@@ -288,8 +288,8 @@
                         if (show_host != "") {
                             showHost(show_host);
                             show_host = ""
-                        } else if (!dashlet) {
-                            zoomAll(id)
+                        //} else if (!dashlet) {
+                        //    zoomAll(id)
                         }
                     }
                 }
@@ -338,13 +338,13 @@
                     },]
                 }).addTo(cache[id].map);
 
-                L.easyButton({
-                    states: [{
-                        icon: 'icon-resize-full', title: 'Show all', onClick: function (btn, map) {
-                            zoomAll(id)
-                        }
-                    },]
-                }).addTo(cache[id].map);
+                //L.easyButton({
+                //    states: [{
+                //        icon: 'icon-resize-full', title: 'Show all', onClick: function (btn, map) {
+                //            zoomAll(id)
+                //       }
+                //    },]
+                //}).addTo(cache[id].map);
 
                 L.control.locate({
                     icon: 'icon-pin'

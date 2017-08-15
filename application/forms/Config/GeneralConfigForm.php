@@ -65,7 +65,7 @@ class GeneralConfigForm extends ConfigForm
             'text',
             'map_min_zoom',
             array(
-                'placeholder' => '5',
+                'placeholder' => '2',
                 'label' => $this->translate('Minimal zoom level'),
                 'description' => $this->translate('Minimal zoom level of the map'),
                 'required' => false

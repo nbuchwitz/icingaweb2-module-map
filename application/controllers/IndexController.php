@@ -20,7 +20,7 @@ class IndexController extends ModuleActionController
         $this->view->default_long = $this->params->get("default_long") ? $this->params->get("default_long") : $config->get('map', 'default_long', '13.409779');
         $this->view->default_lat = $this->params->get("default_lat") ? $this->params->get("default_lat") : $config->get('map', 'default_lat', '52.520645');
 
-        $this->view->min_zoom = $this->params->get("min_zoom") ? $this->params->get("min_zoom") : $config->get('map', 'min_zoom', '5');
+        $this->view->min_zoom = $this->params->get("min_zoom") ? $this->params->get("min_zoom") : $config->get('map', 'min_zoom', '2');
         $this->view->max_zoom = $this->params->get("max_zoom") ? $this->params->get("max_zoom") : $config->get('map', 'max_zoom', '19');
 
         $this->view->dashletHeight = $config->get('map', 'dashlet_height', '300');
