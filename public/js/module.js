@@ -29,12 +29,11 @@
 
         if (!(pkey in params)) {
             link = window.location.href.replace(/(map$|map\?|map\/\?|&)+([^#]*)/gi, function (m, prefix, list) {
-
+                // url without parameters and ? => append ?
                 if (prefix.charAt(prefix.length - 1) == "p") {
                     prefix += "?"
                 }
 
-                // url without parameters and ? => append ?
                 var param = ""
                 if (list != "") {
                     param = list + "&"
@@ -257,6 +256,7 @@
                             if (cache[id].hostMarkers[hostname]) {
                                 marker = cache[id].hostMarkers[hostname];
                                 marker.options.state = worstState;
+                                marker.setIcon(icon);
                             } else {
                                 marker = L.marker(data['coordinates'],
                                     {
@@ -270,7 +270,6 @@
                                 cache[id].hostData[hostname] = data
                             }
 
-                            marker.setIcon(icon);
                             marker.bindPopup(info);
                         });
 
@@ -323,6 +322,14 @@
                             var uri = icinga.config.baseUrl + "/" + "dashboard/new-dashlet?url=" + encodeURIComponent(dashletUri)
 
                             window.open(uri, "_self")
+                        }
+                    },]
+                }).addTo(cache[id].map);
+
+                L.easyButton({
+                    states: [{
+                        icon: 'icon-resize-full', title: 'Show all', onClick: function (btn, map) {
+                            map.fitBounds(cache[id].markers.getBounds());
                         }
                     },]
                 }).addTo(cache[id].map);

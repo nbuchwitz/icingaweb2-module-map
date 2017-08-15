@@ -11,7 +11,9 @@ class IndexController extends ModuleActionController
 {
     public function indexAction()
     {
+        $this->view->id = uniqid();
         $this->view->host = $this->params->get("host");
+        $this->view->expand = $this->params->get("expand");
 
         $config = $this->Config();
         $this->view->default_zoom = $this->params->get("default_zoom") ? $this->params->get("default_zoom") : $config->get('map', 'default_zoom', '6');
