@@ -187,6 +187,11 @@
                             services += '<tbody>';
 
                             $.each(data['services'], function (service_display_name, service) {
+                                if (data.length < 1 || data['coordinates'] == "") {
+                                    console.log('found empty coordinates: ' + data)
+                                    return true
+
+                                }
                                 states.push(service['service_state'])
 
                                 services += '<tr>';
@@ -282,7 +287,7 @@
                         if (show_host != "") {
                             showHost(show_host);
                             show_host = ""
-                        } else if(!dashlet) {
+                        } else if (!dashlet) {
                             zoomAll(id)
                         }
                     }
