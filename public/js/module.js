@@ -173,6 +173,12 @@
                         });
 
                         $.each(result, function (hostname, data) {
+                            if (data.length < 1 || data['coordinates'] == "") {
+                                console.log('found empty coordinates: ' + data)
+                                return true
+
+                            }
+
                             var hostState = data['host_state'];
                             var icon;
                             var services;
@@ -187,11 +193,6 @@
                             services += '<tbody>';
 
                             $.each(data['services'], function (service_display_name, service) {
-                                if (data.length < 1 || data['coordinates'] == "") {
-                                    console.log('found empty coordinates: ' + data)
-                                    return true
-
-                                }
                                 states.push(service['service_state'])
 
                                 services += '<tr>';
