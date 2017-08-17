@@ -48,6 +48,8 @@ This module uses Leaflet and several plugins:
 * [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster) - MIT license
 * [Leaflet.Locate](https://github.com/domoritz/leaflet-locatecontrol) - MIT license
 * [Leaflet.EasyButton](https://github.com/CliffCloud/Leaflet.EasyButton) - MIT license
+* [Leaflet.Spin](https://github.com/makinacorpus/Leaflet.Spin) - MIT license
+* [Spin.js](spin.js.org) - MIT license
 
 ## Support
 

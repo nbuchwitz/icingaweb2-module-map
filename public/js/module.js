@@ -157,150 +157,147 @@
                 }
             }
 
-            var xhr;
-            xhr = new XMLHttpRequest();
-            xhr.open('GET', icinga.config.baseUrl + '/map/data/points', true);
-            xhr.onreadystatechange = function (e) {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        var result = JSON.parse(xhr.responseText);
-                        // remove old markers
-                        $.each(cache[id].hostMarkers, function (hostname, d) {
-                            if (!result[hostname]) {
-                                cache[id].markers.removeLayer(d);
-                                delete cache[id].hostMarkers[hostname];
-                            }
-                        });
-
-                        $.each(result, function (hostname, data) {
-                            if (data.length < 1 || data['coordinates'] == "") {
-                                console.log('found empty coordinates: ' + data)
-                                return true
-
-                            }
-
-                            var hostState = data['host_state'];
-                            var icon;
-                            var services;
-                            var states = []
-
-                            states.push((hostState == 1 ? 2 : hostState ))
-
-                            services = '<div class="map-popup-services">';
-                            services += '<h1><span class="icon-services"></span> Services</h1>';
-                            services += '<div class="scroll-view">';
-                            services += '<table class="icinga-module module-monitoring">';
-                            services += '<tbody>';
-
-                            $.each(data['services'], function (service_display_name, service) {
-                                states.push(service['service_state'])
-
-                                services += '<tr>';
-
-                                services += '<td class="';
-                                services += "state-col";
-                                services += " state-" + service_status[service['service_state']].toLowerCase();
-                                services += "" + (service['service_acknowledged'] == 1 ? " handled" : "");
-                                services += '">';
-                                services += '<div class="state-label">';
-                                services += service_status[service['service_state']];
-                                services += '</div>';
-                                services += '</td>';
-
-                                services += '<td>';
-                                services += '<div class="state-header">';
-                                services += service_display_name;
-                                services += '</td>';
-
-                                services += '</tr>';
-                            });
-
-                            services += '</tbody>';
-                            services += '</table>';
-                            services += '</div>';
-                            services += '</div>';
-
-                            var worstState = getWorstState(states)
-                            switch (parseInt(worstState)) {
-                                case 0:
-                                    icon = colorMarker("green")
-                                    break
-                                case 1:
-                                    icon = colorMarker("orange")
-                                    break
-                                case 2:
-                                    icon = colorMarker("red")
-                                    break
-                                case 3:
-                                    icon = colorMarker("violet")
-                                    break
-                                default:
-                                    icon = colorMarker("blue")
-                            }
-
-                            var host_icon = "";
-                            if (data['host_icon_image'] != "") {
-                                host_icon = '<img src="' + icinga.config.baseUrl + '/img/icons/'
-                                    + data['host_icon_image']
-                                    + '"'
-                                    + (( data['host_icon_image_alt'] != "" ) ? ' alt="' + data['host_icon_image_alt'] + '"' : '')
-                                    + ' class="host-icon-image icon">';
-                            }
-
-                            var info = '<div class="map-popup">';
-                            info += '<h1>';
-                            info += '<a data-base-target="_next" href="'
-                                + icinga.config.baseUrl
-                                + '/monitoring/host/show?host='
-                                + hostname
-                                + '">';
-                            info += ' <span class="icon-eye"></span> ';
-                            info += '</a>';
-                            info += hostname + '</h1>';
-
-                            info += services;
-                            info += '</div>';
-
-                            var marker;
-
-                            if (cache[id].hostMarkers[hostname]) {
-                                marker = cache[id].hostMarkers[hostname];
-                                marker.options.state = worstState;
-                                marker.setIcon(icon);
-                            } else {
-                                marker = L.marker(data['coordinates'],
-                                    {
-                                        icon: icon,
-                                        title: hostname,
-                                        id: hostname,
-                                        state: worstState,
-                                    }).addTo(cache[id].markers);
-
-                                cache[id].hostMarkers[hostname] = marker;
-                                cache[id].hostData[hostname] = data
-                            }
-
-                            marker.bindPopup(info);
-                        });
-
-                        cache[id].markers.refreshClusters()
-
-                        if (show_host != "") {
-                            showHost(show_host);
-                            show_host = ""
-                        //} else if (!dashlet) {
-                        //    zoomAll(id)
-                        }
+            function removeOldMarkers(id, data) {
+                // remove old markers
+                $.each(cache[id].hostMarkers, function (hostname, d) {
+                    if (!data[hostname]) {
+                        cache[id].markers.removeLayer(d);
+                        delete cache[id].hostMarkers[hostname];
                     }
+                });
+            }
+
+            function processData(json) {
+                removeOldMarkers(id, json)
+
+                $.each(json, function (hostname, data) {
+                    if (data.length < 1 || data['coordinates'] == "") {
+                        console.log('found empty coordinates: ' + data)
+                        return true
+
+                    }
+
+                    var hostState = data['host_state'];
+                    var icon;
+                    var services;
+                    var states = [];
+
+                    states.push((hostState == 1 ? 2 : hostState ))
+
+                    services = '<div class="map-popup-services">';
+                    services += '<h1><span class="icon-services"></span> Services</h1>';
+                    services += '<div class="scroll-view">';
+                    services += '<table class="icinga-module module-monitoring">';
+                    services += '<tbody>';
+
+                    $.each(data['services'], function (service_display_name, service) {
+                        states.push(service['service_state'])
+
+                        services += '<tr>';
+
+                        services += '<td class="';
+                        services += "state-col";
+                        services += " state-" + service_status[service['service_state']].toLowerCase();
+                        services += "" + (service['service_acknowledged'] == 1 ? " handled" : "");
+                        services += '">';
+                        services += '<div class="state-label">';
+                        services += service_status[service['service_state']];
+                        services += '</div>';
+                        services += '</td>';
+
+                        services += '<td>';
+                        services += '<div class="state-header">';
+                        services += service_display_name;
+                        services += '</td>';
+
+                        services += '</tr>';
+                    });
+
+                    services += '</tbody>';
+                    services += '</table>';
+                    services += '</div>';
+                    services += '</div>';
+
+                    var worstState = getWorstState(states)
+                    switch (parseInt(worstState)) {
+                        case 0:
+                            icon = colorMarker("green")
+                            break
+                        case 1:
+                            icon = colorMarker("orange")
+                            break
+                        case 2:
+                            icon = colorMarker("red")
+                            break
+                        case 3:
+                            icon = colorMarker("violet")
+                            break
+                        default:
+                            icon = colorMarker("blue")
+                    }
+
+                    var host_icon = "";
+                    if (data['host_icon_image'] != "") {
+                        host_icon = '<img src="' + icinga.config.baseUrl + '/img/icons/'
+                            + data['host_icon_image']
+                            + '"'
+                            + (( data['host_icon_image_alt'] != "" ) ? ' alt="' + data['host_icon_image_alt'] + '"' : '')
+                            + ' class="host-icon-image icon">';
+                    }
+
+                    var info = '<div class="map-popup">';
+                    info += '<h1>';
+                    info += '<a data-base-target="_next" href="'
+                        + icinga.config.baseUrl
+                        + '/monitoring/host/show?host='
+                        + hostname
+                        + '">';
+                    info += ' <span class="icon-eye"></span> ';
+                    info += '</a>';
+                    info += hostname + '</h1>';
+
+                    info += services;
+                    info += '</div>';
+
+                    var marker;
+
+                    if (cache[id].hostMarkers[hostname]) {
+                        marker = cache[id].hostMarkers[hostname];
+                        marker.options.state = worstState;
+                        marker.setIcon(icon);
+                    } else {
+                        marker = L.marker(data['coordinates'],
+                            {
+                                icon: icon,
+                                title: hostname,
+                                id: hostname,
+                                state: worstState,
+                            }).addTo(cache[id].markers);
+
+                        cache[id].hostMarkers[hostname] = marker;
+                        cache[id].hostData[hostname] = data
+                    }
+
+                    marker.bindPopup(info);
+                });
+
+                cache[id].markers.refreshClusters()
+                cache[id].map.spin(false)
+
+                if (show_host != "") {
+                    showHost(show_host);
+                    show_host = ""
+                    //} else if (!dashlet) {
+                    //    zoomAll(id)
                 }
-            };
-            xhr.send(null);
+            }
+
+            // get host objects
+            $.getJSON(icinga.config.baseUrl + '/map/data/points', processData);
         },
 
         onRenderedContainer: function (event) {
             cache[id] = {};
-
-            // TODO: initialize once and only update
             cache[id].markers = new L.MarkerClusterGroup({
                 iconCreateFunction: function (cluster) {
                     var childCount = cluster.getChildCount();
@@ -320,11 +317,12 @@
                     });
                 }
             });
-
             cache[id].hostMarkers = {};
             cache[id].hostData = {};
 
-            cache[id].map = L.map('map-' + id).setView([map_default_lat, map_default_long], map_default_zoom);
+            cache[id].map = L.map('map-' + id)
+            //cache[id].map.fitWorld()
+            cache[id].map.setView([map_default_lat, map_default_long], map_default_zoom);
 
             if (!dashlet) {
                 L.easyButton({
@@ -349,45 +347,44 @@
                 L.control.locate({
                     icon: 'icon-pin'
                 }).addTo(cache[id].map);
+
+                cache[id].map.on('moveend', function (e) {
+                    var center = cache[id].map.getCenter()
+
+                    var lat = center.lat
+                    var lng = center.lng
+
+                    updateUrl('default_lat', lat)
+                    updateUrl('default_long', lng)
+                })
+                cache[id].map.on('zoomend', function (e) {
+                    var zoomLevel = cache[id].map.getZoom()
+                    updateUrl('default_zoom', zoomLevel)
+                })
+                cache[id].map.on('click', function (e) {
+                    // TODO: any other way?
+                    var id = e.target._container.id.replace('map-', '');
+
+                    if (e.originalEvent.ctrlKey) {
+                        var coord = 'vars.geolocation = "'
+                            + e.latlng.lat.toFixed(6)
+                            + ','
+                            + e.latlng.lng.toFixed(6)
+                            + '"';
+                        var marker;
+                        marker = L.marker(e.latlng, {icon: colorMarker("blue")});
+                        marker.bindPopup("<h1>selected coordinates:</h1><pre>" + coord + "</pre>");
+                        marker.addTo(cache[id].markers);
+                        marker.on('popupclose', function (evt) {
+                            cache[id].markers.removeLayer(marker);
+                        });
+                        cache[id].markers.zoomToShowLayer(marker, function () {
+                            marker.openPopup();
+                        })
+                    }
+                });
             }
 
-            cache[id].map.on('moveend', function (e) {
-                var center = cache[id].map.getCenter()
-
-                var lat = center.lat
-                var lng = center.lng
-
-                updateUrl('default_lat', lat)
-                updateUrl('default_long', lng)
-            })
-
-            cache[id].map.on('zoomend', function (e) {
-                var zoomLevel = cache[id].map.getZoom()
-                updateUrl('default_zoom', zoomLevel)
-            })
-
-            cache[id].map.on('click', function (e) {
-                // TODO: any other way?
-                var id = e.target._container.id.replace('map-', '');
-
-                if (e.originalEvent.ctrlKey) {
-                    var coord = 'vars.geolocation = "'
-                        + e.latlng.lat.toFixed(6)
-                        + ','
-                        + e.latlng.lng.toFixed(6)
-                        + '"';
-                    var marker;
-                    marker = L.marker(e.latlng, {icon: colorMarker("blue")});
-                    marker.bindPopup("<h1>selected coordinates:</h1><pre>" + coord + "</pre>");
-                    marker.addTo(cache[id].markers);
-                    marker.on('popupclose', function (evt) {
-                        cache[id].markers.removeLayer(marker);
-                    });
-                    cache[id].markers.zoomToShowLayer(marker, function () {
-                        marker.openPopup();
-                    })
-                }
-            });
 
             var osm = L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -395,11 +392,13 @@
                 maxZoom: map_max_zoom,
                 minZoom: map_min_zoom,
             });
-
             osm.addTo(cache[id].map);
+
             cache[id].markers.addTo(cache[id].map);
 
+            cache[id].map.spin(true)
             this.updateMapData({id: id, show_host: map_show_host})
+
         },
     };
 

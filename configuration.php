@@ -12,7 +12,9 @@ $this->provideCssFile('vendor/L.Control.Locate.css');
 $this->provideCssFile('vendor/easy-button.css');
 
 // javascript libraries
+$this->provideJsFile('vendor/spin.js');
 $this->provideJsFile('vendor/leaflet.js');
+$this->provideJsFile('vendor/leaflet.spin.js');
 $this->provideJsFile('vendor/leaflet.markercluster.js');
 $this->provideJsFile('vendor/L.Control.Locate.js');
 $this->provideJsFile('vendor/easy-button.js');
