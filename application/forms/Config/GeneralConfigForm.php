@@ -103,7 +103,7 @@ class GeneralConfigForm extends ConfigForm
                 ),
             )
         );
-        
+
     }
 }
 

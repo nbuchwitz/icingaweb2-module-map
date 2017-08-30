@@ -30,7 +30,8 @@ class DataController extends Controller
                 'host_acknowledged',
                 'host_state' => 'host_' . $this->stateColumn,
                 'host_last_state_change' => 'host_' . $this->stateChangeColumn,
-                'host_in_downtime'))
+                'host_in_downtime'
+            ))
             ->where('host_name', $hostname);
 
         $this->applyRestriction('monitoring/filter/objects', $query);
@@ -38,7 +39,7 @@ class DataController extends Controller
         if ($query->count()) {
             $row = $query->fetchRow();
 
-            $host = json_decode(json_encode($row), True);
+            $host = json_decode(json_encode($row), true);
         }
 
         unset($query);
@@ -64,7 +65,8 @@ class DataController extends Controller
                 'service_acknowledged',
                 'service_state' => 'service_' . $this->stateColumn,
                 'service_last_state_change' => 'service_' . $this->stateChangeColumn,
-                'service_in_downtime'))
+                'service_in_downtime'
+            ))
             ->where('host_name', $hostname);
 
         $this->applyRestriction('monitoring/filter/objects', $query);
@@ -72,7 +74,7 @@ class DataController extends Controller
         if ($query->count()) {
             foreach ($query as $row) {
                 $service_display_name = $row->service_display_name;
-                $service = json_decode(json_encode($row), True);
+                $service = json_decode(json_encode($row), true);
 
                 $services[$service_display_name] = $service;
             }
@@ -107,7 +109,8 @@ class DataController extends Controller
             ->select()
             ->from('customvar', array(
                 'host_name',
-                'varvalue'))
+                'varvalue'
+            ))
             ->where('varname', 'geolocation');
 
         $points = array();

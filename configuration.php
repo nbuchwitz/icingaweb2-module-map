@@ -21,7 +21,7 @@ $this->provideJsFile('vendor/easy-button.js');
 
 // configuration menu
 $this->provideConfigTab('config', array(
-	'title' => $this->translate('Configure the map module'),
-	'label'	=> $this->translate('Configuration'),
-	'url'	=> 'config'
+    'title' => $this->translate('Configure the map module'),
+    'label' => $this->translate('Configuration'),
+    'url' => 'config'
 ));

@@ -101,6 +101,14 @@
         return worstState;
     }
 
+    function mapCenter(hostname) {
+        console.log(hostname)
+        if (cache[id].hostMarkers[hostname]) {
+            var el = cache[id].hostMarkers[hostname];
+            cache[id].map.panTo(cache[id].hostMarkers[hostname].getLatLng())
+        }
+    }
+
     var cache = {};
 
     var Map = function (module) {
@@ -156,6 +164,7 @@
                     })
                 }
             }
+
 
             function removeOldMarkers(id, data) {
                 // remove old markers
@@ -247,7 +256,7 @@
 
                     var info = '<div class="map-popup">';
                     info += '<h1>';
-                    info += '<a data-base-target="_next" href="'
+                    info += '<a class="detail-link" data-hostname="'+hostname+'" data-base-target="_next" href="'
                         + icinga.config.baseUrl
                         + '/monitoring/host/show?host='
                         + hostname
