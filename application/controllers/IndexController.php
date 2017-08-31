@@ -17,11 +17,11 @@ class IndexController extends ModuleActionController
 
         $config = $this->Config();
         $this->view->default_zoom = $this->params->get("default_zoom") ? $this->params->get("default_zoom") : $config->get('map',
-            'default_zoom', '6');
+            'default_zoom');
         $this->view->default_long = $this->params->get("default_long") ? $this->params->get("default_long") : $config->get('map',
-            'default_long', '13.409779');
+            'default_long');
         $this->view->default_lat = $this->params->get("default_lat") ? $this->params->get("default_lat") : $config->get('map',
-            'default_lat', '52.520645');
+            'default_lat');
 
         $this->view->min_zoom = $this->params->get("min_zoom") ? $this->params->get("min_zoom") : $config->get('map',
             'min_zoom', '2');

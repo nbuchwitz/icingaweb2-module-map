@@ -1,8 +1,8 @@
 <script type="text/javascript">
     <?php
-    echo 'var map_default_zoom = ' . $this->default_zoom . ";\n";
-    echo 'var map_default_long = ' . $this->default_long . ";\n";
-    echo 'var map_default_lat = ' . $this->default_lat . ";\n";
+    echo 'var map_default_zoom = ' . (!empty($this->default_zoom) ? $this->default_zoom : "null") . ";\n";
+    echo 'var map_default_long = ' . (!empty($this->default_long) ? $this->default_long : "null") . ";\n";
+    echo 'var map_default_lat = ' . (!empty($this->default_lat) ? $this->default_lat : "null") . ";\n";
     echo 'var map_max_zoom = ' . $this->max_zoom . ";\n";
     echo 'var map_min_zoom = ' . $this->min_zoom . ";\n";
 

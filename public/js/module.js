@@ -256,7 +256,7 @@
 
                     var info = '<div class="map-popup">';
                     info += '<h1>';
-                    info += '<a class="detail-link" data-hostname="'+hostname+'" data-base-target="_next" href="'
+                    info += '<a class="detail-link" data-hostname="' + hostname + '" data-base-target="_next" href="'
                         + icinga.config.baseUrl
                         + '/monitoring/host/show?host='
                         + hostname
@@ -330,8 +330,17 @@
             cache[id].hostData = {};
 
             cache[id].map = L.map('map-' + id)
-            //cache[id].map.fitWorld()
-            cache[id].map.setView([map_default_lat, map_default_long], map_default_zoom);
+
+            if (map_default_lat !== null && map_default_long !== null) {
+                if (map_default_zoom !== null) {
+                    cache[id].map.setView([map_default_lat, map_default_long], map_default_zoom);
+                } else {
+                    cache[id].map.setView([map_default_lat, map_default_long]);
+                }
+
+            } else {
+                cache[id].map.fitWorld()
+            }
 
             if (!dashlet) {
                 L.easyButton({
