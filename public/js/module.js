@@ -254,6 +254,8 @@
                             + ' class="host-icon-image icon">';
                     }
 
+                    var host_display_name = (data['host_display_name'] ? data['host_display_name'] : hostname )
+
                     var info = '<div class="map-popup">';
                     info += '<h1>';
                     info += '<a class="detail-link" data-hostname="' + hostname + '" data-base-target="_next" href="'
@@ -263,7 +265,7 @@
                         + '">';
                     info += ' <span class="icon-eye"></span> ';
                     info += '</a>';
-                    info += hostname + '</h1>';
+                    info += host_display_name + '</h1>';
 
                     info += services;
                     info += '</div>';
@@ -278,7 +280,7 @@
                         marker = L.marker(data['coordinates'],
                             {
                                 icon: icon,
-                                title: hostname,
+                                title: host_display_name,
                                 id: hostname,
                                 state: worstState,
                             }).addTo(cache[id].markers);
