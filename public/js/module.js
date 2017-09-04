@@ -207,7 +207,7 @@
                         services += '<td class="';
                         services += "state-col";
                         services += " state-" + service_status[service['service_state']].toLowerCase();
-                        services += "" + (service['service_acknowledged'] == 1 ? " handled" : "");
+                        services += "" + (service['service_acknowledged'] == 1 || service['service_in_downtime'] == 1 ? " handled" : "");
                         services += '">';
                         services += '<div class="state-label">';
                         services += service_status[service['service_state']];
