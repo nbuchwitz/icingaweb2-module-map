@@ -32,6 +32,12 @@
             i;
 
         for (i = 0; i < sURLVariables.length; i++) {
+            // protect icinga filter syntax
+            if(sURLVariables[i].charAt(0) === '(') {
+                params.push(sURLVariables[i])
+                continue;
+            }
+
             var tmp = sURLVariables[i].split('=');
             if (0 > ["default_zoom", "default_lat", "default_long"].indexOf(tmp[0])) {
                 params.push(tmp[0] + '=' + tmp[1])
