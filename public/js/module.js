@@ -16,40 +16,69 @@
         cache[id].map.fitBounds(cache[id].markers.getBounds(), {padding: [15, 15]});
     }
 
+    function filterParams() {
+        // default_*
+
+        // const url = new URL(window.location.href);
+        // const params = new URLSearchParams(url.search);
+        //
+        // params.delete("default_zoom");
+        // params.delete("default_lat");
+        // params.delete("default_long");
+
+        var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+            sURLVariables = sPageURL.split('&'),
+            params = [],
+            i;
+
+        for (i = 0; i < sURLVariables.length; i++) {
+            // protect icinga filter syntax
+            if (sURLVariables[i].charAt(0) === '(') {
+                params.push(sURLVariables[i])
+                continue;
+            }
+
+            var tmp = sURLVariables[i].split('=');
+            if (0 > ["default_zoom", "default_lat", "default_long"].indexOf(tmp[0])) {
+                params.push(tmp[0] + '=' + tmp[1])
+            }
+        }
+
+        return params.join("&")
+        return params.toString();
+    }
+
+    // TODO: Allow update of multiple parameters
     function updateUrl(pkey, pvalue) {
         // don't update url if in dashlet mode
         if (dashlet) {
             return;
         }
+        var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+            sURLVariables = sPageURL.split('&'),
+            i;
 
-        var params = {};
-        var link = window.location.href.replace(/(map\?|map\/\?|&)+([^=&]+)=([^&#]*)/gi, function (m, prefix, key, value) {
-            params[key] = value;
-            if (key == pkey) {
-                value = pvalue
+        var updated = false;
+        for (i = 0; i < sURLVariables.length; i++) {
+            // dont replace icingas filter
+            if (sURLVariables[i].charAt(0) === '(') {
+                continue;
             }
-            return prefix + key + "=" + value
-        });
 
-        if (!(pkey in params)) {
-            link = window.location.href.replace(/(map$|map\?|map\/\?|&)+([^#]*)/gi, function (m, prefix, list) {
-                // url without parameters and ? => append ?
-                if (prefix.charAt(prefix.length - 1) == "p") {
-                    prefix += "?"
-                }
-
-                var param = ""
-                if (list != "") {
-                    param = list + "&"
-                }
-
-                param += pkey + "=" + pvalue
-
-                return prefix + param
-            });
+            var tmp = sURLVariables[i].split('=');
+            if (tmp[0] == pkey) {
+                sURLVariables[i] = tmp[0] + '=' + pvalue;
+                updated = true;
+                break;
+            }
         }
 
-        window.history.replaceState(history.state, "Icinga2", link)
+        // parameter is not set
+        if (!updated) {
+            sURLVariables.push(pkey + "=" + pvalue);
+        }
+
+        window.history.replaceState({}, '', window.location.pathname + '?' + sURLVariables.join('&'))
     }
 
     function getWorstState(states) {
@@ -304,7 +333,11 @@
             }
 
             // get host objects
-            $.getJSON(icinga.config.baseUrl + '/map/data/points', processData);
+            $.getJSON(icinga.config.baseUrl + '/map/data/points?' + filterParams(), processData)
+                .fail(function (jqxhr, textStatus, error) {
+                    console.error("Could not get host data: " + textStatus + ": " + error)
+                    cache[id].map.spin(false)
+                });
         },
 
         onRenderedContainer: function (event) {
