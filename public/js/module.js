@@ -22,34 +22,11 @@
             return;
         }
 
-        var params = {};
-        var link = window.location.href.replace(/(map\?|map\/\?|&)+([^=&]+)=([^&#]*)/gi, function (m, prefix, key, value) {
-            params[key] = value;
-            if (key == pkey) {
-                value = pvalue
-            }
-            return prefix + key + "=" + value
-        });
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
 
-        if (!(pkey in params)) {
-            link = window.location.href.replace(/(map$|map\?|map\/\?|&)+([^#]*)/gi, function (m, prefix, list) {
-                // url without parameters and ? => append ?
-                if (prefix.charAt(prefix.length - 1) == "p") {
-                    prefix += "?"
-                }
-
-                var param = ""
-                if (list != "") {
-                    param = list + "&"
-                }
-
-                param += pkey + "=" + pvalue
-
-                return prefix + param
-            });
-        }
-
-        window.history.replaceState(history.state, "Icinga2", link)
+        params.set(pkey, pvalue)
+        window.history.replaceState({}, '', window.location.pathname + '?' + params);
     }
 
     function getWorstState(states) {
