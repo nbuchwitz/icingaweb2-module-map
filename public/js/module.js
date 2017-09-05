@@ -33,7 +33,7 @@
 
         for (i = 0; i < sURLVariables.length; i++) {
             // protect icinga filter syntax
-            if(sURLVariables[i].charAt(0) === '(') {
+            if (sURLVariables[i].charAt(0) === '(') {
                 params.push(sURLVariables[i])
                 continue;
             }
@@ -54,24 +54,31 @@
         if (dashlet) {
             return;
         }
-
         var sPageURL = decodeURIComponent(window.location.search.substring(1)),
             sURLVariables = sPageURL.split('&'),
             i;
 
+        var updated = false;
         for (i = 0; i < sURLVariables.length; i++) {
+            // dont replace icingas filter
+            if (sURLVariables[i].charAt(0) === '(') {
+                continue;
+            }
+
             var tmp = sURLVariables[i].split('=');
-            if (tmp[0] === pkey) {
-                sURLVariables[i] = tmp[0] + '=' + pvalue
+            if (tmp[0] == pkey) {
+                sURLVariables[i] = tmp[0] + '=' + pvalue;
+                updated = true;
                 break;
             }
         }
+
+        // parameter is not set
+        if (!updated) {
+            sURLVariables.push(pkey + "=" + pvalue);
+        }
+
         window.history.replaceState({}, '', window.location.pathname + '?' + sURLVariables.join('&'))
-        // const url = new URL(window.location.href);
-        // const params = new URLSearchParams(url.search);
-        //
-        // params.set(pkey, pvalue)
-        // window.history.replaceState({}, '', window.location.pathname + '?' + params);
     }
 
     function getWorstState(states) {
