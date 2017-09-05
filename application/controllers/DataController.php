@@ -3,9 +3,46 @@
 namespace Icinga\Module\Map\Controllers;
 
 use Icinga\Module\Monitoring\Controller;
+use Icinga\Module\Monitoring\DataView\DataView;
 
 class DataController extends Controller
 {
+    /**
+     * Apply filters on a DataView
+     *
+     * @param DataView  $dataView       The DataView to apply filters on
+     *
+     * @return DataView $dataView
+     */
+    protected function filterQuery(DataView $dataView)
+    {
+        $this->setupFilterControl($dataView, null, null, array(
+            'format', // handleFormatRequest()
+            'stateType', // hostsAction() and servicesAction()
+            'addColumns', // addColumns()
+            'problems' // servicegridAction()
+        ));
+        $this->handleFormatRequest($dataView);
+        return $dataView;
+    }
+
+    /**
+     * Get columns to be added from URL parameter 'addColumns'
+     * and assign to $this->view->addColumns (as array)
+     *
+     * @return array
+     */
+    protected function addColumns()
+    {
+        $columns = preg_split(
+            '~,~',
+            $this->params->shift('addColumns', ''),
+            -1,
+            PREG_SPLIT_NO_EMPTY
+        );
+        $this->view->addColumns = $columns;
+        return $columns;
+    }
 
     private $stateColumn;
     private $stateChangeColumn;
@@ -35,6 +72,7 @@ class DataController extends Controller
             ->where('host_name', $hostname);
 
         $this->applyRestriction('monitoring/filter/objects', $query);
+        $this->filterQuery($query);
 
         if ($query->count()) {
             $row = $query->fetchRow();
@@ -70,6 +108,7 @@ class DataController extends Controller
             ->where('host_name', $hostname);
 
         $this->applyRestriction('monitoring/filter/objects', $query);
+        $this->filterQuery($query);
 
         if ($query->count()) {
             foreach ($query as $row) {

@@ -16,6 +16,20 @@
         cache[id].map.fitBounds(cache[id].markers.getBounds(), {padding: [15, 15]});
     }
 
+    function filterParams() {
+        // default_*
+
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+
+        params.delete("default_zoom");
+        params.delete("default_lat");
+        params.delete("default_long");
+
+        return params.toString();
+    }
+
+    // TODO: Allow update of multiple parameters
     function updateUrl(pkey, pvalue) {
         // don't update url if in dashlet mode
         if (dashlet) {
@@ -281,7 +295,7 @@
             }
 
             // get host objects
-            $.getJSON(icinga.config.baseUrl + '/map/data/points', processData);
+            $.getJSON(icinga.config.baseUrl + '/map/data/points?' + filterParams(), processData);
         },
 
         onRenderedContainer: function (event) {
