@@ -26,8 +26,8 @@
         // params.delete("default_lat");
         // params.delete("default_long");
 
-        var sPageURL = decodeURIComponent(window.location.search.substring(1)),
-            sURLVariables = sPageURL.split('&'),
+        var sPageURL = decodeURIComponent(window.location.search == "" ? window.location.search : window.location.search.substring(1)),
+            sURLVariables = sPageURL == "" ? [] : sPageURL.split('&'),
             params = [],
             i;
 
@@ -54,8 +54,8 @@
         if (dashlet) {
             return;
         }
-        var sPageURL = decodeURIComponent(window.location.search.substring(1)),
-            sURLVariables = sPageURL.split('&'),
+        var sPageURL = decodeURIComponent(window.location.search == "" ? window.location.search : window.location.search.substring(1)),
+            sURLVariables = sPageURL == "" ? [] : sPageURL.split('&'),
             i;
 
         var updated = false;
