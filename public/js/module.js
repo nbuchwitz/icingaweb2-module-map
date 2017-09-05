@@ -19,13 +19,26 @@
     function filterParams() {
         // default_*
 
-        const url = new URL(window.location.href);
-        const params = new URLSearchParams(url.search);
+        // const url = new URL(window.location.href);
+        // const params = new URLSearchParams(url.search);
+        //
+        // params.delete("default_zoom");
+        // params.delete("default_lat");
+        // params.delete("default_long");
 
-        params.delete("default_zoom");
-        params.delete("default_lat");
-        params.delete("default_long");
+        var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+            sURLVariables = sPageURL.split('&'),
+            params = [],
+            i;
 
+        for (i = 0; i < sURLVariables.length; i++) {
+            var tmp = sURLVariables[i].split('=');
+            if (0 > ["default_zoom", "default_lat", "default_long"].indexOf(tmp[0])) {
+                params.push(tmp[0] + '=' + tmp[1])
+            }
+        }
+
+        return params.join("&")
         return params.toString();
     }
 
@@ -36,11 +49,23 @@
             return;
         }
 
-        const url = new URL(window.location.href);
-        const params = new URLSearchParams(url.search);
+        var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+            sURLVariables = sPageURL.split('&'),
+            i;
 
-        params.set(pkey, pvalue)
-        window.history.replaceState({}, '', window.location.pathname + '?' + params);
+        for (i = 0; i < sURLVariables.length; i++) {
+            var tmp = sURLVariables[i].split('=');
+            if (tmp[0] === pkey) {
+                sURLVariables[i] = tmp[0] + '=' + pvalue
+                break;
+            }
+        }
+        window.history.replaceState({}, '', window.location.pathname + '?' + sURLVariables.join('&'))
+        // const url = new URL(window.location.href);
+        // const params = new URLSearchParams(url.search);
+        //
+        // params.set(pkey, pvalue)
+        // window.history.replaceState({}, '', window.location.pathname + '?' + params);
     }
 
     function getWorstState(states) {
@@ -295,7 +320,11 @@
             }
 
             // get host objects
-            $.getJSON(icinga.config.baseUrl + '/map/data/points?' + filterParams(), processData);
+            $.getJSON(icinga.config.baseUrl + '/map/data/points?' + filterParams(), processData)
+                .fail(function (jqxhr, textStatus, error) {
+                    console.error("Could not get host data: " + textStatus + ": " + error)
+                    cache[id].map.spin(false)
+                });
         },
 
         onRenderedContainer: function (event) {
