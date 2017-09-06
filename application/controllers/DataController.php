@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Map\Controllers;
 
+use Icinga\Data\Filter\Filter;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\DataView\DataView;
 
@@ -10,7 +11,7 @@ class DataController extends Controller
     /**
      * Apply filters on a DataView
      *
-     * @param DataView  $dataView       The DataView to apply filters on
+     * @param DataView $dataView The DataView to apply filters on
      *
      * @return DataView $dataView
      */
@@ -48,83 +49,6 @@ class DataController extends Controller
     private $stateChangeColumn;
 
     /**
-     * Fetch host state data for given hostname
-     *
-     * Method returns empty array if hostname is not found or user lacks permissions
-     *
-     * @param string $hostname
-     * @return array host state data
-     */
-    private function hostData($hostname)
-    {
-        $host = array();
-        $query = $this->backend
-            ->select()
-            ->from('hoststatus', array(
-                'host_display_name',
-                'host_icon_image',
-                'host_icon_image_alt',
-                'host_acknowledged',
-                'host_state' => 'host_' . $this->stateColumn,
-                'host_last_state_change' => 'host_' . $this->stateChangeColumn,
-                'host_in_downtime'
-            ))
-            ->where('host_name', $hostname);
-
-        $this->applyRestriction('monitoring/filter/objects', $query);
-        $this->filterQuery($query);
-
-        if ($query->count()) {
-            $row = $query->fetchRow();
-
-            $host = json_decode(json_encode($row), true);
-        }
-
-        unset($query);
-
-        return $host;
-    }
-
-    /**
-     * Fetch services states for given hostname
-     *
-     * Method returns empty array if hostname is not found or user lacks permissions
-     *
-     * @param $hostname
-     * @return array service states
-     */
-    private function hostServiceData($hostname)
-    {
-        $services = array();
-        $query = $this->backend
-            ->select()
-            ->from('servicestatus', array(
-                'service_display_name',
-                'service_acknowledged',
-                'service_state' => 'service_' . $this->stateColumn,
-                'service_last_state_change' => 'service_' . $this->stateChangeColumn,
-                'service_in_downtime'
-            ))
-            ->where('host_name', $hostname);
-
-        $this->applyRestriction('monitoring/filter/objects', $query);
-        $this->filterQuery($query);
-
-        if ($query->count()) {
-            foreach ($query as $row) {
-                $service_display_name = $row->service_display_name;
-                $service = json_decode(json_encode($row), true);
-
-                $services[$service_display_name] = $service;
-            }
-        }
-
-        unset($query);
-
-        return $services;
-    }
-
-    /**
      * Get JSON state objects
      */
     public function pointsAction()
@@ -146,37 +70,55 @@ class DataController extends Controller
 
         $query = $this->backend
             ->select()
-            ->from('customvar', array(
+            ->from('servicestatus', array(
+                'host_display_name',
                 'host_name',
-                'varvalue'
+                'host_acknowledged',
+                'host_state' => 'host_' . $this->stateColumn,
+                'host_last_state_change' => 'host_' . $this->stateChangeColumn,
+                'host_in_downtime',
+                'coordinates' => '_host_geolocation',
+                'service_display_name',
+                'service_acknowledged',
+                'service_state' => 'service_' . $this->stateColumn,
+                'service_last_state_change' => 'service_' . $this->stateChangeColumn,
+                'service_in_downtime'
             ))
-            ->where('varname', 'geolocation');
+            ->applyFilter(Filter::fromQueryString('_host_geolocation >'));
+
+        $this->applyRestriction('monitoring/filter/objects', $query);
+        $this->filterQuery($query);
 
         $points = array();
 
-        if (count($query->fetchAll()) > 0) {
+        if ($query->count() > 0) {
+            //print_r($query->fetchAll());
             foreach ($query as $row) {
                 $hostname = $row->host_name;
-                $coordinates = explode(",", $row->varvalue);
-                $host = $this->hostData($hostname);
+                $data = json_decode(json_encode($row), true);
 
-                // skip this host, if the user lacks sufficient permission to fetch host data
-                if (empty($host)) {
-                    continue;
+                if (!array_key_exists($hostname, $points)) {
+                    $host = $this->filterArray($data, "^host");
+                    $host['services'] = array();
+                    $host['coordinates'] = explode(",", $row->coordinates);
+
+                    $points[$hostname] = $host;
                 }
 
-                $point = array_merge(
-                    array(
-                        "coordinates" => $coordinates,
-                        "services" => $this->hostServiceData($hostname)
-                    ), $host
-                );
+                $service = $this->filterArray($data, "^service");
 
-                $points[$hostname] = $point;
+                $points[$hostname]['services'][$service['service_display_name']] = $service;
             }
         }
 
         echo json_encode($points);
         exit;
+    }
+
+    function filterArray($haystack, $needle)
+    {
+        $matches = preg_grep("/$needle/", array_keys($haystack));
+
+        return array_intersect_key($haystack, array_flip($matches));
     }
 }

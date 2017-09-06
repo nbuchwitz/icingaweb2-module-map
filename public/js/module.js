@@ -16,15 +16,15 @@
         cache[id].map.fitBounds(cache[id].markers.getBounds(), {padding: [15, 15]});
     }
 
-    function filterParams() {
-        // default_*
+    function isFilterParameter(parameter) {
+        return (parameter.charAt(0) === '(');
+    }
 
-        // const url = new URL(window.location.href);
-        // const params = new URLSearchParams(url.search);
-        //
-        // params.delete("default_zoom");
-        // params.delete("default_lat");
-        // params.delete("default_long");
+    function isMapParameter(parameter) {
+        return (0 > ["default_zoom", "default_lat", "default_long"].indexOf(parameter));
+    }
+
+    function filterParams() {
 
         var sPageURL = decodeURIComponent(window.location.search == "" ? window.location.search : window.location.search.substring(1)),
             sURLVariables = sPageURL == "" ? [] : sPageURL.split('&'),
@@ -33,13 +33,13 @@
 
         for (i = 0; i < sURLVariables.length; i++) {
             // protect icinga filter syntax
-            if (sURLVariables[i].charAt(0) === '(') {
+            if (isFilterParameter(sURLVariables[i])) {
                 params.push(sURLVariables[i])
                 continue;
             }
 
             var tmp = sURLVariables[i].split('=');
-            if (0 > ["default_zoom", "default_lat", "default_long"].indexOf(tmp[0])) {
+            if (isMapParameter(tmp[0])) {
                 params.push(tmp[0] + '=' + tmp[1])
             }
         }
@@ -61,7 +61,7 @@
         var updated = false;
         for (i = 0; i < sURLVariables.length; i++) {
             // dont replace icingas filter
-            if (sURLVariables[i].charAt(0) === '(') {
+            if (isFilterParameter(sURLVariables[i])) {
                 continue;
             }
 
