@@ -8,10 +8,21 @@ class IndexController extends ModuleActionController
 {
     public function indexAction()
     {
+        // preserve parameters for dashlets
+        //if($this->view->compact) {
+        $parameters = $this->filterArray($this->getAllParams(), "^([_]{0,1}(host|service))|\("); //
+
+        array_walk($parameters, function (&$a, $b) {
+            $a = "$b=$a";
+        });
+        //}
+
         $this->view->id = uniqid();
         $this->view->host = $this->params->get("showHost");
         $this->view->expand = $this->params->get("expand");
         $this->view->fullscreen = ($this->params->get("showFullscreen") == 1);
+
+        $this->view->url_parameters = join("&", $parameters);
 
         $config = $this->Config();
         $this->view->default_zoom = $this->params->get("default_zoom") ? $this->params->get("default_zoom") : $config->get('map',
@@ -27,5 +38,11 @@ class IndexController extends ModuleActionController
             'max_zoom', '19');
 
         $this->view->dashletHeight = $config->get('map', 'dashlet_height', '300');
+    }
+
+    function filterArray($array, $pattern)
+    {
+        $matches = preg_grep("/$pattern/", array_keys($array));
+        return array_intersect_key($array, array_flip($matches));
     }
 }

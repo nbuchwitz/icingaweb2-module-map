@@ -17,6 +17,7 @@
     service_status[3] = '<?= $this->translate('UNKNOWN', 'icinga.state') ?>';
     service_status[99] = '<?= $this->translate('PENDING', 'icinga.state') ?>';
 
+    var url_parameters = "<?=$this->url_parameters; ?>";
     var id = '<?= $this->id ?>';
     var dashlet = <?= $this->compact ? 'true' : 'false' ?>;
     var expand = <?= $this->expand ? 'true' : 'false' ?>;

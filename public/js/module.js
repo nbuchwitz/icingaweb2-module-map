@@ -17,7 +17,7 @@
     }
 
     function isFilterParameter(parameter) {
-        if(parameter.charAt(0) === '(' || parameter.match('^[_]{0,1}(host|service)')) {
+        if (parameter.charAt(0) === '(' || parameter.match('^[_]{0,1}(host|service)')) {
             return true;
         }
 
@@ -28,10 +28,11 @@
         return parameter.match("^default_(zoom|lat|long)|showHost$");
     }
 
-    function filterParams() {
-        var sPageURL = decodeURIComponent(window.location.search == "" ? window.location.search : window.location.search.substring(1)),
-            sURLVariables = sPageURL == "" ? [] : sPageURL.split('&'),
-            params = [],
+    function filterParams(id) {
+        var sPageURL = decodeURIComponent(dashlet ? cache[id].parameters : window.location.search == "" ? window.location.search : window.location.search.substring(1)),
+            sURLVariables = sPageURL == "" ? [] : sPageURL.split('&');
+
+        var params = [],
             i;
 
         for (i = 0; i < sURLVariables.length; i++) {
@@ -61,8 +62,8 @@
     function toggleFullscreen() {
         icinga.ui.toggleFullscreen();
         cache[id].map.invalidateSize();
-        cache[id].fullscreen = ! cache[id].fullscreen;
-        if(cache[id].fullscreen) {
+        cache[id].fullscreen = !cache[id].fullscreen;
+        if (cache[id].fullscreen) {
             $('.controls').hide();
         } else {
             $('.controls').show();
@@ -174,6 +175,7 @@
             this.timer = {};
             this.module.on('rendered', this.onRenderedContainer);
             this.registerTimer()
+
         },
 
         registerTimer: function (id) {
@@ -354,7 +356,7 @@
             }
 
             // get host objects
-            $.getJSON(icinga.config.baseUrl + '/map/data/points?' + filterParams(), processData)
+            $.getJSON(icinga.config.baseUrl + '/map/data/points?' + filterParams(id), processData)
                 .fail(function (jqxhr, textStatus, error) {
                     console.error("Could not get host data: " + textStatus + ": " + error)
                     cache[id].map.spin(false)
@@ -387,6 +389,7 @@
 
             cache[id].map = L.map('map-' + id);
             cache[id].fullscreen = false;
+            cache[id].parameters = url_parameters;
 
             showDefaultView();
 
@@ -394,7 +397,7 @@
                 L.easyButton({
                     states: [{
                         icon: 'icon-dashboard', title: 'Add To dashboard', onClick: function (btn, map) {
-                            var dashletUri = window.location.href.replace(new RegExp(".*" + icinga.config.baseUrl + "/", "g"), "")
+                            var dashletUri = "map" + window.location.search
                             var uri = icinga.config.baseUrl + "/" + "dashboard/new-dashlet?url=" + encodeURIComponent(dashletUri)
 
                             window.open(uri, "_self")
