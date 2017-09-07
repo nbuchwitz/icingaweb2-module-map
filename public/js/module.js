@@ -17,15 +17,18 @@
     }
 
     function isFilterParameter(parameter) {
-        return (parameter.charAt(0) === '(');
+        if(parameter.charAt(0) === '(' || parameter.match('^[_]{0,1}(host|service)')) {
+            return true;
+        }
+
+        return false;
     }
 
     function isMapParameter(parameter) {
-        return (0 > ["default_zoom", "default_lat", "default_long", "showHost"].indexOf(parameter));
+        return parameter.match("^default_(zoom|lat|long)|showHost$");
     }
 
     function filterParams() {
-
         var sPageURL = decodeURIComponent(window.location.search == "" ? window.location.search : window.location.search.substring(1)),
             sURLVariables = sPageURL == "" ? [] : sPageURL.split('&'),
             params = [],
@@ -37,15 +40,33 @@
                 params.push(sURLVariables[i])
                 continue;
             }
-
-            var tmp = sURLVariables[i].split('=');
-            if (isMapParameter(tmp[0])) {
-                params.push(tmp[0] + '=' + tmp[1])
-            }
         }
 
         return params.join("&")
-        return params.toString();
+    }
+
+    function showDefaultView() {
+        if (map_default_lat !== null && map_default_long !== null) {
+            if (map_default_zoom !== null) {
+                cache[id].map.setView([map_default_lat, map_default_long], map_default_zoom);
+            } else {
+                cache[id].map.setView([map_default_lat, map_default_long]);
+            }
+
+        } else {
+            cache[id].map.fitWorld()
+        }
+    }
+
+    function toggleFullscreen() {
+        icinga.ui.toggleFullscreen();
+        cache[id].map.invalidateSize();
+        cache[id].fullscreen = ! cache[id].fullscreen;
+        if(cache[id].fullscreen) {
+            $('.controls').hide();
+        } else {
+            $('.controls').show();
+        }
     }
 
     // TODO: Allow update of multiple parameters
@@ -364,18 +385,10 @@
             cache[id].hostMarkers = {};
             cache[id].hostData = {};
 
-            cache[id].map = L.map('map-' + id)
+            cache[id].map = L.map('map-' + id);
+            cache[id].fullscreen = false;
 
-            if (map_default_lat !== null && map_default_long !== null) {
-                if (map_default_zoom !== null) {
-                    cache[id].map.setView([map_default_lat, map_default_long], map_default_zoom);
-                } else {
-                    cache[id].map.setView([map_default_lat, map_default_long]);
-                }
-
-            } else {
-                cache[id].map.fitWorld()
-            }
+            showDefaultView();
 
             if (!dashlet) {
                 L.easyButton({
@@ -396,6 +409,22 @@
                 //       }
                 //    },]
                 //}).addTo(cache[id].map);
+
+                L.easyButton({
+                    states: [{
+                        icon: 'icon-resize-full-alt', title: 'Fullscreen', onClick: function (btn, map) {
+                            toggleFullscreen();
+                        }
+                    },]
+                }).addTo(cache[id].map);
+
+                L.easyButton({
+                    states: [{
+                        icon: 'icon-globe', title: 'Show default view', onClick: function (btn, map) {
+                            showDefaultView();
+                        }
+                    },]
+                }).addTo(cache[id].map);
 
                 L.control.locate({
                     icon: 'icon-pin'
