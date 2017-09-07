@@ -1,3 +1,5 @@
+<?php
+?>
 <script type="text/javascript">
     <?php
     echo 'var map_default_zoom = ' . (!empty($this->default_zoom) ? $this->default_zoom : "null") . ";\n";
@@ -20,7 +22,7 @@
     var expand = <?= $this->expand ? 'true' : 'false' ?>;
 </script>
 <div class="controls">
-    <?php if (!$this->compact): ?>
+    <?php if (!$this->compact && !$this->fullscreen): ?>
         <?= $this->tabs ?>
     <?php endif ?>
 </div>

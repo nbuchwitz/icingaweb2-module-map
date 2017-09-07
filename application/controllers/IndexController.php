@@ -3,9 +3,6 @@
 namespace Icinga\Module\Map\Controllers;
 
 use Icinga\Web\Controller\ModuleActionController;
-use Icinga\Application\Icinga;
-use Icinga\Web\Controller;
-use Icinga\Web\Widget;
 
 class IndexController extends ModuleActionController
 {
@@ -14,14 +11,15 @@ class IndexController extends ModuleActionController
         $this->view->id = uniqid();
         $this->view->host = $this->params->get("host");
         $this->view->expand = $this->params->get("expand");
+        $this->view->fullscreen = ($this->params->get("showFullscreen") == 1);
 
         $config = $this->Config();
         $this->view->default_zoom = $this->params->get("default_zoom") ? $this->params->get("default_zoom") : $config->get('map',
             'default_zoom', '4');
         $this->view->default_long = $this->params->get("default_long") ? $this->params->get("default_long") : $config->get('map',
-            'default_long','13.377485');
+            'default_long', '13.377485');
         $this->view->default_lat = $this->params->get("default_lat") ? $this->params->get("default_lat") : $config->get('map',
-            'default_lat','52.515855');
+            'default_lat', '52.515855');
 
         $this->view->min_zoom = $this->params->get("min_zoom") ? $this->params->get("min_zoom") : $config->get('map',
             'min_zoom', '2');
