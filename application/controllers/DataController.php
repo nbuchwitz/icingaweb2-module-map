@@ -17,32 +17,8 @@ class DataController extends Controller
      */
     protected function filterQuery(DataView $dataView)
     {
-        $this->setupFilterControl($dataView, null, null, array(
-            'format', // handleFormatRequest()
-            'stateType', // hostsAction() and servicesAction()
-            'addColumns', // addColumns()
-            'problems' // servicegridAction()
-        ));
-        $this->handleFormatRequest($dataView);
+        $this->setupFilterControl($dataView);
         return $dataView;
-    }
-
-    /**
-     * Get columns to be added from URL parameter 'addColumns'
-     * and assign to $this->view->addColumns (as array)
-     *
-     * @return array
-     */
-    protected function addColumns()
-    {
-        $columns = preg_split(
-            '~,~',
-            $this->params->shift('addColumns', ''),
-            -1,
-            PREG_SPLIT_NO_EMPTY
-        );
-        $this->view->addColumns = $columns;
-        return $columns;
     }
 
     private $stateColumn;
@@ -68,16 +44,28 @@ class DataController extends Controller
             $this->stateChangeColumn = 'last_state_change';
         }
 
-        $query = $this->backend
+        // get host data
+        $hostQuery = $this->backend
             ->select()
-            ->from('servicestatus', array(
+            ->from('hoststatus', array(
                 'host_display_name',
                 'host_name',
                 'host_acknowledged',
                 'host_state' => 'host_' . $this->stateColumn,
                 'host_last_state_change' => 'host_' . $this->stateChangeColumn,
                 'host_in_downtime',
-                'coordinates' => '_host_geolocation',
+                'coordinates' => '_host_geolocation'
+            ))
+            ->applyFilter(Filter::fromQueryString('_host_geolocation >'));
+
+        $this->applyRestriction('monitoring/filter/objects', $hostQuery);
+        $this->filterQuery($hostQuery);
+
+        // get service data
+        $serviceQuery = $this->backend
+            ->select()
+            ->from('servicestatus', array(
+                'host_name',
                 'service_display_name',
                 'service_acknowledged',
                 'service_state' => 'service_' . $this->stateColumn,
@@ -86,26 +74,29 @@ class DataController extends Controller
             ))
             ->applyFilter(Filter::fromQueryString('_host_geolocation >'));
 
-        $this->applyRestriction('monitoring/filter/objects', $query);
-        $this->filterQuery($query);
+        $this->applyRestriction('monitoring/filter/objects', $serviceQuery);
+        $this->filterQuery($serviceQuery);
 
         $points = array();
-
-        if ($query->count() > 0) {
-            //print_r($query->fetchAll());
-            foreach ($query as $row) {
+        if ($hostQuery->count() > 0) {
+            foreach ($hostQuery as $row) {
                 $hostname = $row->host_name;
-                $data = json_decode(json_encode($row), true);
 
-                if (!array_key_exists($hostname, $points)) {
-                    $host = $this->filterArray($data, "^host");
-                    $host['services'] = array();
-                    $host['coordinates'] = explode(",", $row->coordinates);
+                $host = (array)$row;
+                $host['services'] = array();
+                $host['coordinates'] = explode(",", $host['coordinates']);
 
-                    $points[$hostname] = $host;
-                }
+                $points[$hostname] = $host;
+            }
+        }
 
-                $service = $this->filterArray($data, "^service");
+        // add services to host
+        if ($serviceQuery->count() > 0) {
+            foreach ($serviceQuery as $row) {
+                $hostname = $row->host_name;
+
+                $service = (array)$row;
+                unset($service['host_name']);
 
                 $points[$hostname]['services'][$service['service_display_name']] = $service;
             }
@@ -113,12 +104,5 @@ class DataController extends Controller
 
         echo json_encode($points);
         exit;
-    }
-
-    function filterArray($haystack, $needle)
-    {
-        $matches = preg_grep("/$needle/", array_keys($haystack));
-
-        return array_intersect_key($haystack, array_flip($matches));
     }
 }
