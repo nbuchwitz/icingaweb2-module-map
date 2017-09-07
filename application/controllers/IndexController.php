@@ -9,7 +9,7 @@ class IndexController extends ModuleActionController
     public function indexAction()
     {
         $this->view->id = uniqid();
-        $this->view->host = $this->params->get("host");
+        $this->view->host = $this->params->get("showHost");
         $this->view->expand = $this->params->get("expand");
         $this->view->fullscreen = ($this->params->get("showFullscreen") == 1);
 

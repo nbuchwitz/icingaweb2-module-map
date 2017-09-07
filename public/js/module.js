@@ -21,7 +21,7 @@
     }
 
     function isMapParameter(parameter) {
-        return (0 > ["default_zoom", "default_lat", "default_long"].indexOf(parameter));
+        return (0 > ["default_zoom", "default_lat", "default_long", "showHost"].indexOf(parameter));
     }
 
     function filterParams() {

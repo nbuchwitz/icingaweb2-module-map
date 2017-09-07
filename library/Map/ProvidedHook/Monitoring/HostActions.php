@@ -12,7 +12,7 @@ class HostActions extends HostActionsHook
     public function getActionsForHost(Host $host)
     {
         return array(
-            "Show on map" => Url::fromPath('map/', array('host' => $host->host_name))
+            "Show on map" => Url::fromPath('map/', array('showHost' => $host->host_name))
         );
     }
 }
