@@ -1,0 +1,18 @@
+name: Map Module
+description: "file:///README.md"
+url: "https://github.com/nbuchwitz/icingaweb2-module-map"
+tags: Module, Icinga Web 2, Map, Visualization
+vendor: Nicolai Buchwitz
+target: Icinga Web 2
+type: Module
+license: gplv2
+releases:
+  -
+    name: v1.0.3
+    description: "Current"
+    files:
+      -
+        name: icingaweb2-module-map-1.0.3.tar.gz
+        url: "https://github.com/nbuchwitz/icingaweb2-module-map/archive/v1.0.3.tar.gz"
+        description: Module file for Icinga Web 2
+        checksum: 465f9b3d75512953da9c59a703d801a0
