@@ -235,7 +235,6 @@
                     if (data.length < 1 || data['coordinates'] == "") {
                         console.log('found empty coordinates: ' + data)
                         return true
-
                     }
 
                     var hostState = data['host_state'];
