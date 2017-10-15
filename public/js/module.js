@@ -1,7 +1,7 @@
 (function (Icinga) {
 
     function colorMarker(color) {
-        img_base = icinga.config.baseUrl + '/img/map/';
+        var img_base = icinga.config.baseUrl + '/img/map/';
 
         return L.icon({
                 iconUrl: img_base + 'marker-icon-' + color + '.png',
@@ -24,19 +24,17 @@
         return false;
     }
 
-    function isMapParameter(parameter) {
-        return parameter.match("^default_(zoom|lat|long)|showHost$");
+    function getParameters() {
+        return decodeURIComponent($('.module-map').data('icingaUrl').replace(/^.*\?/, '')).split('&');
     }
 
     function filterParams(id) {
-        var sPageURL = decodeURIComponent(dashlet ? cache[id].parameters : window.location.search == "" ? window.location.search : window.location.search.substring(1)),
-            sURLVariables = sPageURL == "" ? [] : sPageURL.split('&');
-
+        var sURLVariables = getParameters();
         var params = [],
             i;
 
         for (i = 0; i < sURLVariables.length; i++) {
-            // protect icinga filter syntax
+            // Protect Icinga filter syntax
             if (isFilterParameter(sURLVariables[i])) {
                 params.push(sURLVariables[i])
                 continue;
@@ -72,17 +70,21 @@
 
     // TODO: Allow update of multiple parameters
     function updateUrl(pkey, pvalue) {
-        // don't update url if in dashlet mode
+        // Don't update URL if in dashlet mode
         if (dashlet) {
             return;
         }
-        var sPageURL = decodeURIComponent(window.location.search == "" ? window.location.search : window.location.search.substring(1)),
-            sURLVariables = sPageURL == "" ? [] : sPageURL.split('&'),
-            i;
+
+        var $target = $('.module-map');
+        var $currentUrl = $target.data('icingaUrl');
+        var basePath = $currentUrl.replace(/\?.*$/, '');
+        var searchPath = $currentUrl.replace(/^.*\?/, '');
+
+        var sURLVariables = searchPath.split('&');
 
         var updated = false;
-        for (i = 0; i < sURLVariables.length; i++) {
-            // dont replace icingas filter
+        for (var i = 0; i < sURLVariables.length; i++) {
+            // Don't replace Icinga filters
             if (isFilterParameter(sURLVariables[i])) {
                 continue;
             }
@@ -95,12 +97,13 @@
             }
         }
 
-        // parameter is not set
+        // Parameter is to be added
         if (!updated) {
             sURLVariables.push(pkey + "=" + pvalue);
         }
 
-        window.history.replaceState({}, '', window.location.pathname + '?' + sURLVariables.join('&'))
+        $target.data('icingaUrl', basePath + '?' + sURLVariables.join('&'));
+        icinga.history.pushCurrentState();
     }
 
     function getWorstState(states) {
@@ -430,7 +433,12 @@
 
                 L.control.locate({
                     icon: 'icon-pin'
-                }).addTo(cache[id].map);
+                }).addTo(cache[id].map)
+
+                cache[id].map.on('map-container-resize', function () {
+                    map.invalidateSize();
+                    console.log("Resize")
+                });
 
                 cache[id].map.on('moveend', function (e) {
                     var center = cache[id].map.getCenter()
