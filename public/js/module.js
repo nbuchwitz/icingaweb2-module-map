@@ -260,11 +260,11 @@
 
                         services += '<td class="';
                         services += "state-col";
-                        services += " state-" + service_status[service['service_state']].toLowerCase();
+                        services += " state-" + service_status[service['service_state']][1].toLowerCase();
                         services += "" + (service['service_acknowledged'] == 1 || service['service_in_downtime'] == 1 ? " handled" : "");
                         services += '">';
                         services += '<div class="state-label">';
-                        services += service_status[service['service_state']];
+                        services += service_status[service['service_state']][0];
                         services += '</div>';
                         services += '</td>';
 
@@ -389,16 +389,25 @@
             cache[id].hostMarkers = {};
             cache[id].hostData = {};
 
-            cache[id].map = L.map('map-' + id);
+            cache[id].map = L.map('map-' + id, {
+                    zoomControl: false
+                }
+            );
             cache[id].fullscreen = false;
             cache[id].parameters = url_parameters;
 
             showDefaultView();
 
+            L.control.zoom({
+                    zoomInTitle: translation['btn-zoom-in'],
+                    zoomOutTitle: translation['btn-zoom-in']
+                }
+            ).addTo(cache[id].map);
+
             if (!dashlet) {
                 L.easyButton({
                     states: [{
-                        icon: 'icon-dashboard', title: 'Add To dashboard', onClick: function (btn, map) {
+                        icon: 'icon-dashboard', title: translation['btn-dashboard'], onClick: function (btn, map) {
                             var dashletUri = "map" + window.location.search
                             var uri = icinga.config.baseUrl + "/" + "dashboard/new-dashlet?url=" + encodeURIComponent(dashletUri)
 
@@ -415,9 +424,12 @@
                 //    },]
                 //}).addTo(cache[id].map);
 
+
                 L.easyButton({
                     states: [{
-                        icon: 'icon-resize-full-alt', title: 'Fullscreen', onClick: function (btn, map) {
+                        icon: 'icon-resize-full-alt',
+                        title: translation['btn-fullscreen'],
+                        onClick: function (btn, map) {
                             toggleFullscreen();
                         }
                     },]
@@ -425,14 +437,16 @@
 
                 L.easyButton({
                     states: [{
-                        icon: 'icon-globe', title: 'Show default view', onClick: function (btn, map) {
+                        icon: 'icon-globe', title: translation['btn-default'], onClick: function (btn, map) {
                             showDefaultView();
                         }
                     },]
                 }).addTo(cache[id].map);
 
+
                 L.control.locate({
-                    icon: 'icon-pin'
+                    icon: 'icon-pin',
+                    strings: {title: translation['btn-locate']}
                 }).addTo(cache[id].map)
 
                 cache[id].map.on('map-container-resize', function () {
