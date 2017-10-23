@@ -390,7 +390,8 @@
             cache[id].hostData = {};
 
             cache[id].map = L.map('map-' + id, {
-                    zoomControl: false
+                    zoomControl: false,
+                    worldCopyJump: true,
                 }
             );
             cache[id].fullscreen = false;
