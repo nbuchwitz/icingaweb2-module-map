@@ -117,6 +117,8 @@ object Host "db-in-la" {
 }
 ```
 
+You could also add the geolocation variable to your hosts using the [Icinga Director](https://github.com/icinga/icingaweb2-module-director) with the new [mapDatatype](https://github.com/nbuchwitz/icingaweb2-module-mapDatatype) module.
+
 ## FAQ
 
 ### Change default parameters per map
