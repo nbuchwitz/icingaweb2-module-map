@@ -25,7 +25,12 @@
     }
 
     function getParameters() {
-        return decodeURIComponent($('.module-map').data('icingaUrl').replace(/^.*\?/, '')).split('&');
+        var params = decodeURIComponent($('.module-map').data('icingaUrl')).split('&');
+
+        // remove module path from url parameters
+        params.shift();
+
+        return params
     }
 
     function filterParams(id) {
@@ -79,6 +84,10 @@
         var $currentUrl = $target.data('icingaUrl');
         var basePath = $currentUrl.replace(/\?.*$/, '');
         var searchPath = $currentUrl.replace(/^.*\?/, '');
+
+        if(basePath === searchPath) {
+            searchPath = ""
+        }
 
         var sURLVariables = searchPath.split('&');
 
