@@ -3,13 +3,10 @@
     function colorMarker(color) {
         var img_base = icinga.config.baseUrl + '/img/map/';
 
-        return L.icon({
-                iconUrl: img_base + 'marker-icon-' + color + '.png',
-                //iconSize: [20, 20],
-                //shadowSize: [25, 18],
-                shadowUrl: img_base + 'marker-shadow.png',
-            }
-        );
+        return new L.Icon.Default({
+            iconUrl: img_base + 'marker-icon-' + color + '.png',
+            shadowUrl: img_base + 'marker-shadow.png',
+        });
     }
 
     function zoomAll(id) {
@@ -85,7 +82,7 @@
         var basePath = $currentUrl.replace(/\?.*$/, '');
         var searchPath = $currentUrl.replace(/^.*\?/, '');
 
-        if(basePath === searchPath) {
+        if (basePath === searchPath) {
             searchPath = ""
         }
 
