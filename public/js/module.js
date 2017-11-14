@@ -14,11 +14,7 @@
     }
 
     function isFilterParameter(parameter) {
-        if (parameter.charAt(0) === '(' || parameter.match('^[_]{0,1}(host|service)')) {
-            return true;
-        }
-
-        return false;
+        return (parameter.charAt(0) === '(' || parameter.match('^[_]{0,1}(host|service)'));
     }
 
     function getParameters() {
@@ -82,11 +78,7 @@
         var basePath = $currentUrl.replace(/\?.*$/, '');
         var searchPath = $currentUrl.replace(/^.*\?/, '');
 
-        if (basePath === searchPath) {
-            searchPath = ""
-        }
-
-        var sURLVariables = searchPath.split('&');
+        var sURLVariables = (searchPath === basePath ? [] : searchPath.split('&'));
 
         var updated = false;
         for (var i = 0; i < sURLVariables.length; i++) {
