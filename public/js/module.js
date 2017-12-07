@@ -5,6 +5,7 @@
 
         return new L.Icon.Default({
             iconUrl: img_base + 'marker-icon-' + color + '.png',
+            iconRetinaUrl: img_base + 'marker-icon-' + color + '.png',
             shadowUrl: img_base + 'marker-shadow.png',
         });
     }
