@@ -1,5 +1,5 @@
 <?php
-$section = $this->menuSection(N_('Maps'));
+$section = $this->menuSection(N_('Maps'), array('icon' => 'globe'));
 
 $section->add(N_($this->translate('Host map')), array(
     'icon' => 'globe',
