@@ -1,5 +1,5 @@
 Module: map
 Version: 1.0.4
 Depends: monitoring
-Description: Map visualization
- This is a simple map for visualization of host based status information based on Openstreetmap.
+Description: Map - Visualize your hosts and service status
+ This is a simple map for visualization of host and service status information based on Openstreetmap.

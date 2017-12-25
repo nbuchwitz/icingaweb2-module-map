@@ -65,4 +65,4 @@ newly provided styling is loaded.
 Getting started with the map
 ---------------------------------------------
 
-That's it, *Map* is now ready for use. Please read more on [how to get started](02-Getting-Started.md).
+That's it, *Map* is now ready for use. Please read more on [adding markers to your map](02-Add-Items-to-map.md).
