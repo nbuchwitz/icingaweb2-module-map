@@ -1,8 +1,12 @@
 <?php
-$section = $this->menuSection(N_('Maps'))
-    ->setIcon('globe')
-    ->add($this->translate('Host Map'))
-    ->setUrl('map');
+$section = $this->menuSection(N_('Maps'));
+
+$section->add(N_($this->translate('Host map')), array(
+    'icon' => 'globe',
+    'description' => $this->translate('Visualize your hosts and services on a map'),
+    'url' => 'map',
+    'priority' => 10
+));
 
 // stylesheets
 $this->provideCssFile('vendor/leaflet.css');

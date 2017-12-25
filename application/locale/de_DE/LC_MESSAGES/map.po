@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Map Module (1.0.3)\n"
 "Report-Msgid-Bugs-To: dev@icinga.com\n"
-"POT-Creation-Date: 2017-10-22 18:46+0200\n"
+"POT-Creation-Date: 2017-11-22 14:54+0000\n"
 "PO-Revision-Date: 2017-10-20 16:42+0200\n"
 "Last-Translator: Nicolai Buchwitz <nb@odly.de>\n"
 "Language: de_DE\n"
@@ -25,11 +25,11 @@ msgctxt "icinga.state"
 msgid "CRITICAL"
 msgstr "KRITISCH"
 
-#: ../../../../modules/map/configuration.php:25
+#: ../../../../modules/map/configuration.php:29
 msgid "Configuration"
 msgstr "Konfiguration"
 
-#: ../../../../modules/map/configuration.php:24
+#: ../../../../modules/map/configuration.php:28
 msgid "Configure the map module"
 msgstr "Konfiguration des Karten Moduls"
 
@@ -63,7 +63,8 @@ msgid "Default zoom level of the map"
 msgstr "Standard-Zoomstufe des Karte"
 
 #: ../../../../modules/map/configuration.php:4
-msgid "Host Map"
+#, fuzzy
+msgid "Host map"
 msgstr "Host-Karte"
 
 #: ../../../../modules/map/configuration.php:2
@@ -124,6 +125,10 @@ msgstr "Art der angezeigten Statusinformationen"
 msgctxt "icinga.state"
 msgid "UNKNOWN"
 msgstr "UNBEKANNT"
+
+#: ../../../../modules/map/configuration.php:6
+msgid "Visualize your hosts and services on a map"
+msgstr "Visualisierung von Hosts und Services auf der Karte"
 
 #: ../../../../modules/map/application/views/scripts/index/index.phtml:15
 msgctxt "icinga.state"
