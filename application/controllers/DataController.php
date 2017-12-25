@@ -84,6 +84,14 @@ class DataController extends Controller
 
                 $host = (array)$row;
                 $host['services'] = array();
+
+                // check for broken coordinates
+                $coordinate_pattern = '/^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$/';
+
+                if (!preg_match($coordinate_pattern, $host['coordinates'])) {
+                    continue;
+                }
+
                 $host['coordinates'] = explode(",", $host['coordinates']);
 
                 $points[$hostname] = $host;

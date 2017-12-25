@@ -1,15 +1,13 @@
 (function (Icinga) {
 
     function colorMarker(color) {
-        img_base = icinga.config.baseUrl + '/img/map/';
+        var img_base = icinga.config.baseUrl + '/img/map/';
 
-        return L.icon({
-                iconUrl: img_base + 'marker-icon-' + color + '.png',
-                //iconSize: [20, 20],
-                //shadowSize: [25, 18],
-                shadowUrl: img_base + 'marker-shadow.png',
-            }
-        );
+        return new L.Icon.Default({
+            iconUrl: img_base + 'marker-icon-' + color + '.png',
+            iconRetinaUrl: img_base + 'marker-icon-' + color + '.png',
+            shadowUrl: img_base + 'marker-shadow.png',
+        });
     }
 
     function zoomAll(id) {
@@ -17,26 +15,25 @@
     }
 
     function isFilterParameter(parameter) {
-        if (parameter.charAt(0) === '(' || parameter.match('^[_]{0,1}(host|service)')) {
-            return true;
-        }
-
-        return false;
+        return (parameter.charAt(0) === '(' || parameter.match('^[_]{0,1}(host|service)'));
     }
 
-    function isMapParameter(parameter) {
-        return parameter.match("^default_(zoom|lat|long)|showHost$");
+    function getParameters() {
+        var params = decodeURIComponent($('.module-map').data('icingaUrl')).split('&');
+
+        // remove module path from url parameters
+        params.shift();
+
+        return params
     }
 
     function filterParams(id) {
-        var sPageURL = decodeURIComponent(dashlet ? cache[id].parameters : window.location.search == "" ? window.location.search : window.location.search.substring(1)),
-            sURLVariables = sPageURL == "" ? [] : sPageURL.split('&');
-
+        var sURLVariables = getParameters();
         var params = [],
             i;
 
         for (i = 0; i < sURLVariables.length; i++) {
-            // protect icinga filter syntax
+            // Protect Icinga filter syntax
             if (isFilterParameter(sURLVariables[i])) {
                 params.push(sURLVariables[i])
                 continue;
@@ -72,17 +69,21 @@
 
     // TODO: Allow update of multiple parameters
     function updateUrl(pkey, pvalue) {
-        // don't update url if in dashlet mode
+        // Don't update URL if in dashlet mode
         if (dashlet) {
             return;
         }
-        var sPageURL = decodeURIComponent(window.location.search == "" ? window.location.search : window.location.search.substring(1)),
-            sURLVariables = sPageURL == "" ? [] : sPageURL.split('&'),
-            i;
+
+        var $target = $('.module-map');
+        var $currentUrl = $target.data('icingaUrl');
+        var basePath = $currentUrl.replace(/\?.*$/, '');
+        var searchPath = $currentUrl.replace(/^.*\?/, '');
+
+        var sURLVariables = (searchPath === basePath ? [] : searchPath.split('&'));
 
         var updated = false;
-        for (i = 0; i < sURLVariables.length; i++) {
-            // dont replace icingas filter
+        for (var i = 0; i < sURLVariables.length; i++) {
+            // Don't replace Icinga filters
             if (isFilterParameter(sURLVariables[i])) {
                 continue;
             }
@@ -95,12 +96,13 @@
             }
         }
 
-        // parameter is not set
+        // Parameter is to be added
         if (!updated) {
             sURLVariables.push(pkey + "=" + pvalue);
         }
 
-        window.history.replaceState({}, '', window.location.pathname + '?' + sURLVariables.join('&'))
+        $target.data('icingaUrl', basePath + '?' + sURLVariables.join('&'));
+        icinga.history.pushCurrentState();
     }
 
     function getWorstState(states) {
@@ -235,7 +237,6 @@
                     if (data.length < 1 || data['coordinates'] == "") {
                         console.log('found empty coordinates: ' + data)
                         return true
-
                     }
 
                     var hostState = data['host_state'];
@@ -258,11 +259,11 @@
 
                         services += '<td class="';
                         services += "state-col";
-                        services += " state-" + service_status[service['service_state']].toLowerCase();
+                        services += " state-" + service_status[service['service_state']][1].toLowerCase();
                         services += "" + (service['service_acknowledged'] == 1 || service['service_in_downtime'] == 1 ? " handled" : "");
                         services += '">';
                         services += '<div class="state-label">';
-                        services += service_status[service['service_state']];
+                        services += service_status[service['service_state']][0];
                         services += '</div>';
                         services += '</td>';
 
@@ -387,16 +388,26 @@
             cache[id].hostMarkers = {};
             cache[id].hostData = {};
 
-            cache[id].map = L.map('map-' + id);
+            cache[id].map = L.map('map-' + id, {
+                    zoomControl: false,
+                    worldCopyJump: true,
+                }
+            );
             cache[id].fullscreen = false;
             cache[id].parameters = url_parameters;
 
             showDefaultView();
 
+            L.control.zoom({
+                    zoomInTitle: translation['btn-zoom-in'],
+                    zoomOutTitle: translation['btn-zoom-in']
+                }
+            ).addTo(cache[id].map);
+
             if (!dashlet) {
                 L.easyButton({
                     states: [{
-                        icon: 'icon-dashboard', title: 'Add To dashboard', onClick: function (btn, map) {
+                        icon: 'icon-dashboard', title: translation['btn-dashboard'], onClick: function (btn, map) {
                             var dashletUri = "map" + window.location.search
                             var uri = icinga.config.baseUrl + "/" + "dashboard/new-dashlet?url=" + encodeURIComponent(dashletUri)
 
@@ -413,9 +424,12 @@
                 //    },]
                 //}).addTo(cache[id].map);
 
+
                 L.easyButton({
                     states: [{
-                        icon: 'icon-resize-full-alt', title: 'Fullscreen', onClick: function (btn, map) {
+                        icon: 'icon-resize-full-alt',
+                        title: translation['btn-fullscreen'],
+                        onClick: function (btn, map) {
                             toggleFullscreen();
                         }
                     },]
@@ -423,15 +437,22 @@
 
                 L.easyButton({
                     states: [{
-                        icon: 'icon-globe', title: 'Show default view', onClick: function (btn, map) {
+                        icon: 'icon-globe', title: translation['btn-default'], onClick: function (btn, map) {
                             showDefaultView();
                         }
                     },]
                 }).addTo(cache[id].map);
 
+
                 L.control.locate({
-                    icon: 'icon-pin'
-                }).addTo(cache[id].map);
+                    icon: 'icon-pin',
+                    strings: {title: translation['btn-locate']}
+                }).addTo(cache[id].map)
+
+                cache[id].map.on('map-container-resize', function () {
+                    map.invalidateSize();
+                    console.log("Resize")
+                });
 
                 cache[id].map.on('moveend', function (e) {
                     var center = cache[id].map.getCenter()

@@ -1,0 +1,149 @@
+# Icinga Web 2 - Head for multiple monitoring backends.
+# Copyright (C) 2017 Icinga Development Team
+# This file is distributed under the same license as Map Module.
+# Nicolai Buchwitz <nb@odly.de>, 2017.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Map Module (1.0.3)\n"
+"Report-Msgid-Bugs-To: dev@icinga.com\n"
+"POT-Creation-Date: 2017-10-22 18:46+0200\n"
+"PO-Revision-Date: 2017-10-20 16:42+0200\n"
+"Last-Translator: Nicolai Buchwitz <nb@odly.de>\n"
+"Language: de_DE\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: ../../../../modules/map/application/views/scripts/index/index.phtml:16
+msgctxt "icinga.state"
+msgid "CRITICAL"
+msgstr "KRITISCH"
+
+#: ../../../../modules/map/configuration.php:25
+msgid "Configuration"
+msgstr "Konfiguration"
+
+#: ../../../../modules/map/configuration.php:24
+msgid "Configure the map module"
+msgstr "Konfiguration des Karten Moduls"
+
+#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:79
+#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:80
+msgid "Dashlet height"
+msgstr "Höhe des Dashlets"
+
+#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:29
+msgid "Default latitude (WGS84)"
+msgstr "Standard Breitengrad (WGS84)"
+
+#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:39
+msgid "Default longitude (WGS84)"
+msgstr "Standard Längengrad (WGS84)"
+
+#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:30
+msgid "Default map position (latitude)"
+msgstr "Mittelpunkt der Karte (Breitengrad)"
+
+#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:40
+msgid "Default map position (longitude)"
+msgstr "Mittelpunkt der Karte (Längengrad)"
+
+#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:49
+msgid "Default zoom level"
+msgstr "Standard-Zoomstufe"
+
+#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:50
+msgid "Default zoom level of the map"
+msgstr "Standard-Zoomstufe des Karte"
+
+#: ../../../../modules/map/configuration.php:4
+msgid "Host Map"
+msgstr "Host-Karte"
+
+#: ../../../../modules/map/configuration.php:2
+msgid "Maps"
+msgstr "Karten"
+
+#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:89
+msgid "Marker size"
+msgstr "Icon Größe"
+
+#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:59
+msgid "Maximum zoom level"
+msgstr "Maximale Zoomstufe"
+
+#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:60
+msgid "Maximum zoom level of the map"
+msgstr "Maximale Zoomstufe der Karte"
+
+#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:69
+msgid "Minimal zoom level"
+msgstr "Minimale Zoomstufe"
+
+#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:70
+msgid "Minimal zoom level of the map"
+msgstr "Minimale Zoomstufe der Karte"
+
+#: ../../../../modules/map/application/views/scripts/index/index.phtml:14
+msgctxt "icinga.state"
+msgid "OK"
+msgstr ""
+
+#: ../../../../modules/map/application/views/scripts/index/index.phtml:18
+msgctxt "icinga.state"
+msgid "PENDING"
+msgstr "AUSSTEHEND"
+
+#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:16
+msgid "Save Changes"
+msgstr "Änderungen speichern"
+
+#: ../../../../modules/map/library/Map/ProvidedHook/Monitoring/HostActions.php:15
+msgid "Show on map"
+msgstr "Auf der Karte zeigen"
+
+#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:90
+msgid "Size of the host markers"
+msgstr "Größe der Host-Icons"
+
+#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:98
+msgid "State type"
+msgstr "Zustandsart"
+
+#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:99
+msgid "State type for status indication"
+msgstr "Art der angezeigten Statusinformationen"
+
+#: ../../../../modules/map/application/views/scripts/index/index.phtml:17
+msgctxt "icinga.state"
+msgid "UNKNOWN"
+msgstr "UNBEKANNT"
+
+#: ../../../../modules/map/application/views/scripts/index/index.phtml:15
+msgctxt "icinga.state"
+msgid "WARNING"
+msgstr "WARNUNG"
+
+msgid "Zoom in"
+msgstr "Vergrößern"
+
+msgid "Zoom out"
+msgstr "Verkleinern"
+
+msgid "Add to dashboard"
+msgstr "Zum Dashboard hinzufügen"
+
+msgid "Fullscreen"
+msgstr "Vollbild"
+
+msgid "Show current location"
+msgstr "Zeige aktuelle Position"
+
+msgid "Show default view"
+msgstr "Zeige Standardansicht"

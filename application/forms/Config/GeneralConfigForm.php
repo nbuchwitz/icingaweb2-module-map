@@ -13,7 +13,7 @@ class GeneralConfigForm extends ConfigForm
     public function init()
     {
         $this->setName('form_config_map_general');
-        $this->setSubmitLabel('Save Changes');
+        $this->setSubmitLabel($this->translate('Save Changes'));
     }
 
     /**

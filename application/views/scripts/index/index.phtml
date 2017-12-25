@@ -11,11 +11,29 @@
     echo 'var map_show_host = "' . $this->host . "\";\n";
     ?>
     var service_status = {};
-    service_status[0] = '<?= $this->translate('OK', 'icinga.state') ?>';
-    service_status[1] = '<?= $this->translate('WARNING', 'icinga.state') ?>';
-    service_status[2] = '<?= $this->translate('CRITICAL', 'icinga.state') ?>';
-    service_status[3] = '<?= $this->translate('UNKNOWN', 'icinga.state') ?>';
-    service_status[99] = '<?= $this->translate('PENDING', 'icinga.state') ?>';
+    service_status[0] = ['<?= $this->translate('OK', 'icinga.state') ?>', 'OK'];
+    service_status[1] = ['<?= $this->translate('WARNING', 'icinga.state') ?>', 'WARNING'];
+    service_status[2] = ['<?= $this->translate('CRITICAL', 'icinga.state') ?>', 'CRITICAL'];
+    service_status[3] = ['<?= $this->translate('UNKNOWN', 'icinga.state') ?>', 'UNKNOWN'];
+    service_status[99] = ['<?= $this->translate('PENDING', 'icinga.state') ?>', 'PENDING'];
+
+    // @TODO: Is there a better way of translation in JS-Code?
+    <?php
+    $toTranslate = array(
+        "btn-zoom-in" => "Zoom in",
+        "btn-zoom-out" => "Zoom out",
+        "btn-dashboard" => "Add to dashboard",
+        "btn-fullscreen" => "Fullscreen",
+        "btn-default" => "Show default view",
+        "btn-locate" => "Show current location"
+    );
+
+    print("var translation = {");
+    foreach ($toTranslate as $key => $value) {
+        printf("'%s': '%s',", $key, $this->translate($value));
+    }
+    print("};\n");
+    ?>
 
     var url_parameters = "<?=$this->url_parameters; ?>";
     var id = '<?= $this->id ?>';
