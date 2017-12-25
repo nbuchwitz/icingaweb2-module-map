@@ -4,39 +4,21 @@
 
 1. [About](#about)
 2. [License](#license)
-3. [Support](#support)
-4. [Requirements](#requirements)
-5. [Installation](#installation)
-6. [Configuration](#configuration)
-7. [FAQ](#faq)
-8. [Thanks](#thanks)
-9. [Contributing](#contributing)
+3. [Documentation](#documentation)
+4. [Support](#support)
+5. [Requirements](#requirements)
+6. [Thanks](#thanks)
+7. [Contributing](#contributing)
 
 ## About
 
 This module displays host objects as markers on [openstreetmap](https://www.openstreetmap.org) using [leaflet.js](http://leafletjs.com/). If you configure multiple hosts with the same coordinates, i.e. servers in a datacenter, a clustered view is rendered.
 
-<img src="https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/clustered-map.png" alt="Clustered map" height="300">
-
-<img src="https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/clustered-map2.png" alt="Clustered map" height="300">
-
-<img src="https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/detailed-map.png" alt="Detailed map" height="300">
-
-In order to locate a specific host on the map, you can use the custom host action:
-
-<img src="https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/host-action.png" alt="Host action" height="100">
-
-The map module is directly integrated into the detail view in Icinga Web 2:
-
-<img src="https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/tab-view.png" alt="Host detail view" height="300">
-
-If you click on the host marker, a popup shows a service list and their current hard states.
-
-<img src="https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/host-details.png" alt="Host detail view" height="300">
+![Marker popup](doc/screenshot/map-module.png)
 
 You could also integrate a map as dashlet into your dashboards:
 
-<img src="https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/dashboard.png" alt="Map as a dashlet" height="300">
+![Marker popup](doc/screenshot/dashlets.png)
 
 ## License
 
@@ -51,6 +33,12 @@ This module uses Leaflet and several plugins:
 * [Leaflet.Spin](https://github.com/makinacorpus/Leaflet.Spin) - MIT license
 * [Spin.js](spin.js.org) - MIT license
 
+## Documentation
+
+* [Installation](doc/01-Installation.md)
+* [Adding markers to your map](doc/02-Add-Items-to-map.md)
+* [Exploring the map](doc/03-Exploring-the-map.md)
+
 ## Support
 
 Join the [Icinga community channels](https://www.icinga.com/community/get-involved/) for questions.
@@ -58,78 +46,6 @@ Join the [Icinga community channels](https://www.icinga.com/community/get-involv
 ## Requirements
 
 * [Icinga Web 2](https://www.icinga.com/products/icinga-web-2/) (>= 2.4.1)
-
-
-## Installation
-
-Extract this module to your Icinga Web 2 modules directory as `map` directory.
-
-Git clone:
-
-```
-cd /usr/share/icingaweb2/modules
-git clone https://github.com/nbuchwitz/icingaweb2-module-map.git map
-```
-
-
-Tarball download (latest [release](https://github.com/nbuchwitz/icingaweb2-module-map/releases/latest)):
-
-```
-cd /usr/share/icingaweb2/modules
-wget https://github.com/nbuchwitz/icingaweb2-module-map/archive/v1.0.0.zip
-unzip v1.0.0.zip
-mv icingaweb2-module-map-1.0.0 map
-```
-
-### Enable Icinga Web 2 module
-
-Enable the module in the Icinga Web 2 frontend in `Configuration -> Modules -> map -> enable`.
-You can also enable the module by using the `icingacli` command:
-
-```
-icingacli module enable map
-```
-
-## Configuration
-
-### Module
-
-Configure the default coordinates and the zoom levels inside Configuration -> Modules -> map where you navigate to the configuration tab.
-
-<img src="https://github.com/nbuchwitz/icingaweb2-module-map/raw/master/screenshots/configuration-tab.png" alt="Configuration Tab" height="300">
-
-
-### Add coordinates to a host object in Icinga 2
-
-Add a custom attribute called `geolocation` to any host you want to display on the map. Its value consists of WGS84 coordinates in the following format:
-
-```
-vars.geolocation = "<latitude>,<longitude>"
-```
-
-Example:
-
-```
-object Host "db-in-la" {
-  check_command = "hostalive"
-  address = "192.168.33.5"
-  vars.geolocation = "34.052234,-118.243685"
-}
-```
-
-You could also add the geolocation variable to your hosts using the [Icinga Director](https://github.com/icinga/icingaweb2-module-director) with the new [mapDatatype](https://github.com/nbuchwitz/icingaweb2-module-mapDatatype) module.
-
-## FAQ
-
-### Change default parameters per map
-
-It's possible to change the parameters ``default_zoom``, ``default_long`` and ``default_lat`` for a map by adding the parameters to the url:
-
-```map?default_zoom=20&default_long=13.370324&default_lat=52.500859```
-
-### Show host coordinates inside the map
-
-In order to highlight the host's coordinate, hold the CTRL key and click on the desired map location.
 
 
 ## Thanks
