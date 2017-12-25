@@ -189,6 +189,13 @@
             return this;
         },
 
+        onPopupOpen: function (evt) {
+            $('.detail-link').on("click", function (ievt) {
+                mapCenter(evt.popup._source.options.id);
+                cache[id].map.invalidateSize();
+            });
+        },
+
         updateAllMapData: function () {
             var _this = this;
 
@@ -345,8 +352,11 @@
                     marker.bindPopup(info);
                 });
 
-                cache[id].markers.refreshClusters()
-                cache[id].map.spin(false)
+                cache[id].markers.refreshClusters();
+                cache[id].map.spin(false);
+
+                // TODO: Should be updated instant and not only on data refresh
+                cache[id].map.invalidateSize();
 
                 if (show_host != "") {
                     showHost(show_host);
@@ -397,6 +407,8 @@
             cache[id].parameters = url_parameters;
 
             showDefaultView();
+
+            cache[id].map.on('popupopen', this.onPopupOpen);
 
             L.control.zoom({
                     zoomInTitle: translation['btn-zoom-in'],
