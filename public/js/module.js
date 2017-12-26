@@ -375,7 +375,25 @@
         },
 
         onRenderedContainer: function (event) {
+            if (typeof id === undefined) {
+                return;
+            }
+
             cache[id] = {};
+            cache[id].map = L.map('map-' + id, {
+                    zoomControl: false,
+                    worldCopyJump: true,
+                }
+            );
+
+            var osm = L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                subdomains: ['a', 'b', 'c'],
+                maxZoom: map_max_zoom,
+                minZoom: map_min_zoom,
+            });
+            osm.addTo(cache[id].map);
+
             cache[id].markers = new L.MarkerClusterGroup({
                 iconCreateFunction: function (cluster) {
                     var childCount = cluster.getChildCount();
@@ -393,16 +411,14 @@
                         className: 'marker-cluster' + c,
                         iconSize: new L.Point(40, 40)
                     });
-                }
+                },
+                maxClusterRadius: function (zoom) {
+                    return (zoom <= map_max_zoom-1) ? 80 : 1; // radius in pixels
+                },
             });
             cache[id].hostMarkers = {};
             cache[id].hostData = {};
 
-            cache[id].map = L.map('map-' + id, {
-                    zoomControl: false,
-                    worldCopyJump: true,
-                }
-            );
             cache[id].fullscreen = false;
             cache[id].parameters = url_parameters;
 
@@ -502,15 +518,6 @@
                     }
                 });
             }
-
-
-            var osm = L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-                subdomains: ['a', 'b', 'c'],
-                maxZoom: map_max_zoom,
-                minZoom: map_min_zoom,
-            });
-            osm.addTo(cache[id].map);
 
             cache[id].markers.addTo(cache[id].map);
 
