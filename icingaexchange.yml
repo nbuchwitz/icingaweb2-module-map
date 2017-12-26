@@ -8,11 +8,11 @@ type: Module
 license: gplv2
 releases:
   -
-    name: v1.0.3
+    name: v1.0.4
     description: "Current"
     files:
       -
-        name: icingaweb2-module-map-1.0.3.tar.gz
-        url: "https://github.com/nbuchwitz/icingaweb2-module-map/archive/v1.0.3.tar.gz"
+        name: icingaweb2-module-map-1.0.4.tar.gz
+        url: "https://github.com/nbuchwitz/icingaweb2-module-map/archive/v1.0.4.tar.gz"
         description: Module file for Icinga Web 2
-        checksum: 465f9b3d75512953da9c59a703d801a0
+        checksum: d9806f6b6f2e33fb15ea32b256d0e0e1
