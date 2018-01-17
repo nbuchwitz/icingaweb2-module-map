@@ -276,7 +276,16 @@
 
                         services += '<td>';
                         services += '<div class="state-header">';
+                        services += '<a data-hostname="' + hostname + '" data-base-target="_next" href="'
+                            + icinga.config.baseUrl
+                            + '/monitoring/service/show?host='
+                            + hostname
+                            + '&service='
+                            + service['name']
+                            + '">';
                         services += service_display_name;
+                        services += '</a>'
+                        services += '</div>'
                         services += '</td>';
 
                         services += '</tr>';

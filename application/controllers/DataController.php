@@ -67,6 +67,7 @@ class DataController extends Controller
             ->from('servicestatus', array(
                 'host_name',
                 'service_display_name',
+                'name'=>'service',
                 'service_acknowledged',
                 'service_state' => 'service_' . $this->stateColumn,
                 'service_last_state_change' => 'service_' . $this->stateChangeColumn,
