@@ -22,7 +22,9 @@
         var params = decodeURIComponent($('.module-map').data('icingaUrl')).split('&');
 
         // remove module path from url parameters
-        params.shift();
+        if(params.length > 0) {
+            params[0] = params[0].replace(/^.*\?/,'')
+        }
 
         return params
     }
