@@ -31,7 +31,7 @@
     }
 
     function isFilterParameter(parameter) {
-        return (parameter.charAt(0) === '(' || parameter.match('^[_]{0,1}(host|service)'));
+        return (parameter.charAt(0) === '(' || parameter.match('^[_]{0,1}(host|service)') || parameter.match('^(object|state)Type'));
     }
 
     function getParameters() {
@@ -246,7 +246,7 @@
             function removeOldMarkers(id, data) {
                 // remove old markers
                 $.each(cache[id].hostMarkers, function (identifier, d) {
-                    if (!data['hosts'][identifier] && !data['services'][identifier]) {
+                    if ((data['hosts'] && !data['hosts'][identifier]) && (data['services'] && !data['services'][identifier])) {
                         cache[id].markers.removeLayer(d);
                         delete cache[id].hostMarkers[identifier];
                     }
