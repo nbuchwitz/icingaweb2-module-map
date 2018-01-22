@@ -17,7 +17,7 @@ class DataController extends Controller
      */
     protected function filterQuery(DataView $dataView)
     {
-        $this->setupFilterControl($dataView);
+        $this->setupFilterControl($dataView, null, null, ['stateType', 'objectType']);
         return $dataView;
     }
 
@@ -29,12 +29,16 @@ class DataController extends Controller
      */
     public function pointsAction()
     {
+        $points = array();
+
         // Borrowed from monitoring module
         // Handle soft and hard states
         $config = $this->config();
         $stateType = strtolower($this->params->shift('stateType',
             $config->get('map', 'stateType', 'soft')
         ));
+
+        $objectType = strtolower($this->params->shift('objectType', 'all'));
 
         if ($stateType === 'hard') {
             $this->stateColumn = 'hard_state';
@@ -44,121 +48,125 @@ class DataController extends Controller
             $this->stateChangeColumn = 'last_state_change';
         }
 
-        // get host data
-        $hostQuery = $this->backend
-            ->select()
-            ->from('hoststatus', array(
-                'host_display_name',
-                'host_name',
-                'host_acknowledged',
-                'host_state' => 'host_' . $this->stateColumn,
-                'host_last_state_change' => 'host_' . $this->stateChangeColumn,
-                'host_in_downtime',
-                'coordinates' => '_host_geolocation'
-            ))
-            ->applyFilter(Filter::fromQueryString('_host_geolocation >'));
+        if (in_array($objectType, ['all', 'hosts'])) {
+            // get host data
+            $hostQuery = $this->backend
+                ->select()
+                ->from('hoststatus', array(
+                    'host_display_name',
+                    'host_name',
+                    'host_acknowledged',
+                    'host_state' => 'host_' . $this->stateColumn,
+                    'host_last_state_change' => 'host_' . $this->stateChangeColumn,
+                    'host_in_downtime',
+                    'coordinates' => '_host_geolocation'
+                ))
+                ->applyFilter(Filter::fromQueryString('_host_geolocation >'));
 
-        $this->applyRestriction('monitoring/filter/objects', $hostQuery);
-        $this->filterQuery($hostQuery);
+            $this->applyRestriction('monitoring/filter/objects', $hostQuery);
+            $this->filterQuery($hostQuery);
 
-        // get service data
-        $serviceQuery = $this->backend
-            ->select()
-            ->from('servicestatus', array(
-                'host_name',
-                'service_display_name',
-                'service_name' => 'service',
-                'service_acknowledged',
-                'service_state' => 'service_' . $this->stateColumn,
-                'service_last_state_change' => 'service_' . $this->stateChangeColumn,
-                'service_in_downtime'
-            ))
-            ->applyFilter(Filter::fromQueryString('_host_geolocation >'));
+            // get service data
+            $serviceQuery = $this->backend
+                ->select()
+                ->from('servicestatus', array(
+                    'host_name',
+                    'service_display_name',
+                    'service_name' => 'service',
+                    'service_acknowledged',
+                    'service_state' => 'service_' . $this->stateColumn,
+                    'service_last_state_change' => 'service_' . $this->stateChangeColumn,
+                    'service_in_downtime'
+                ))
+                ->applyFilter(Filter::fromQueryString('_host_geolocation >'));
 
-        $this->applyRestriction('monitoring/filter/objects', $serviceQuery);
-        $this->filterQuery($serviceQuery);
+            $this->applyRestriction('monitoring/filter/objects', $serviceQuery);
+            $this->filterQuery($serviceQuery);
 
-        // get services with geolocation
-        $geoServiceQuery = $this->backend
-            ->select()
-            ->from('servicestatus', array(
-                'host_display_name',
-                'host_name',
-                'host_acknowledged',
-                'host_state' => 'host_' . $this->stateColumn,
-                'host_last_state_change' => 'host_' . $this->stateChangeColumn,
-                'host_in_downtime',
-                'service_display_name',
-                'service_name' => 'service',
-                'service_acknowledged',
-                'service_state' => 'service_' . $this->stateColumn,
-                'service_last_state_change' => 'service_' . $this->stateChangeColumn,
-                'service_in_downtime',
-                'coordinates' => '_service_geolocation'
-            ))->applyFilter(Filter::fromQueryString('_host_geolocation >'));
+            if ($hostQuery->count() > 0) {
+                foreach ($hostQuery as $row) {
+                    $hostname = $row->host_name;
 
-        $this->applyRestriction('monitoring/filter/objects', $geoServiceQuery);
-        $this->filterQuery($geoServiceQuery);
-        // ---
+                    $host = (array)$row;
+                    $host['services'] = array();
 
-        $points = array();
-        if ($hostQuery->count() > 0) {
-            foreach ($hostQuery as $row) {
-                $hostname = $row->host_name;
+                    // check for broken coordinates
+                    $coordinate_pattern = '/^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$/';
 
-                $host = (array)$row;
-                $host['services'] = array();
+                    if (!preg_match($coordinate_pattern, $host['coordinates'])) {
+                        continue;
+                    }
 
-                // check for broken coordinates
-                $coordinate_pattern = '/^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$/';
+                    $host['coordinates'] = explode(",", $host['coordinates']);
 
-                if (!preg_match($coordinate_pattern, $host['coordinates'])) {
-                    continue;
+                    $points['hosts'][$hostname] = $host;
                 }
+            }
 
-                $host['coordinates'] = explode(",", $host['coordinates']);
+            // add services to host
+            if ($serviceQuery->count() > 0) {
+                foreach ($serviceQuery as $row) {
+                    $hostname = $row->host_name;
 
-                $points['hosts'][$hostname] = $host;
+                    $service = (array)$row;
+                    unset($service['host_name']);
+
+                    $points['hosts'][$hostname]['services'][$service['service_display_name']] = $service;
+                }
             }
         }
 
-        // add services to host
-        if ($serviceQuery->count() > 0) {
-            foreach ($serviceQuery as $row) {
-                $hostname = $row->host_name;
+        if (in_array($objectType, ['all', 'services'])) {
 
-                $service = (array)$row;
-                unset($service['host_name']);
+            // get services with geolocation
+            $geoServiceQuery = $this->backend
+                ->select()
+                ->from('servicestatus', array(
+                    'host_display_name',
+                    'host_name',
+                    'host_acknowledged',
+                    'host_state' => 'host_' . $this->stateColumn,
+                    'host_last_state_change' => 'host_' . $this->stateChangeColumn,
+                    'host_in_downtime',
+                    'service_display_name',
+                    'service_name' => 'service',
+                    'service_acknowledged',
+                    'service_state' => 'service_' . $this->stateColumn,
+                    'service_last_state_change' => 'service_' . $this->stateChangeColumn,
+                    'service_in_downtime',
+                    'coordinates' => '_service_geolocation'
+                ))->applyFilter(Filter::fromQueryString('_host_geolocation >'));
 
-                $points['hosts'][$hostname]['services'][$service['service_display_name']] = $service;
-            }
-        }
+            $this->applyRestriction('monitoring/filter/objects', $geoServiceQuery);
+            $this->filterQuery($geoServiceQuery);
+            // ---
 
-        if ($geoServiceQuery->count() > 0) {
-            foreach ($geoServiceQuery as $row) {
-                $identifier = $row->host_name . "!" . $row->service_name;
+            if ($geoServiceQuery->count() > 0) {
+                foreach ($geoServiceQuery as $row) {
+                    $identifier = $row->host_name . "!" . $row->service_name;
 
-                $ar = (array)$row;
+                    $ar = (array)$row;
 
-                $host = array_filter($ar, function ($k) {
-                    return (preg_match("/^host_|^coordinates/", $k));
-                }, ARRAY_FILTER_USE_KEY);
+                    $host = array_filter($ar, function ($k) {
+                        return (preg_match("/^host_|^coordinates/", $k));
+                    }, ARRAY_FILTER_USE_KEY);
 
-                $service = array_filter($ar, function ($k) {
-                    return (preg_match("/^service_/", $k));
-                }, ARRAY_FILTER_USE_KEY);
+                    $service = array_filter($ar, function ($k) {
+                        return (preg_match("/^service_/", $k));
+                    }, ARRAY_FILTER_USE_KEY);
 
-                $host['services'][$service['service_display_name']] = $service;
+                    $host['services'][$service['service_display_name']] = $service;
 
-                // check for broken coordinates
-                $coordinate_pattern = '/^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$/';
+                    // check for broken coordinates
+                    $coordinate_pattern = '/^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$/';
 
-                if (!preg_match($coordinate_pattern, $host['coordinates'])) {
-                    continue;
+                    if (!preg_match($coordinate_pattern, $host['coordinates'])) {
+                        continue;
+                    }
+
+                    $host['coordinates'] = explode(",", $host['coordinates']);
+                    $points['services'][$identifier] = $host;
                 }
-
-                $host['coordinates'] = explode(",", $host['coordinates']);
-                $points['services'][$identifier] = $host;
             }
         }
 
