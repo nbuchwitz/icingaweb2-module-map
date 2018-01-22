@@ -67,7 +67,7 @@ class DataController extends Controller
             ->from('servicestatus', array(
                 'host_name',
                 'service_display_name',
-                'name'=>'service',
+                'service_name' => 'service',
                 'service_acknowledged',
                 'service_state' => 'service_' . $this->stateColumn,
                 'service_last_state_change' => 'service_' . $this->stateChangeColumn,
@@ -77,6 +77,29 @@ class DataController extends Controller
 
         $this->applyRestriction('monitoring/filter/objects', $serviceQuery);
         $this->filterQuery($serviceQuery);
+
+        // get services with geolocation
+        $geoServiceQuery = $this->backend
+            ->select()
+            ->from('servicestatus', array(
+                'host_display_name',
+                'host_name',
+                'host_acknowledged',
+                'host_state' => 'host_' . $this->stateColumn,
+                'host_last_state_change' => 'host_' . $this->stateChangeColumn,
+                'host_in_downtime',
+                'service_display_name',
+                'service_name' => 'service',
+                'service_acknowledged',
+                'service_state' => 'service_' . $this->stateColumn,
+                'service_last_state_change' => 'service_' . $this->stateChangeColumn,
+                'service_in_downtime',
+                'coordinates' => '_service_geolocation'
+            ))->applyFilter(Filter::fromQueryString('_host_geolocation >'));
+
+        $this->applyRestriction('monitoring/filter/objects', $geoServiceQuery);
+        $this->filterQuery($geoServiceQuery);
+        // ---
 
         $points = array();
         if ($hostQuery->count() > 0) {
@@ -95,7 +118,7 @@ class DataController extends Controller
 
                 $host['coordinates'] = explode(",", $host['coordinates']);
 
-                $points[$hostname] = $host;
+                $points['hosts'][$hostname] = $host;
             }
         }
 
@@ -107,7 +130,35 @@ class DataController extends Controller
                 $service = (array)$row;
                 unset($service['host_name']);
 
-                $points[$hostname]['services'][$service['service_display_name']] = $service;
+                $points['hosts'][$hostname]['services'][$service['service_display_name']] = $service;
+            }
+        }
+
+        if ($geoServiceQuery->count() > 0) {
+            foreach ($geoServiceQuery as $row) {
+                $identifier = $row->host_name . "!" . $row->service_name;
+
+                $ar = (array)$row;
+
+                $host = array_filter($ar, function ($k) {
+                    return (preg_match("/^host_|^coordinates/", $k));
+                }, ARRAY_FILTER_USE_KEY);
+
+                $service = array_filter($ar, function ($k) {
+                    return (preg_match("/^service_/", $k));
+                }, ARRAY_FILTER_USE_KEY);
+
+                $host['services'][$service['service_display_name']] = $service;
+
+                // check for broken coordinates
+                $coordinate_pattern = '/^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$/';
+
+                if (!preg_match($coordinate_pattern, $host['coordinates'])) {
+                    continue;
+                }
+
+                $host['coordinates'] = explode(",", $host['coordinates']);
+                $points['services'][$identifier] = $host;
             }
         }
 
