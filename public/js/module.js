@@ -1,13 +1,29 @@
 (function (Icinga) {
 
-    function colorMarker(color) {
+    function colorMarker(color, icon) {
         var img_base = icinga.config.baseUrl + '/img/map/';
 
-        return new L.Icon.Default({
-            iconUrl: img_base + 'marker-icon-' + color + '.png',
-            iconRetinaUrl: img_base + 'marker-icon-' + color + '.png',
-            shadowUrl: img_base + 'marker-shadow.png',
+        var redMarker = L.AwesomeMarkers.icon({
+            icon: icon,
+            markerColor: color
         });
+
+        return redMarker
+    }
+
+    function state2color(state) {
+        switch (parseInt(state)) {
+            case 0:
+                return "green";
+            case 1:
+                return "orange";
+            case 2:
+                return "red";
+            case 3:
+                return "violet";
+            default:
+                return "blue";
+        }
     }
 
     function zoomAll(id) {
@@ -22,8 +38,8 @@
         var params = decodeURIComponent($('.module-map').data('icingaUrl')).split('&');
 
         // remove module path from url parameters
-        if(params.length > 0) {
-            params[0] = params[0].replace(/^.*\?/,'')
+        if (params.length > 0) {
+            params[0] = params[0].replace(/^.*\?/, '')
         }
 
         return params
@@ -179,7 +195,6 @@
             this.timer = {};
             this.module.on('rendered', this.onRenderedContainer);
             this.registerTimer()
-
         },
 
         registerTimer: function (id) {
@@ -228,139 +243,128 @@
                 }
             }
 
-
             function removeOldMarkers(id, data) {
                 // remove old markers
-                $.each(cache[id].hostMarkers, function (hostname, d) {
-                    if (!data[hostname]) {
+                $.each(cache[id].hostMarkers, function (identifier, d) {
+                    if (!data['hosts'][identifier] && !data['services'][identifier]) {
                         cache[id].markers.removeLayer(d);
-                        delete cache[id].hostMarkers[hostname];
+                        delete cache[id].hostMarkers[identifier];
                     }
                 });
             }
 
             function processData(json) {
-                removeOldMarkers(id, json)
+                removeOldMarkers(id, json);
 
-                $.each(json, function (hostname, data) {
-                    if (data.length < 1 || data['coordinates'] == "") {
-                        console.log('found empty coordinates: ' + data)
-                        return true
-                    }
+                $.each(json, function (type, element) {
+                    $.each(element, function (identifier, data) {
+                        if (data.length < 1 || data['coordinates'] == "") {
+                            console.log('found empty coordinates: ' + data)
+                            return true
+                        }
 
-                    var hostState = data['host_state'];
-                    var icon;
-                    var services;
-                    var states = [];
+                        var states = [];
+                        var icon;
+                        var services;
+                        var worstState;
+                        var display_name;
 
-                    states.push((hostState == 1 ? 2 : hostState ))
+                        if (type === 'hosts') {
+                            states.push((data['host_state'] == 1 ? 2 : data['host_state']))
+                        }
 
-                    services = '<div class="map-popup-services">';
-                    services += '<h1><span class="icon-services"></span> Services</h1>';
-                    services += '<div class="scroll-view">';
-                    services += '<table class="icinga-module module-monitoring">';
-                    services += '<tbody>';
+                        services = '<div class="map-popup-services">';
+                        services += '<h1><span class="icon-services"></span> Services</h1>';
+                        services += '<div class="scroll-view">';
+                        services += '<table class="icinga-module module-monitoring">';
+                        services += '<tbody>';
 
-                    $.each(data['services'], function (service_display_name, service) {
-                        states.push(service['service_state'])
+                        $.each(data['services'], function (service_display_name, service) {
+                            states.push(service['service_state'])
 
-                        services += '<tr>';
+                            services += '<tr>';
 
-                        services += '<td class="';
-                        services += "state-col";
-                        services += " state-" + service_status[service['service_state']][1].toLowerCase();
-                        services += "" + (service['service_acknowledged'] == 1 || service['service_in_downtime'] == 1 ? " handled" : "");
-                        services += '">';
-                        services += '<div class="state-label">';
-                        services += service_status[service['service_state']][0];
+                            services += '<td class="';
+                            services += "state-col";
+                            services += " state-" + service_status[service['service_state']][1].toLowerCase();
+                            services += "" + (service['service_acknowledged'] == 1 || service['service_in_downtime'] == 1 ? " handled" : "");
+                            services += '">';
+                            services += '<div class="state-label">';
+                            services += service_status[service['service_state']][0];
+                            services += '</div>';
+                            services += '</td>';
+
+                            services += '<td>';
+                            services += '<div class="state-header">';
+                            services += '<a data-hostname="' + data['host_name'] + '" data-base-target="_next" href="'
+                                + icinga.config.baseUrl
+                                + '/monitoring/service/show?host='
+                                + data['host_name']
+                                + '&service='
+                                + service['service_name']
+                                + '">';
+                            services += service_display_name;
+                            services += '</a>'
+                            services += '</div>'
+                            services += '</td>';
+
+                            services += '</tr>';
+                        });
+
+                        services += '</tbody>';
+                        services += '</table>';
                         services += '</div>';
-                        services += '</td>';
+                        services += '</div>';
 
-                        services += '<td>';
-                        services += '<div class="state-header">';
-                        services += '<a data-hostname="' + hostname + '" data-base-target="_next" href="'
+                        worstState = getWorstState(states);
+                        icon = colorMarker(state2color(worstState), (type === 'hosts' ? 'host' : 'service'));
+
+                        var host_icon = "";
+                        if (data['host_icon_image'] != "") {
+                            host_icon = '<img src="' + icinga.config.baseUrl + '/img/icons/'
+                                + data['host_icon_image']
+                                + '"'
+                                + ((data['host_icon_image_alt'] != "") ? ' alt="' + data['host_icon_image_alt'] + '"' : '')
+                                + ' class="host-icon-image icon">';
+                        }
+
+                        var host_display_name = (data['host_display_name'] ? data['host_display_name'] : hostname)
+
+                        var info = '<div class="map-popup">';
+                        info += '<h1>';
+                        info += '<a class="detail-link" data-hostname="' + data['host_name'] + '" data-base-target="_next" href="'
                             + icinga.config.baseUrl
-                            + '/monitoring/service/show?host='
-                            + hostname
-                            + '&service='
-                            + service['name']
+                            + '/monitoring/host/show?host='
+                            + data['host_name']
                             + '">';
-                        services += service_display_name;
-                        services += '</a>'
-                        services += '</div>'
-                        services += '</td>';
+                        info += ' <span class="icon-eye"></span> ';
+                        info += '</a>';
+                        info += data['host_display_name'] + '</h1>';
 
-                        services += '</tr>';
-                    });
+                        info += services;
+                        info += '</div>';
 
-                    services += '</tbody>';
-                    services += '</table>';
-                    services += '</div>';
-                    services += '</div>';
+                        var marker;
 
-                    var worstState = getWorstState(states)
-                    switch (parseInt(worstState)) {
-                        case 0:
-                            icon = colorMarker("green")
-                            break
-                        case 1:
-                            icon = colorMarker("orange")
-                            break
-                        case 2:
-                            icon = colorMarker("red")
-                            break
-                        case 3:
-                            icon = colorMarker("violet")
-                            break
-                        default:
-                            icon = colorMarker("blue")
-                    }
+                        if (cache[id].hostMarkers[identifier]) {
+                            marker = cache[id].hostMarkers[identifier];
+                            marker.options.state = worstState;
+                            marker.setIcon(icon);
+                        } else {
+                            marker = L.marker(data['coordinates'],
+                                {
+                                    icon: icon,
+                                    title: display_name,
+                                    id: identifier,
+                                    state: worstState,
+                                }).addTo(cache[id].markers);
 
-                    var host_icon = "";
-                    if (data['host_icon_image'] != "") {
-                        host_icon = '<img src="' + icinga.config.baseUrl + '/img/icons/'
-                            + data['host_icon_image']
-                            + '"'
-                            + (( data['host_icon_image_alt'] != "" ) ? ' alt="' + data['host_icon_image_alt'] + '"' : '')
-                            + ' class="host-icon-image icon">';
-                    }
+                            cache[id].hostMarkers[identifier] = marker;
+                            cache[id].hostData[identifier] = data
+                        }
 
-                    var host_display_name = (data['host_display_name'] ? data['host_display_name'] : hostname )
-
-                    var info = '<div class="map-popup">';
-                    info += '<h1>';
-                    info += '<a class="detail-link" data-hostname="' + hostname + '" data-base-target="_next" href="'
-                        + icinga.config.baseUrl
-                        + '/monitoring/host/show?host='
-                        + hostname
-                        + '">';
-                    info += ' <span class="icon-eye"></span> ';
-                    info += '</a>';
-                    info += host_display_name + '</h1>';
-
-                    info += services;
-                    info += '</div>';
-
-                    var marker;
-
-                    if (cache[id].hostMarkers[hostname]) {
-                        marker = cache[id].hostMarkers[hostname];
-                        marker.options.state = worstState;
-                        marker.setIcon(icon);
-                    } else {
-                        marker = L.marker(data['coordinates'],
-                            {
-                                icon: icon,
-                                title: host_display_name,
-                                id: hostname,
-                                state: worstState,
-                            }).addTo(cache[id].markers);
-
-                        cache[id].hostMarkers[hostname] = marker;
-                        cache[id].hostData[hostname] = data
-                    }
-
-                    marker.bindPopup(info);
+                        marker.bindPopup(info);
+                    })
                 });
 
                 cache[id].markers.refreshClusters();
@@ -424,7 +428,7 @@
                     });
                 },
                 maxClusterRadius: function (zoom) {
-                    return (zoom <= map_max_zoom-1) ? 80 : 1; // radius in pixels
+                    return (zoom <= map_max_zoom - 1) ? 80 : 1; // radius in pixels
                 },
             });
             cache[id].hostMarkers = {};
