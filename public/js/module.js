@@ -18,8 +18,8 @@
         return (parameter.charAt(0) === '(' || parameter.match('^[_]{0,1}(host|service)'));
     }
 
-    function getParameters() {
-        var params = decodeURIComponent($('.module-map').data('icingaUrl')).split('&');
+    function getParameters(id) {
+        var params = decodeURIComponent($('#map-'+id).closest('.module-map').data('icingaUrl')).split('&');
 
         // remove module path from url parameters
         if(params.length > 0) {
@@ -30,7 +30,7 @@
     }
 
     function filterParams(id) {
-        var sURLVariables = getParameters();
+        var sURLVariables = getParameters(id);
         var params = [],
             i;
 
