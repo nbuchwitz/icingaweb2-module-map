@@ -20,7 +20,7 @@
             case 2:
                 return "red";
             case 3:
-                return "violet";
+                return "purple";
             default:
                 return "blue";
         }
@@ -35,7 +35,7 @@
     }
 
     function getParameters(id) {
-        var params = decodeURIComponent($('#map-'+id).closest('.module-map').data('icingaUrl')).split('&');
+        var params = decodeURIComponent($('#map-' + id).closest('.module-map').data('icingaUrl')).split('&');
 
         // remove module path from url parameters
         if (params.length > 0) {
@@ -129,6 +129,10 @@
         var allUnknown = -1
         var last = -1
 
+        if (states.length == 1) {
+            return states[0];
+        }
+
         for (var i = 0, len = states.length; i < len; i++) {
             var state = states[i]
             if (state < 3) {
@@ -173,7 +177,6 @@
     }
 
     function mapCenter(hostname) {
-        console.log(hostname)
         if (cache[id].hostMarkers[hostname]) {
             var el = cache[id].hostMarkers[hostname];
             cache[id].map.panTo(cache[id].hostMarkers[hostname].getLatLng())
@@ -405,7 +408,7 @@
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
                 subdomains: ['a', 'b', 'c'],
                 maxZoom: map_max_zoom,
-                minZoom: map_min_zoom,
+                minZoom: map_min_zoom
             });
             osm.addTo(cache[id].map);
 
@@ -413,12 +416,12 @@
                 iconCreateFunction: function (cluster) {
                     var childCount = cluster.getChildCount();
 
-                    var states = []
+                    var states = [];
                     $.each(cluster.getAllChildMarkers(), function (id, el) {
-                        states.push(el.options.state)
-                    })
+                        states.push(el.options.state);
+                    });
 
-                    var worstState = getWorstState(states)
+                    var worstState = getWorstState(states);
                     var c = ' marker-cluster-' + worstState;
 
                     return new L.DivIcon({
@@ -429,7 +432,7 @@
                 },
                 maxClusterRadius: function (zoom) {
                     return (zoom <= map_max_zoom - 1) ? 80 : 1; // radius in pixels
-                },
+                }
             });
             cache[id].hostMarkers = {};
             cache[id].hostData = {};
