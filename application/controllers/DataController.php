@@ -168,6 +168,7 @@ class DataController extends Controller
                     }
 
                     $host['coordinates'] = explode(",", $host['coordinates']);
+                    $host['icon'] = $ar['icon'];
                     $points['services'][$identifier] = $host;
                 }
             }
