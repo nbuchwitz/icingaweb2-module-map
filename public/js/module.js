@@ -1,14 +1,19 @@
 (function (Icinga) {
 
-    function colorMarker(color, icon) {
-        var img_base = icinga.config.baseUrl + '/img/map/';
+    function colorMarker(worstState, icon) {
+        var markerColor = 'awesome-marker';
 
-        var redMarker = L.AwesomeMarkers.icon({
+        if(worstState > 0) {
+            markerColor = markerColor + ' awesome-marker-square';
+        }
+
+        var marker = L.AwesomeMarkers.icon({
             icon: icon,
-            markerColor: color
+            markerColor: state2color(worstState),
+            className: markerColor
         });
 
-        return redMarker
+        return marker
     }
 
     function state2color(state) {
@@ -326,7 +331,7 @@
                             marker_icon = data['icon'];
                         }
 
-                        icon = colorMarker(state2color(worstState),marker_icon);
+                        icon = colorMarker(worstState, marker_icon);
 
                         var host_icon = "";
                         if (data['host_icon_image'] != "") {
@@ -530,7 +535,7 @@
                             + e.latlng.lng.toFixed(6)
                             + '"';
                         var marker;
-                        marker = L.marker(e.latlng, {icon: colorMarker("blue")});
+                        marker = L.marker(e.latlng, {icon: colorMarker(99, 'reschedule')});
                         marker.bindPopup("<h1>selected coordinates:</h1><pre>" + coord + "</pre>");
                         marker.addTo(cache[id].markers);
                         marker.on('popupclose', function (evt) {

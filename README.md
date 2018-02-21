@@ -31,7 +31,7 @@ This module uses Leaflet and several plugins:
 * [Leaflet.Locate](https://github.com/domoritz/leaflet-locatecontrol) - MIT license
 * [Leaflet.EasyButton](https://github.com/CliffCloud/Leaflet.EasyButton) - MIT license
 * [Leaflet.Spin](https://github.com/makinacorpus/Leaflet.Spin) - MIT license
-* [Leaflet.awesome-markers](https://github.com/lvoogdt/Leaflet.awesome-markers) - MIT license
+* [Leaflet.awesome-markers](https://github.com/sigma-geosistemas/Leaflet.awesome-markers) - MIT license
 * [Spin.js](spin.js.org) - MIT license
 
 ## Documentation

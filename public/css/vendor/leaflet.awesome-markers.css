@@ -25,14 +25,14 @@ Version: 1.0
 /* Retina displays */
 @media (min--moz-device-pixel-ratio: 1.5),(-o-min-device-pixel-ratio: 3/2),
 (-webkit-min-device-pixel-ratio: 1.5),(min-device-pixel-ratio: 1.5),(min-resolution: 1.5dppx) {
-  .awesome-marker {
-    background-image: url('../img/map/markers-soft@2x.png');
-    background-size: 720px 46px;
-  }
-  .awesome-marker-shadow {
-    background-image: url('../img/map/markers-shadow@2x.png');
-    background-size: 35px 16px;
-  }
+ .awesome-marker {
+  background-image: url('../img/map/markers-soft@2x.png');
+  background-size: 720px 92px;
+ }
+ .awesome-marker-shadow {
+  background-image: url('../img/map/markers-shadow@2x.png');
+  background-size: 35px 16px;
+ }
 }
 
 .awesome-marker i {
@@ -121,4 +121,8 @@ Version: 1.0
 
 .awesome-marker-icon-black {
   background-position: -682px 0;
+}
+
+.awesome-marker-square {
+  background-position-y: -46px;
 }
