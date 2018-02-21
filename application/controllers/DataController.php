@@ -59,7 +59,8 @@ class DataController extends Controller
                     'host_state' => 'host_' . $this->stateColumn,
                     'host_last_state_change' => 'host_' . $this->stateChangeColumn,
                     'host_in_downtime',
-                    'coordinates' => '_host_geolocation'
+                    'coordinates' => '_host_geolocation',
+                    'icon' => '_host_map_icon',
                 ))
                 ->applyFilter(Filter::fromQueryString('_host_geolocation >'));
 
@@ -134,8 +135,10 @@ class DataController extends Controller
                     'service_state' => 'service_' . $this->stateColumn,
                     'service_last_state_change' => 'service_' . $this->stateChangeColumn,
                     'service_in_downtime',
-                    'coordinates' => '_service_geolocation'
-                ))->applyFilter(Filter::fromQueryString('_host_geolocation >'));
+                    'coordinates' => '_service_geolocation',
+                    'icon' => '_service_map_icon',
+
+                ))->applyFilter(Filter::fromQueryString('_service_geolocation >'));
 
             $this->applyRestriction('monitoring/filter/objects', $geoServiceQuery);
             $this->filterQuery($geoServiceQuery);

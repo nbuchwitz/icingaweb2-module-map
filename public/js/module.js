@@ -320,7 +320,13 @@
                         services += '</div>';
 
                         worstState = getWorstState(states);
-                        icon = colorMarker(state2color(worstState), (type === 'hosts' ? 'host' : 'service'));
+
+                        var marker_icon = (type === 'hosts' ? 'host' : 'service');
+                        if (data['icon']) {
+                            marker_icon = data['icon'];
+                        }
+
+                        icon = colorMarker(state2color(worstState),marker_icon);
 
                         var host_icon = "";
                         if (data['host_icon_image'] != "") {
