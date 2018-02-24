@@ -48,7 +48,7 @@ class DataController extends Controller
             $this->stateChangeColumn = 'last_state_change';
         }
 
-        if (in_array($objectType, ['all', 'hosts'])) {
+        if (in_array($objectType, ['all', 'host'])) {
             // get host data
             $hostQuery = $this->backend
                 ->select()
@@ -117,7 +117,7 @@ class DataController extends Controller
             }
         }
 
-        if (in_array($objectType, ['all', 'services'])) {
+        if (in_array($objectType, ['all', 'service'])) {
 
             // get services with geolocation
             $geoServiceQuery = $this->backend
