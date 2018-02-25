@@ -3,9 +3,10 @@
     function colorMarker(worstState, icon) {
         var markerColor = 'awesome-marker';
 
-        if(worstState > 0) {
-            markerColor = markerColor + ' awesome-marker-square';
-        }
+        // TODO: Different marker icon for not-OK states
+        // if(worstState > 0) {
+        //     markerColor = markerColor + ' awesome-marker-square';
+        // }
 
         var marker = L.AwesomeMarkers.icon({
             icon: icon,
@@ -445,6 +446,7 @@
                     return (zoom <= map_max_zoom - 1) ? 80 : 1; // radius in pixels
                 }
             });
+
             cache[id].hostMarkers = {};
             cache[id].hostData = {};
 
