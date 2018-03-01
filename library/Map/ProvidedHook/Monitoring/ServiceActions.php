@@ -4,20 +4,25 @@ namespace Icinga\Module\Map\ProvidedHook\Monitoring;
 
 use Icinga\Module\Monitoring\Hook\ServiceActionsHook;
 use Icinga\Module\Monitoring\Object\Service;
+use Icinga\Web\Navigation\Navigation;
+use Icinga\Web\Navigation\NavigationItem;
 use Icinga\Web\Url;
 
 class ServiceActions extends ServiceActionsHook
 {
     public function getActionsForService(Service $service)
     {
-        $actions = [];
+        $nav = new Navigation();
 
         $service->fetchCustomvars();
         if (array_key_exists("geolocation", $service->customvars)) {
-            $actions[t("Show on map")] = Url::fromPath('map/',
-                array('showHost' => $service->host_name . "!" . $service->getName()));
+            $nav->addItem(new NavigationItem(t('Show on map'), array(
+                'url' => Url::fromPath('map/', array('showHost' => $service->host_name . "!" . $service->getName())),
+                'target' => '_next',
+                'icon' => 'globe',
+            )));
         }
 
-        return $actions;
+        return $nav;
     }
 }
