@@ -32,10 +32,6 @@
         }
     }
 
-    function zoomAll(id) {
-        cache[id].map.fitBounds(cache[id].markers.getBounds(), {padding: [15, 15]});
-    }
-
     function isFilterParameter(parameter) {
         return (parameter.charAt(0) === '(' || parameter.match('^[_]{0,1}(host|service)') || parameter.match('^(object|state)Type'));
     }
@@ -74,7 +70,6 @@
             } else {
                 cache[id].map.setView([map_default_lat, map_default_long]);
             }
-
         } else {
             cache[id].map.fitWorld()
         }
@@ -399,20 +394,21 @@
             // get host objects
             $.getJSON(icinga.config.baseUrl + '/map/data/points?' + filterParams(id), processData)
                 .fail(function (jqxhr, textStatus, error) {
-                    console.error("Could not get host data: " + textStatus + ": " + error)
+                    console.error("Could not get host data: " + textStatus + ": " + error);
                     cache[id].map.spin(false)
                 });
         },
 
         onRenderedContainer: function (event) {
-            if (typeof id === undefined) {
+            if (typeof id === 'undefined') {
+                // in module configuration we don't have a map, so return peacefully
                 return;
             }
 
             cache[id] = {};
             cache[id].map = L.map('map-' + id, {
                     zoomControl: false,
-                    worldCopyJump: true,
+                    worldCopyJump: true
                 }
             );
 
@@ -467,22 +463,13 @@
                 L.easyButton({
                     states: [{
                         icon: 'icon-dashboard', title: translation['btn-dashboard'], onClick: function (btn, map) {
-                            var dashletUri = "map" + window.location.search
-                            var uri = icinga.config.baseUrl + "/" + "dashboard/new-dashlet?url=" + encodeURIComponent(dashletUri)
+                            var dashletUri = "map" + window.location.search;
+                            var uri = icinga.config.baseUrl + "/" + "dashboard/new-dashlet?url=" + encodeURIComponent(dashletUri);
 
                             window.open(uri, "_self")
                         }
-                    },]
+                    }]
                 }).addTo(cache[id].map);
-
-                //L.easyButton({
-                //    states: [{
-                //        icon: 'icon-resize-full', title: 'Show all', onClick: function (btn, map) {
-                //            zoomAll(id)
-                //       }
-                //    },]
-                //}).addTo(cache[id].map);
-
 
                 L.easyButton({
                     states: [{
@@ -491,7 +478,7 @@
                         onClick: function (btn, map) {
                             toggleFullscreen();
                         }
-                    },]
+                    }]
                 }).addTo(cache[id].map);
 
                 L.easyButton({
@@ -499,14 +486,14 @@
                         icon: 'icon-globe', title: translation['btn-default'], onClick: function (btn, map) {
                             showDefaultView();
                         }
-                    },]
+                    }]
                 }).addTo(cache[id].map);
 
 
                 L.control.locate({
                     icon: 'icon-pin',
                     strings: {title: translation['btn-locate']}
-                }).addTo(cache[id].map)
+                }).addTo(cache[id].map);
 
                 cache[id].map.on('map-container-resize', function () {
                     map.invalidateSize();
@@ -514,21 +501,23 @@
                 });
 
                 cache[id].map.on('moveend', function (e) {
-                    var center = cache[id].map.getCenter()
+                    var center = cache[id].map.getCenter();
 
-                    var lat = center.lat
-                    var lng = center.lng
+                    var lat = center.lat;
+                    var lng = center.lng;
 
-                    updateUrl('default_lat', lat)
+                    updateUrl('default_lat', lat);
                     updateUrl('default_long', lng)
-                })
+                });
+
                 cache[id].map.on('zoomend', function (e) {
-                    var zoomLevel = cache[id].map.getZoom()
+                    var zoomLevel = cache[id].map.getZoom();
                     updateUrl('default_zoom', zoomLevel)
-                })
+                });
+
                 cache[id].map.on('click', function (e) {
-                    // TODO: any other way?
-                    var id = e.target._container.id.replace('map-', '');
+                    // only for debugging needed
+                    // var id = e.target._container.id.replace('map-', '');
 
                     if (e.originalEvent.ctrlKey) {
                         var coord = 'vars.geolocation = "'
@@ -536,13 +525,20 @@
                             + ','
                             + e.latlng.lng.toFixed(6)
                             + '"';
+
+                        var popup = "<h1>Location selected</h1>"
+                            + "<p>To use this location with your host(s) or service(s), just add the following config to your object definition:</p>"
+                            + "<pre>" + coord + "</pre>";
+
                         var marker;
-                        marker = L.marker(e.latlng, {icon: colorMarker(99, 'reschedule')});
-                        marker.bindPopup("<h1>selected coordinates:</h1><pre>" + coord + "</pre>");
+                        marker = L.marker(e.latlng, {icon: colorMarker(99, 'globe')});
+                        marker.bindPopup(popup);
                         marker.addTo(cache[id].markers);
+
                         marker.on('popupclose', function (evt) {
                             cache[id].markers.removeLayer(marker);
                         });
+
                         cache[id].markers.zoomToShowLayer(marker, function () {
                             marker.openPopup();
                         })
@@ -552,10 +548,10 @@
 
             cache[id].markers.addTo(cache[id].map);
 
-            cache[id].map.spin(true)
+            cache[id].map.spin(true);
             this.updateMapData({id: id, show_host: map_show_host})
 
-        },
+        }
     };
 
     Icinga.availableModules.map = Map;
