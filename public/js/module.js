@@ -210,6 +210,11 @@
             return this;
         },
 
+        removeTimer: function (id) {
+            this.module.icinga.timer.unregister(this.timer);
+            return this
+        },
+
         onPopupOpen: function (evt) {
             $('.detail-link').on("click", function (ievt) {
                 mapCenter(evt.popup._source.options.id);
@@ -221,7 +226,7 @@
             var _this = this;
 
             if (cache.length == 0) {
-                this.module.icinga.timer.unregister(this.timer);
+                this.removeTimer(id)
                 return this
             }
 
@@ -237,6 +242,7 @@
         updateMapData: function (parameters) {
             var id = parameters.id;
             var show_host = parameters.show_host;
+            var $that = this;
 
             function showHost(hostname) {
                 if (cache[id].hostMarkers[hostname]) {
@@ -257,7 +263,25 @@
                 });
             }
 
+            function errorMessage(msg) {
+                cache[id].map.spin(false);
+                $map = cache[id].map;
+                $map.openModal({
+                    content: "<p>Could not fetch data from API:</p><pre>" + msg + "</pre>",
+                    onShow: function (evt) {
+                        $that.removeTimer(id)
+                    },
+                    onHide: function (evt) {
+                        $that.registerTimer(id);
+                    }
+                });
+            }
+
             function processData(json) {
+                if (json['message']) {
+                    errorMessage(json['message']);
+                    return;
+                }
                 removeOldMarkers(id, json);
 
                 $.each(json, function (type, element) {
@@ -394,8 +418,7 @@
             // get host objects
             $.getJSON(icinga.config.baseUrl + '/map/data/points?' + filterParams(id), processData)
                 .fail(function (jqxhr, textStatus, error) {
-                    console.error("Could not get host data: " + textStatus + ": " + error);
-                    cache[id].map.spin(false)
+                    errorMessage(error);
                 });
         },
 
