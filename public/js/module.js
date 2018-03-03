@@ -388,7 +388,8 @@
                             marker = L.marker(data['coordinates'],
                                 {
                                     icon: icon,
-                                    title: display_name,
+                                    title: host_display_name,
+                                    riseOnHover: true,
                                     id: identifier,
                                     state: worstState,
                                 }).addTo(cache[id].markers);
