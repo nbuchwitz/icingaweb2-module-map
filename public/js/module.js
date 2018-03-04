@@ -47,15 +47,28 @@
         return params
     }
 
-    function filterParams(id) {
+    function unique(list) {
+        var result = [];
+        $.each(list, function (i, e) {
+            if ($.inArray(e, result) == -1) result.push(e);
+        });
+        return result;
+    }
+
+    function filterParams(id, extra) {
         var sURLVariables = getParameters(id);
         var params = [],
             i;
 
+        if (extra !== undefined) {
+            sURLVariables = $.merge(extra.split('&'), sURLVariables);
+            sURLVariables = unique(sURLVariables);
+        }
+
         for (i = 0; i < sURLVariables.length; i++) {
             // Protect Icinga filter syntax
             if (isFilterParameter(sURLVariables[i])) {
-                params.push(sURLVariables[i])
+                params.push(sURLVariables[i]);
                 continue;
             }
         }
@@ -411,21 +424,19 @@
                 if (show_host != "") {
                     showHost(show_host);
                     show_host = ""
-                    //} else if (!dashlet) {
-                    //    zoomAll(id)
                 }
             }
 
-            // get host objects
-            $.getJSON(icinga.config.baseUrl + '/map/data/points?' + filterParams(id), processData)
+            var url = icinga.config.baseUrl + '/map/data/points?' + filterParams(id, cache[id].parameters);
+            $.getJSON(url, processData)
                 .fail(function (jqxhr, textStatus, error) {
                     errorMessage(error);
                 });
         },
 
         onRenderedContainer: function (event) {
+            // in module configuration we don't have a map, so return peacefully
             if (typeof id === 'undefined') {
-                // in module configuration we don't have a map, so return peacefully
                 return;
             }
 
@@ -472,6 +483,11 @@
 
             cache[id].fullscreen = false;
             cache[id].parameters = url_parameters;
+
+            // TODO: fixme
+            // var basePath = $currentUrl.replace(/\?.*$/, '');
+            // var initialUrl = icinga.
+            // $('#map-' + id).closest('.module-map').data('icingaUrl', url_parameters);
 
             showDefaultView();
 
