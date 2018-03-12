@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Map\Controllers;
 
-use Dompdf\Exception;
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\DataView\DataView;
