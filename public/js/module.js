@@ -308,7 +308,7 @@
                         var icon;
                         var services;
                         var worstState;
-                        var display_name;
+                        var display_name = (data['host_display_name'] ? data['host_display_name'] : hostname);
 
                         if (type === 'hosts') {
                             states.push((data['host_state'] == 1 ? 2 : data['host_state']))
@@ -350,6 +350,10 @@
                             services += '</td>';
 
                             services += '</tr>';
+
+                            if (type === 'services') {
+                                display_name = service_display_name + " (" + display_name + ")";
+                            }
                         });
 
                         services += '</tbody>';
@@ -375,8 +379,6 @@
                                 + ' class="host-icon-image icon">';
                         }
 
-                        var host_display_name = (data['host_display_name'] ? data['host_display_name'] : hostname)
-
                         var info = '<div class="map-popup">';
                         info += '<h1>';
                         info += '<a class="detail-link" data-hostname="' + data['host_name'] + '" data-base-target="_next" href="'
@@ -401,7 +403,7 @@
                             marker = L.marker(data['coordinates'],
                                 {
                                     icon: icon,
-                                    title: host_display_name,
+                                    title: display_name,
                                     riseOnHover: true,
                                     id: identifier,
                                     state: worstState,
