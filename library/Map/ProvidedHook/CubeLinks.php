@@ -19,7 +19,7 @@ class CubeLinks extends ActionsHook
             return;
         }
 
-        $vars = array("objectType"=>"hosts");
+        $vars = array("objectType"=>"host");
         foreach ($cube->getSlices() as $key => $val) {
             $vars['_host_' . $key] = $val;
         }
@@ -28,7 +28,7 @@ class CubeLinks extends ActionsHook
 
         $this->addActionLink(
             $this->makeUrl($url, $vars),
-            $view->translate('Show hosts on the map'),
+            $view->translate('Show on map'),
             $view->translate('This shows all matching hosts and their current state on the map module'),
             'globe'
         );
