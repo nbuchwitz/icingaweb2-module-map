@@ -164,19 +164,19 @@
                         allPending = 1;
                     }
 
-                    // treat PENDING  as OK
-                    state = 0;
+                    // OK -> PENDING -> UNKNOWN -> WARNING -> CRITICAL
+                    state = 0.25;
                 }
 
                 // UNKNOWN
-                if (state == 3 && allUnknown < 0 && last < 0) {
-                    allUnknown = 1;
-                }
-            }
+                if (state == 3) {
+                    if (allUnknown < 0 && last < 0) {
+                        allUnknown = 1;
+                    }
 
-            // Place UNKNOWN between OK and WARNING
-            if (state == 3) {
-                state = 0.5;
+                    // OK -> PENDING -> UNKNOWN -> WARNING -> CRITICAL
+                    state = 0.5;
+                }
             }
 
             if (state > worstState) {
@@ -194,8 +194,10 @@
             worstState = 3;
         }
 
-        // Restore UNKNOWN state
-        if (worstState == 0.5) {
+        // Restore PENDING and UNKNOWN
+        if (worstState == 0.25) {
+            worstState = 99;
+        } else if (worstState == 0.5) {
             worstState = 3;
         }
 
