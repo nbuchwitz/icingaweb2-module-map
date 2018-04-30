@@ -159,8 +159,10 @@
 
             if (state > 2) {
                 // PENDING
-                if (state == 99 && allPending < 0 && last < 0) {
-                    allPending = 1;
+                if (state == 99) {
+                    if (allPending < 0 && last < 0) {
+                        allPending = 1;
+                    }
 
                     // treat PENDING  as OK
                     state = 0;
