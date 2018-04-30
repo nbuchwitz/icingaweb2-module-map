@@ -17,7 +17,7 @@ class DataController extends Controller
      */
     protected function filterQuery(DataView $dataView)
     {
-        $this->setupFilterControl($dataView, null, null, ['stateType', 'objectType']);
+        $this->setupFilterControl($dataView, null, null, ['stateType', 'objectType', 'problems']);
         return $dataView;
     }
 
@@ -38,6 +38,8 @@ class DataController extends Controller
             $stateType = strtolower($this->params->shift('stateType',
                 $config->get('map', 'stateType', 'soft')
             ));
+
+            $filter = (bool)$this->params->shift('problems', false) ? Filter::where('service_problem', 1) : null;
 
             $objectType = strtolower($this->params->shift('objectType', 'all'));
 
@@ -60,6 +62,7 @@ class DataController extends Controller
                         'host_state' => 'host_' . $this->stateColumn,
                         'host_last_state_change' => 'host_' . $this->stateChangeColumn,
                         'host_in_downtime',
+                        'host_problem',
                         'coordinates' => '_host_geolocation',
                         'icon' => '_host_map_icon',
                     ))
@@ -81,6 +84,10 @@ class DataController extends Controller
                         'service_in_downtime'
                     ))
                     ->applyFilter(Filter::fromQueryString('_host_geolocation >'));
+
+                if ($filter) {
+                    $serviceQuery->applyFilter($filter);
+                }
 
                 $this->applyRestriction('monitoring/filter/objects', $serviceQuery);
                 $this->filterQuery($serviceQuery);
@@ -113,7 +120,18 @@ class DataController extends Controller
                         $service = (array)$row;
                         unset($service['host_name']);
 
-                        $points['hosts'][$hostname]['services'][$service['service_display_name']] = $service;
+                        if (isset($points['hosts'][$hostname])) {
+                            $points['hosts'][$hostname]['services'][$service['service_display_name']] = $service;
+                        }
+                    }
+                }
+
+                // remove hosts without problems and services
+                if ($filter) {
+                    foreach ($points['hosts'] as $name => $host) {
+                        if (empty($host['services']) && $host['host_problem'] != '1') {
+                            unset($points['hosts'][$name]);
+                        }
                     }
                 }
             }
@@ -140,6 +158,11 @@ class DataController extends Controller
                         'icon' => '_service_map_icon',
 
                     ))->applyFilter(Filter::fromQueryString('_service_geolocation >'));
+
+                if ($filter) {
+                    $geoServiceQuery->applyFilter($filter);
+                }
+
 
                 $this->applyRestriction('monitoring/filter/objects', $geoServiceQuery);
                 $this->filterQuery($geoServiceQuery);

@@ -33,7 +33,7 @@
     }
 
     function isFilterParameter(parameter) {
-        return (parameter.charAt(0) === '(' || parameter.match('^[_]{0,1}(host|service)') || parameter.match('^(object|state)Type'));
+        return (parameter.charAt(0) === '(' || parameter.match('^[_]{0,1}(host|service)') || parameter.match('^(object|state)Type') || parameter.match('^problems'));
     }
 
     function getParameters(id) {
@@ -138,53 +138,54 @@
     }
 
     function getWorstState(states) {
-        var worstState = 0
-        var allPending = -1
-        var allUnknown = -1
-        var last = -1
+        var worstState = 0;
+        var allPending = -1;
+        var allUnknown = -1;
+        var last = -1;
 
         if (states.length == 1) {
             return states[0];
         }
 
         for (var i = 0, len = states.length; i < len; i++) {
-            var state = states[i]
+            var state = states[i];
             if (state < 3) {
                 if (allPending == 1) {
-                    allPending = 0
+                    allPending = 0;
                 } else if (allUnknown == 1) {
-                    allUnknown = 0
+                    allUnknown = 0;
                 }
             }
 
             if (state > 2) {
                 // PENDING
                 if (state == 99 && allPending < 0 && last < 0) {
-                    allPending = 1
+                    allPending = 1;
+
+                    // treat PENDING  as OK
+                    state = 0;
                 }
 
                 // UNKNOWN
                 if (state == 3 && allUnknown < 0 && last < 0) {
-                    allUnknown = 1
+                    allUnknown = 1;
                 }
-
-                // treat PENDING and UNKNOWN at the moment as OK
-                state = 0
             }
 
-            if (state > worstState) {
-                worstState = state
+            // Ignore UNKNOWN unless worstState = 0
+            if ((state > worstState && state < 3) || (worstState == 0 && state == 3)) {
+                worstState = state;
             }
 
-            last = state
+            last = state;
         }
 
         if (allPending == 1) {
-            worstState = 99
+            worstState = 99;
         }
 
         if (allUnknown == 1) {
-            worstState = 3
+            worstState = 3;
         }
 
         return worstState;
