@@ -172,8 +172,12 @@
                 }
             }
 
-            // Ignore UNKNOWN unless worstState = 0
-            if ((state > worstState && state < 3) || (worstState == 0 && state == 3)) {
+            // Place UNKNOWN between OK and WARNING
+            if (state == 3) {
+                state = 0.5;
+            }
+
+            if (state > worstState) {
                 worstState = state;
             }
 
@@ -185,6 +189,11 @@
         }
 
         if (allUnknown == 1) {
+            worstState = 3;
+        }
+
+        // Restore UNKNOWN state
+        if (worstState == 0.5) {
             worstState = 3;
         }
 
