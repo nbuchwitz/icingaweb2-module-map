@@ -1,14 +1,14 @@
 # Icinga Web 2 - Head for multiple monitoring backends.
-# Copyright (C) 2017 Icinga Development Team
+# Copyright (C) 2018 Icinga Development Team
 # This file is distributed under the same license as Map Module.
 # Nicolai Buchwitz <nb@odly.de>, 2017.
 # 
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Map Module (1.0.3)\n"
+"Project-Id-Version: Map Module (1.0.4)\n"
 "Report-Msgid-Bugs-To: dev@icinga.com\n"
-"POT-Creation-Date: 2017-11-22 14:54+0000\n"
+"POT-Creation-Date: 2018-06-18 12:46+0200\n"
 "PO-Revision-Date: 2017-10-20 16:42+0200\n"
 "Last-Translator: Nicolai Buchwitz <nb@odly.de>\n"
 "Language: de_DE\n"
@@ -25,11 +25,11 @@ msgctxt "icinga.state"
 msgid "CRITICAL"
 msgstr "KRITISCH"
 
-#: ../../../../modules/map/configuration.php:29
+#: ../../../../modules/map/configuration.php:33
 msgid "Configuration"
 msgstr "Konfiguration"
 
-#: ../../../../modules/map/configuration.php:28
+#: ../../../../modules/map/configuration.php:32
 msgid "Configure the map module"
 msgstr "Konfiguration des Karten Moduls"
 
@@ -71,10 +71,6 @@ msgstr "Host-Karte"
 msgid "Maps"
 msgstr "Karten"
 
-#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:89
-msgid "Marker size"
-msgstr "Icon Größe"
-
 #: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:59
 msgid "Maximum zoom level"
 msgstr "Maximale Zoomstufe"
@@ -105,21 +101,23 @@ msgstr "AUSSTEHEND"
 msgid "Save Changes"
 msgstr "Änderungen speichern"
 
-#: ../../../../modules/map/library/Map/ProvidedHook/Monitoring/HostActions.php:15
+#: ../../../../modules/map/library/Map/ProvidedHook/CubeLinks.php:31
+#: ../../../../modules/map/library/Map/ProvidedHook/Monitoring/HostActions.php:21
+#: ../../../../modules/map/library/Map/ProvidedHook/Monitoring/ServiceActions.php:19
 msgid "Show on map"
 msgstr "Auf der Karte zeigen"
 
-#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:90
-msgid "Size of the host markers"
-msgstr "Größe der Host-Icons"
-
-#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:98
+#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:88
 msgid "State type"
 msgstr "Zustandsart"
 
-#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:99
+#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:89
 msgid "State type for status indication"
 msgstr "Art der angezeigten Statusinformationen"
+
+#: ../../../../modules/map/library/Map/ProvidedHook/CubeLinks.php:32
+msgid "This shows all matching hosts and their current state on the map module"
+msgstr ""
 
 #: ../../../../modules/map/application/views/scripts/index/index.phtml:17
 msgctxt "icinga.state"
@@ -134,6 +132,12 @@ msgstr "Visualisierung von Hosts und Services auf der Karte"
 msgctxt "icinga.state"
 msgid "WARNING"
 msgstr "WARNUNG"
+
+msgid "Marker size"
+msgstr "Icon Größe"
+
+msgid "Size of the host markers"
+msgstr "Größe der Host-Icons"
 
 msgid "Zoom in"
 msgstr "Vergrößern"
@@ -152,3 +156,6 @@ msgstr "Zeige aktuelle Position"
 
 msgid "Show default view"
 msgstr "Zeige Standardansicht"
+
+msgid "Host is down"
+msgstr "Host ist nicht erreichbar"
