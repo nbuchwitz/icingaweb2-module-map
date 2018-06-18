@@ -335,7 +335,7 @@
                         services += '<tbody>';
 
                         $.each(data['services'], function (service_display_name, service) {
-                            states.push(service['service_state'])
+                            states.push(service['service_state']);
 
                             services += '<tr>';
 
@@ -393,7 +393,7 @@
                                 + ' class="host-icon-image icon">';
                         }
 
-                        var host_status = data['host_state'] == 1 ? "<div id=\"hoststatus\">"+translation['host-down']+"</div>" : "";
+                        var host_status = type === 'hosts' && data['host_state'] == 1 ? "<div id=\"hoststatus\">" + translation['host-down'] + "</div>" : "";
 
                         var info = '<div class="map-popup">';
                         info += '<h1>';
