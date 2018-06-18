@@ -337,6 +337,7 @@
                         $.each(data['services'], function (service_display_name, service) {
                             states.push(service['service_state']);
 
+                            service_handled = "";
                             if ((data['host_state'] == 1 && data['host_acknowledged']) || (service['service_acknowledged'] == 1 || service['service_in_downtime'] == 1)) {
                                 service_handled = " handled";
                             }
