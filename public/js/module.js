@@ -393,6 +393,8 @@
                                 + ' class="host-icon-image icon">';
                         }
 
+                        var host_status = data['host_state'] == 1 ? "<div id=\"hoststatus\">"+translation['host-down']+"</div>" : "";
+
                         var info = '<div class="map-popup">';
                         info += '<h1>';
                         info += '<a class="detail-link" data-hostname="' + data['host_name'] + '" data-base-target="_next" href="'
@@ -403,6 +405,7 @@
                         info += ' <span class="icon-eye"></span> ';
                         info += '</a>';
                         info += data['host_display_name'] + '</h1>';
+                        info += host_status;
 
                         info += services;
                         info += '</div>';
