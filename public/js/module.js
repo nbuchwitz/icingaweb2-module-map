@@ -335,14 +335,18 @@
                         services += '<tbody>';
 
                         $.each(data['services'], function (service_display_name, service) {
-                            states.push(service['service_state'])
+                            states.push(service['service_state']);
+
+                            if ((data['host_state'] == 1 && data['host_acknowledged']) || (service['service_acknowledged'] == 1 || service['service_in_downtime'] == 1)) {
+                                service_handled = " handled";
+                            }
 
                             services += '<tr>';
 
                             services += '<td class="';
                             services += "state-col";
                             services += " state-" + service_status[service['service_state']][1].toLowerCase();
-                            services += "" + (service['service_acknowledged'] == 1 || service['service_in_downtime'] == 1 ? " handled" : "");
+                            services += "" + service_handled;
                             services += '">';
                             services += '<div class="state-label">';
                             services += service_status[service['service_state']][0];
@@ -393,7 +397,7 @@
                                 + ' class="host-icon-image icon">';
                         }
 
-                        var host_status = data['host_state'] == 1 ? "<div id=\"hoststatus\">"+translation['host-down']+"</div>" : "";
+                        var host_status = type === 'hosts' && data['host_state'] == 1 ? "<div id=\"hoststatus\">" + translation['host-down'] + "</div>" : "";
 
                         var info = '<div class="map-popup">';
                         info += '<h1>';
