@@ -45,6 +45,10 @@ class IndexController extends ModuleActionController
          * 2. stored map
          * 3. config
          */
+        $userPreferences = $this->Auth()->getUser()->getPreferences();
+        if ($userPreferences->has("map")) {
+            $config->getSection("map")->merge($userPreferences->get("map"));
+        }
 
         foreach ($parameterDefaults as $parameter => $default) {
             if ($this->params->has($parameter)) {
