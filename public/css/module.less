@@ -1,3 +1,7 @@
+// Marker transparency
+@cluster-outer-transparency: 70%;
+@cluster-inner-transparency: 47%;
+
 [class^="icon-"]:before, [class*=" icon-"]:before {
   margin-right: 0;
 }
@@ -38,49 +42,77 @@
   text-align: center;
   font-weight: bold;
   background-color: @color-down;
+  padding: 0.25em;
+  text-transform: uppercase;
+}
+
+.marker-cluster span {
+  font-weight: normal;
+  mix-blend-mode: difference;
 }
 
 // cluster OK
 .marker-cluster-0 {
-  background-color: rgba(181, 226, 140, 0.6);
+  color: @color-ok;
+  background-color: fade(@color-ok, @cluster-inner-transparency);
 }
 
 .marker-cluster-0 div {
-  background-color: rgba(110, 204, 57, 0.6);
+  background-color: fade(@color-ok, @cluster-outer-transparency);
+}
+
+.marker-cluster-0 span {
+  color: @color-ok;
 }
 
 // cluster WARNING
 .marker-cluster-1 {
-  background-color: rgba(241, 211, 87, 0.6);
+  background-color: fade(@color-warning, @cluster-inner-transparency);
 }
 
 .marker-cluster-1 div {
-  background-color: rgba(240, 194, 12, 0.6);
+  background-color: fade(@color-warning, @cluster-outer-transparency);
+}
+
+.marker-cluster-1 span {
+  color: @color-warning;
 }
 
 // cluster CRITICAL
 .marker-cluster-2 {
-  background-color: rgba(247, 141, 114, 0.6);
+  background-color: fade(@color-critical, @cluster-inner-transparency);
 }
 
 .marker-cluster-2 div {
-  background-color: rgba(228, 70, 31, 0.6);
+  background-color: fade(@color-critical, @cluster-outer-transparency);
+}
+
+.marker-cluster-2 span {
+  color: @color-critical;
 }
 
 // cluster UNKNOWN
 .marker-cluster-3 {
-  background-color: rgba(221, 179, 255, 0.6);
+  background-color: fade(@color-unknown, @cluster-inner-transparency);
 }
 
 .marker-cluster-3 div {
-  background-color: rgba(170, 68, 255, 0.6);
+  background-color: fade(@color-unknown, @cluster-outer-transparency);
+}
+
+.marker-cluster-3 span {
+  color: @color-unknown;
 }
 
 // cluster PENDING
 .marker-cluster-99 {
-  background-color: rgba(140, 180, 255, 0.6);
+  background-color: fade(@color-pending, @cluster-inner-transparency);
 }
 
 .marker-cluster-99 div {
-  background-color: rgba(119, 170, 255, 0.6);
+  background-color: fade(@color-pending, @cluster-outer-transparency);
+}
+
+.marker-cluster-99 span {
+  color: @color-pending;
 }
