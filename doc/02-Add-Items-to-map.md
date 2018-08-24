@@ -26,6 +26,18 @@ Don't forget to reload your icinga2 daemon after adding items to your config.
 
 There is also an [article](https://www.icinga.com/2017/08/16/integrate-maps-into-icinga/) in the icinga blog describing a more automated way of adding coordinates by matching your hostname conventions.
 
+### Assign different marker icons
+
+Add a custom attribute called `map_icon` to an object already having the custom attribute `geolocation`. Its value must be a name of an icon from the iconfont used in Icinga Web 2 which you can find at /icingaweb2/doc/style/font when you enable the doc module.
+
+```
+vars.map_icon = "print"
+```
+
+Markers will look like the following example showing the icons sitemap, flapping and wifi.
+
+![Marker icons](screenshot/02_getting-started/0207_marker-icons.png)
+
 
 ## Using the Icinga Director
 
