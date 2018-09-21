@@ -471,9 +471,10 @@
                 }
             );
 
-            var osm = L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            var osm = L.tileLayer(tile_url, {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
                 subdomains: ['a', 'b', 'c'],
+                maxNativeZoom: map_max_native_zoom,
                 maxZoom: map_max_zoom,
                 minZoom: map_min_zoom
             });

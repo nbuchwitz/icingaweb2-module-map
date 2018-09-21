@@ -6,7 +6,9 @@
     echo 'var map_default_long = ' . (!empty($this->default_long) ? $this->default_long : "null") . ";\n";
     echo 'var map_default_lat = ' . (!empty($this->default_lat) ? $this->default_lat : "null") . ";\n";
     echo 'var map_max_zoom = ' . $this->max_zoom . ";\n";
+    echo 'var map_max_native_zoom = ' . $this->max_native_zoom . ";\n";
     echo 'var map_min_zoom = ' . $this->min_zoom . ";\n";
+    echo 'var tile_url = \'' . $this->tile_url . "';\n";
 
     echo 'var map_show_host = "' . $this->host . "\";\n";
     ?>
