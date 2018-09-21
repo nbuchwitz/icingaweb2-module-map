@@ -125,7 +125,7 @@ class GeneralConfigForm extends ConfigForm
 
         $this->addElement(
             'checkbox',
-            'map_cluter_problem_count',
+            'map_cluster_problem_count',
             array(
                 'label' => $this->translate('Show number of problems in cluster'),
                 'description' => $this->translate('Show number of problems in cluster instead of the number of markers'),
