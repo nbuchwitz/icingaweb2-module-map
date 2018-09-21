@@ -113,6 +113,15 @@ class GeneralConfigForm extends ConfigForm
                 ),
             )
         );
+        $this->addElement(
+            'text',
+            'map_disable_cluster_at_zoom',
+            array(
+                'label' => $this->translate('Disable clustering at zoomlevel'),
+                'description' => $this->translate('Don\'t cluster marker at a certain zoomlevel. Use 1 for disabling clustering'),
+                'required' => false,
+            )
+        );
 
     }
 }
