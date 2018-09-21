@@ -499,8 +499,8 @@
                     });
                 },
                 maxClusterRadius: function (zoom) {
-                    return (zoom <= map_max_zoom - 1) ? 80 : 1; // radius in pixels
-                }
+                    return (zoom <= disable_cluster_at_zoom) ? 80 : 1; // radius in pixels
+                },
             });
 
             cache[id].hostMarkers = {};

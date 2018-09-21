@@ -55,6 +55,7 @@ The following parameters could be overriden:
 | min_zoom |
 | max_zoom |
 | max_native_zoom |
+| disable_cluster_at_zoom |
 | default_zoom |
 | default_long |
 | default_lat |
@@ -86,3 +87,7 @@ insert into icingaweb_user_preference values ("USER", "map", "default_zoom", 5, 
 insert into icingaweb_user_preference values ("USER", "map", "default_lat", "29.87", "2018-08-23 08:52:19", "2018-08-23 08:52:19");
 insert into icingaweb_user_preference values ("USER", "map", "default_long", "-88.90", "2018-08-23 08:52:19", "2018-08-23 08:52:19");
 ```
+
+### Disable clustering
+In some environments it is desired not to cluster the markers.
+The cluster function can be deactivated with the configuration option ``disable_cluster_at_zoom``, either at a certain zoom level (e.g. ``disable_cluster_at_zoom=10`` or completely (``disable_cluster_at_zoom=1``)

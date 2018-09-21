@@ -39,8 +39,8 @@ class IndexController extends ModuleActionController
             "min_zoom" => "2",
             "max_zoom" => "19",
             "max_native_zoom" => "19",
+            "disable_cluster_at_zoom" => null, // should be by default: max_zoom - 1
             "tile_url" => "//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-
         );
 
         /*
@@ -61,6 +61,10 @@ class IndexController extends ModuleActionController
             } else {
                 $this->view->$parameter = $config->get("map", $parameter, $default);
             }
+        }
+
+        if (!$this->view->disable_cluster_at_zoom) {
+            $this->view->disable_cluster_at_zoom = $this->view->max_zoom - 1;
         }
 
         $pattern = "/^([_]{0,1}(host|service))|\(|(object|state)Type/";
