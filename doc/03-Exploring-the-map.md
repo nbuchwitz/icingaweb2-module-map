@@ -60,6 +60,7 @@ The following parameters could be overriden:
 | default_long |
 | default_lat |
 | stateType |
+|cluster_problem_count |
 | tile_url |
 
 Hierarchy: ``Module Config < User Config < Map Config``
@@ -91,3 +92,7 @@ insert into icingaweb_user_preference values ("USER", "map", "default_long", "-8
 ### Disable clustering
 In some environments it is desired not to cluster the markers.
 The cluster function can be deactivated with the configuration option ``disable_cluster_at_zoom``, either at a certain zoom level (e.g. ``disable_cluster_at_zoom=10`` or completely (``disable_cluster_at_zoom=1``)
+
+### Show number of problems instead of totals
+
+Set ``cluster_problem_count`` to ``1`` to show the number of problems in the cluster instead of the marker count.
