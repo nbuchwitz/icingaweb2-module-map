@@ -63,12 +63,32 @@ class GeneralConfigForm extends ConfigForm
         );
         $this->addElement(
             'text',
+            'map_max_native_zoom',
+            array(
+                'placeholder' => '19',
+                'label' => $this->translate('Maximum native zoom level '),
+                'description' => $this->translate('Maximum zoom level natively supported by the map'),
+                'required' => false
+            )
+        );
+        $this->addElement(
+            'text',
             'map_min_zoom',
             array(
                 'placeholder' => '2',
                 'label' => $this->translate('Minimal zoom level'),
                 'description' => $this->translate('Minimal zoom level of the map'),
                 'required' => false
+            )
+        );
+        $this->addElement(
+            'text',
+            'map_tile_url',
+            array(
+                'placeholder' => '//\{s\}.tile.openstreetmap.org/\{z\}/\{x\}/\{y\}.png',
+                'label' => $this->translate('URL for tile server'),
+                'description' => $this->translate('Escaped server url, for leaflet tilelayer'),
+                'required' => false,
             )
         );
         $this->addElement(

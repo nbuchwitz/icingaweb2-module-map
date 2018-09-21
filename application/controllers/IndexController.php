@@ -38,6 +38,9 @@ class IndexController extends ModuleActionController
             "default_lat" => '52.515855',
             "min_zoom" => "2",
             "max_zoom" => "19",
+            "max_native_zoom" => "19",
+            "tile_url" => "//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+
         );
 
         /*
