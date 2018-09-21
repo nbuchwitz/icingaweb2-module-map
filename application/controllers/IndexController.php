@@ -40,6 +40,7 @@ class IndexController extends ModuleActionController
             "max_zoom" => "19",
             "max_native_zoom" => "19",
             "disable_cluster_at_zoom" => null, // should be by default: max_zoom - 1
+            "cluster_problem_count" => 0,
             "tile_url" => "//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         );
 

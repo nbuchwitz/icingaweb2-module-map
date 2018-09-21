@@ -482,11 +482,15 @@
 
             cache[id].markers = new L.MarkerClusterGroup({
                 iconCreateFunction: function (cluster) {
-                    var childCount = cluster.getChildCount();
+                    var childCount = cluster_problem_count ? 0 : cluster.getChildCount();
 
                     var states = [];
                     $.each(cluster.getAllChildMarkers(), function (id, el) {
                         states.push(el.options.state);
+                        
+                        if (cluster_problem_count && el.options.state > 0) {
+                            childCount++;
+                        }
                     });
 
                     var worstState = getWorstState(states);
