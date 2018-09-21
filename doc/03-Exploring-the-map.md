@@ -38,12 +38,51 @@ The usual icingaweb2 filter syntax can be used to filter the set of hosts being 
 | hostgroup_name=customer1&_host_environment=production | Show all hosts of hostgroup `customer1` of where the custom variable environment is equal to `production` |
 | _host_customer=(max-corp\|icinga)                     | Show all hosts where the custom variable `customer` is set to `max-corp` or `icinga` |
 
-### Change default parameters
-
-It's possible to change the parameters ``default_zoom``, ``default_long`` and ``default_lat`` for a map by adding the parameters to the url:
-
-```map?default_zoom=20&default_long=13.370324&default_lat=52.500859```
 
 ## Dashboard integration
 
 To add a map widget to a dashboard (or a new one) click on the `Add to dashboard` button as shown above. Any filters which are applied to the current view, are also stored in the dashlet.
+
+
+## Settings
+
+Besides the global map configuration in the module settings, it is possible to override these settings per user or per each map.
+
+The following parameters could be overriden:
+
+| Parameter | 
+| --- |
+| min_zoom |
+| max_zoom |
+| max_native_zoom |
+| default_zoom |
+| default_long |
+| default_lat |
+| stateType |
+| tile_url |
+
+Hierarchy: ``Module Config < User Config < Map Config``
+
+### Map specific overrides
+
+All config parameters above could be changed for the specific map by adding it to the URL. Use the ampersand sign for concatenation of multiple parameters.
+
+Example: ``/icingaweb2/map?default_zoom=20&default_long=13.370324&default_lat=52.500859``
+
+### User specific overrides
+
+The way in which a user-specific configuration can be stored depends on how Icinga Web 2 manages its configuration.
+
+#### File
+
+Add a new section named ``map`` to your users Icinga Web 2 configuration (``/etc/icingaweb2/preferences/<USERNAME>/config.ini``) and put in the parameters you would like to override.
+
+#### Database
+
+You need to manually insert an entry in the users database configuration for each parameter you'd like to change:
+
+```sql
+insert into icingaweb_user_preference values ("USER", "map", "default_zoom", 5, "2018-08-23 08:52:19", "2018-08-23 08:52:19");
+insert into icingaweb_user_preference values ("USER", "map", "default_lat", "29.87", "2018-08-23 08:52:19", "2018-08-23 08:52:19");
+insert into icingaweb_user_preference values ("USER", "map", "default_long", "-88.90", "2018-08-23 08:52:19", "2018-08-23 08:52:19");
+```
