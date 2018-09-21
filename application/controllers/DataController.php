@@ -39,6 +39,11 @@ class DataController extends Controller
                 $config->get('map', 'stateType', 'soft')
             ));
 
+            $userPreferences = $this->Auth()->getUser()->getPreferences();
+            if ($userPreferences->has("map")) {
+                $stateType = $userPreferences->getValue("map", "stateType", $stateType);
+            }
+
             $filter = (bool)$this->params->shift('problems', false) ? Filter::where('service_problem', 1) : null;
 
             $objectType = strtolower($this->params->shift('objectType', 'all'));
