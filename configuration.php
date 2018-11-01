@@ -1,7 +1,7 @@
 <?php
 $section = $this->menuSection(N_('Maps'), array('icon' => 'globe'));
 
-$mapModule = $section->add(N_($this->translate('Host map')), array(
+$mapModule = $section->add(N_($this->translate('Default map')), array(
     'icon' => 'globe',
     'description' => $this->translate('Visualize your hosts and services on a map'),
     'url' => 'map',
