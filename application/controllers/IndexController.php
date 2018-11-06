@@ -47,7 +47,8 @@ class IndexController extends ModuleActionController
         /*
          * 1. url
          * 2. stored map
-         * 3. config
+         * 3. user config
+         * 4. config
          */
         $userPreferences = $this->Auth()->getUser()->getPreferences();
         if ($userPreferences->has("map")) {

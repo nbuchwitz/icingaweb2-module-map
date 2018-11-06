@@ -20,7 +20,7 @@ You might want to use a script as follows for this task:
 ICINGAWEB_MODULEPATH="/usr/share/icingaweb2/modules"
 REPO_URL="https://github.com/nbuchwitz/icingaweb2-module-map"
 TARGET_DIR="${ICINGAWEB_MODULEPATH}/map"
-MODULE_VERSION="1.0.4"
+MODULE_VERSION="1.1.0"
 URL="${REPO_URL}/archive/v${MODULE_VERSION}.tar.gz"
 install -d -m 0755 "${TARGET_DIR}"
 wget -q -O - "$URL" | tar xfz - -C "${TARGET_DIR}" --strip-components 1
