@@ -39,7 +39,7 @@
         },
 
         setMarker: function (f) {
-          this._setMarkerFunction = f;
+            this._setMarkerFunction = f;
         },
 
         onAdd: function (map) {
@@ -141,7 +141,7 @@
             return this;
         },
 
-        getMarker: function() {
+        getMarker: function () {
             return this._geocodeMarker;
         },
 
@@ -149,7 +149,7 @@
             L.DomEvent.preventDefault(event);
             L.DomEvent.stopPropagation(event);
 
-            L.DomUtil.addClass(this._container, 'leaflet-control-ocd-search-spinner');
+            // L.DomUtil.addClass(this._container, 'leaflet-control-ocd-search-spinner');
             this._clearResults();
             this.options.geocoder.geocode(this._input.value, this._geocodeResult, this);
 
@@ -192,7 +192,9 @@
         },
 
         _createAlt: function (result, index) {
+            var icon = result['icon'] || "globe";
             var li = document.createElement('li');
+            li.classList.add("leaflet-search-result-" + icon);
             li.innerHTML = '<a href="#" data-result-index="' + index + '">' +
                 (this.options.showResultIcons && result.icon ?
                     '<img src="' + result.icon + '"/>' :
@@ -258,7 +260,7 @@
         window[callbackId] = L.Util.bind(callback, context);
         var script = document.createElement('script');
         script.type = 'text/javascript';
-        script.src = url + L.Util.getParamString(params);
+        script.src = url + L.Util.getParamString(params) + '&' + context.options.filter();
         script.id = callbackId;
         script.addEventListener('error', function () {
             callback({results: []});
@@ -288,24 +290,26 @@
                 var center = context._map.getCenter();
                 proximity.proximity = center.lat + "," + center.lng;
             }
-            L.Control.OpenCageSearch.jsonp(this.options.serviceUrl + 'json/', L.extend({
+
+            L.Control.OpenCageSearch.jsonp(icinga.config.baseUrl + '/map/search', L.extend({
                     q: query,
                     limit: this.options.limit,
-                    key: this.options.key,
                 }, proximity, this.options.geocodingQueryParams),
                 function (data) {
                     var results = [];
-                    for (var i = data.results.length - 1; i >= 0; i--) {
-                        results[i] = {
-                            name: data.results[i].formatted,
-                            center: L.latLng(data.results[i].geometry.lat, data.results[i].geometry.lng)
-                        };
-                        if (data.results[i].bounds) {
-                            results[i].bounds = L.latLngBounds(
-                                [data.results[i].bounds.southwest.lat, data.results[i].bounds.southwest.lng],
-                                [data.results[i].bounds.northeast.lat, data.results[i].bounds.northeast.lng]);
-                        }
+
+                    if (data.hosts.length) {
+                        results = results.concat(data.hosts)
                     }
+
+                    if (data.services.length) {
+                        results = results.concat(data.services)
+                    }
+
+                    if (data.ocg.length) {
+                        results = results.concat(data.ocg)
+                    }
+
                     cb.call(context, results);
                 }, this, 'jsonp');
         },

@@ -127,7 +127,27 @@ ul.leaflet-control-ocd-search-alternatives {
     overflow: hidden;
     text-overflow: ellipsis;
     border-bottom: 1px solid #eee;
-    padding: 0
+    padding: 0;
+    margin: auto;
+    line-height: 1.7em;
+}
+
+.leaflet-search-result-globe:before {
+    content: '\e819';
+}
+
+.leaflet-search-result-host:before {
+    content: '\e866';
+}
+
+.leaflet-search-result-service:before {
+    content: '\e83f';
+}
+
+.leaflet-control-ocd-search-alternatives li:before {
+    font-family: 'ifont';
+    color: @icinga-blue;
+    padding: 0px 6px;
 }
 
 .leaflet-control-ocd-search-alternatives li:last-child {
@@ -135,11 +155,12 @@ ul.leaflet-control-ocd-search-alternatives {
 }
 
 .leaflet-control-ocd-search-alternatives a {
-    display: block;
+    display: inline-block;
     text-decoration: none;
     color: #000;
-    padding: 6px 8px 16px 6px;
-    font-size: 14px
+    padding: 0px 8px 8px 6px;
+    font-size: 14px;
+    width: 100%;
 }
 
 .leaflet-touch .leaflet-control-ocd-search-alternatives a {
@@ -147,5 +168,5 @@ ul.leaflet-control-ocd-search-alternatives {
 }
 
 .leaflet-control-ocd-search-alternatives a:hover, .leaflet-control-ocd-search-selected {
-    background-color: #ddd
+    background-color: @tr-active-color;
 }

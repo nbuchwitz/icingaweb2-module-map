@@ -76,6 +76,15 @@
         return params.join("&")
     }
 
+    function showHost(hostname) {
+        if (cache[id].hostMarkers[hostname]) {
+            var el = cache[id].hostMarkers[hostname];
+            cache[id].markers.zoomToShowLayer(el, function () {
+                el.openPopup();
+            })
+        }
+    }
+
     function showDefaultView() {
         if (map_default_lat !== null && map_default_long !== null) {
             if (map_default_zoom !== null) {
@@ -270,15 +279,6 @@
             var id = parameters.id;
             var show_host = parameters.show_host;
             var $that = this;
-
-            function showHost(hostname) {
-                if (cache[id].hostMarkers[hostname]) {
-                    var el = cache[id].hostMarkers[hostname];
-                    cache[id].markers.zoomToShowLayer(el, function () {
-                        el.openPopup();
-                    })
-                }
-            }
 
             function removeOldMarkers(id, data) {
                 // remove old markers
@@ -480,14 +480,36 @@
             });
             osm.addTo(cache[id].map);
 
-            // search button
-            if (map_opencage_apikey != "") {
-                var options = {
-                    key: map_opencage_apikey,
-                    limit: 10,
-                };
-                var control = L.Control.openCageSearch(options).addTo(cache[id].map);
-            }
+            var options = {
+                limit: 10,
+                filter: function () {
+                    return filterParams(id, cache[id].parameters);
+                }
+            };
+            var control = L.Control.openCageSearch(options).addTo(cache[id].map);
+
+            control.setMarker(function (el) {
+                if (el['id'] && cache[id].hostMarkers[el.id]) {
+                    showHost(el.id)
+                } else {
+                    var geocodeMarker = new L.Marker(el.center, {
+                        icon: L.AwesomeMarkers.icon({
+                            icon: 'globe',
+                            markerColor: 'blue',
+                            className: 'awesome-marker'
+                        })
+                    })
+                        .bindPopup(el.name)
+                        .addTo(cache[id].map)
+                        .openPopup();
+
+                    cache[id].map.setView(geocodeMarker.getLatLng(), map_max_zoom);
+
+                    geocodeMarker.on('popupclose', function (evt) {
+                        cache[id].map.removeLayer(evt.target);
+                    });
+                }
+            });
 
             cache[id].markers = new L.MarkerClusterGroup({
                 iconCreateFunction: function (cluster) {
