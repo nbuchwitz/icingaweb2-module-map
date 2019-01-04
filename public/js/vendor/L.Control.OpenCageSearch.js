@@ -57,13 +57,7 @@
             input.placeholder = this.options.placeholder;
 
             L.DomEvent.addListener(input, 'keydown', this._keydown, this);
-            L.DomEvent.addListener(window, 'keydown', function(e){
-                if (e.keyCode == 114 || (e.ctrlKey && e.keyCode == 70)) {
-                    e.preventDefault();
-                    this._toggle();
-                }
-
-            }, this);
+            L.DomEvent.addListener(window, 'keydown', this._hotkeySearch, this);
 
             this._errorElement = document.createElement('div');
             this._errorElement.className = className + '-form-no-error';
@@ -214,6 +208,17 @@
             return li;
         },
 
+        _hotkeySearch: function (e) {
+            // ignore hotkey if map is not visible
+            if (document.querySelectorAll('.module-map').length == 0) {
+                return;
+            }
+
+            if (e.keyCode == 114 || (e.ctrlKey && e.keyCode == 70)) {
+                e.preventDefault();
+                this._toggle();
+            }
+        },
         _keydown: function (e) {
             var _this = this,
                 select = function select(dir) {
