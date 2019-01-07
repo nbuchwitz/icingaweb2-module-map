@@ -209,40 +209,45 @@
         },
 
         _hotkeySearch: function (e) {
+            var key = e.which;
+
             // ignore hotkey if map is not visible
             if (document.querySelectorAll('.module-map').length == 0) {
                 return;
             }
 
-            if (e.keyCode == 114 || (e.ctrlKey && e.keyCode == 70)) {
+            if (key === 114 || (e.ctrlKey && key === 70)) {
                 e.preventDefault();
                 this._toggle();
             }
         },
+
         _keydown: function (e) {
-            var _this = this,
-                select = function select(dir) {
-                    if (_this._selection) {
-                        L.DomUtil.removeClass(_this._selection.firstChild, 'leaflet-control-ocd-search-selected');
-                        _this._selection = _this._selection[dir > 0 ? 'nextSibling' : 'previousSibling'];
-                    }
+            var key = e.which;
+            var _this = this;
 
-                    if (!_this._selection) {
-                        _this._selection = _this._alts[dir > 0 ? 'firstChild' : 'lastChild'];
-                    }
+            var select = function select(dir) {
+                if (_this._selection) {
+                    L.DomUtil.removeClass(_this._selection.firstChild, 'leaflet-control-ocd-search-selected');
+                    _this._selection = _this._selection[dir > 0 ? 'nextSibling' : 'previousSibling'];
+                }
 
-                    if (_this._selection) {
-                        L.DomUtil.addClass(_this._selection.firstChild, 'leaflet-control-ocd-search-selected');
-                    }
-                };
+                if (!_this._selection) {
+                    _this._selection = _this._alts[dir > 0 ? 'firstChild' : 'lastChild'];
+                }
 
-            switch (e.keyCode) {
+                if (_this._selection) {
+                    L.DomUtil.addClass(_this._selection.firstChild, 'leaflet-control-ocd-search-selected');
+                }
+            };
+
+            switch (key) {
                 // Up
                 case 38:
                     select(-1);
                     L.DomEvent.preventDefault(e);
                     break;
-                // Up
+                // Down
                 case 40:
                     select(1);
                     L.DomEvent.preventDefault(e);
