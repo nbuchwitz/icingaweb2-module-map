@@ -155,7 +155,6 @@ ul.leaflet-control-ocd-search-alternatives {
 }
 
 .leaflet-control-ocd-search-alternatives a {
-    display: inline-block;
     text-decoration: none;
     color: #000;
     padding: 0px 8px 8px 6px;
