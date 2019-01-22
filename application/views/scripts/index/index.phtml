@@ -12,7 +12,6 @@
     echo "var tile_url = '" . $this->tile_url . "';\n";
     echo "var cluster_problem_count = " . $this->cluster_problem_count . ";\n";
     echo 'var map_show_host = "' . $this->host . "\";\n";
-    echo 'var map_opencage_apikey = "' . $this->opencage_apikey . "\";\n";
     ?>
     var service_status = {};
     service_status[0] = ['<?= $this->translate('OK', 'icinga.state') ?>', 'OK'];

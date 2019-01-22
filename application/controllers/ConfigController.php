@@ -37,7 +37,6 @@ class ConfigController extends Controller
             "max_native_zoom" => "19",
             "cluster_problem_count" => 0,
             "tile_url" => "//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            "opencage_apikey" => "",
         );
 
         $defaults['disable_cluster_at_zoom'] = $defaults['max_zoom'] - 1; // should be by default: max_zoom - 1

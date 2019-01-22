@@ -25,7 +25,6 @@
             position: 'topright',
             placeholder: 'Search...',
             errorMessage: 'Nothing found.',
-            key: '',
             limit: 5
         },
 
@@ -293,7 +292,6 @@
             serviceUrl: 'https://api.opencagedata.com/geocode/v1/',
             geocodingQueryParams: {},
             reverseQueryParams: {},
-            key: '',
             limit: 5
         },
 
