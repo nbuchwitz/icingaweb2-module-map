@@ -227,7 +227,7 @@
 
             var select = function select(dir) {
                 if (_this._selection) {
-                    L.DomUtil.removeClass(_this._selection.firstChild, 'leaflet-control-ocd-search-selected');
+                    L.DomUtil.removeClass(_this._selection.firstChild.parentElement, 'leaflet-control-ocd-search-selected');
                     _this._selection = _this._selection[dir > 0 ? 'nextSibling' : 'previousSibling'];
                 }
 
@@ -236,7 +236,7 @@
                 }
 
                 if (_this._selection) {
-                    L.DomUtil.addClass(_this._selection.firstChild, 'leaflet-control-ocd-search-selected');
+                    L.DomUtil.addClass(_this._selection.firstChild.parentElement, 'leaflet-control-ocd-search-selected');
                 }
             };
 

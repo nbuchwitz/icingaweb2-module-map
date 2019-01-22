@@ -167,6 +167,6 @@ ul.leaflet-control-ocd-search-alternatives {
     font-size: 12px
 }
 
-.leaflet-control-ocd-search-alternatives a:hover, .leaflet-control-ocd-search-selected {
+.leaflet-control-ocd-search-alternatives li:hover, .leaflet-control-ocd-search-selected {
     background-color: @tr-active-color;
 }
