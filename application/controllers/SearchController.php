@@ -25,7 +25,7 @@ class SearchController extends Controller
     protected function filterQuery(DataView $dataView)
     {
         $this->setupFilterControl($dataView, null, null,
-            ['stateType', 'objectType', 'problems', 'jsonp', 'q', 'proximity']);
+            ['stateType', 'objectType', 'problems', 'jsonp', 'q', 'proximity', 'lite']);
         return $dataView;
     }
 
