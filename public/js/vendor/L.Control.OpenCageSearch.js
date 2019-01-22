@@ -298,7 +298,7 @@
             geocodingQueryParams: {},
             reverseQueryParams: {},
             limit: 5,
-            lite: false,
+            lite: 0,
         },
 
         initialize: function (options) {

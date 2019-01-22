@@ -159,7 +159,7 @@ class SearchController extends Controller
         $callback = strtolower($this->params->shift('jsonp', ''));
         $this->limit = strtolower($this->params->shift('limit', 5));
 
-        $lite = strtolower($this->params->shift('lite', false));
+        $lite = boolval(strtolower($this->params->shift('lite', 0)));
 
         $results = [
             "ocg" => [],
