@@ -37,7 +37,7 @@ class SearchController extends Controller
             return $results;
         }
 
-        $result = $this->geocoder->geocode($query);
+        $result = $this->geocoder->geocode($query, ["limit" => $this->limit]);
 
         if ($result && $result['total_results'] > 0) {
             foreach ($result['results'] as $el) {
@@ -159,6 +159,8 @@ class SearchController extends Controller
         $callback = strtolower($this->params->shift('jsonp', ''));
         $this->limit = strtolower($this->params->shift('limit', 5));
 
+        $lite = strtolower($this->params->shift('lite', false));
+
         $results = [
             "ocg" => [],
             "hosts" => [],
@@ -166,9 +168,10 @@ class SearchController extends Controller
         ];
 
         $results["ocg"] = $this->opencageSearch($query);
-        $results["hosts"] = $this->hostSearch($query);
-        $results["services"] = $this->serviceSearch($query);
-
+        if (!$lite) {
+            $results["hosts"] = $this->hostSearch($query);
+            $results["services"] = $this->serviceSearch($query);
+        }
         print $callback . "(" . json_encode($results) . ");";
         exit();
     }

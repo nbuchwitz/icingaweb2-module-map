@@ -226,7 +226,7 @@
         this.module = module;
         this.initialize();
         this.timer;
-        this.module.icinga.logger.debug('Map module loaded');
+        // this.module.icinga.logger.debug('Map module loaded');
     };
 
     Map.prototype = {

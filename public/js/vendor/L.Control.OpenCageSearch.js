@@ -276,7 +276,12 @@
         window[callbackId] = L.Util.bind(callback, context);
         var script = document.createElement('script');
         script.type = 'text/javascript';
-        script.src = url + L.Util.getParamString(params) + '&' + context.options.filter();
+        script.src = url + L.Util.getParamString(params);
+
+        if ("filter" in context.options) {
+            script.src += '&' + context.options.filter();
+        }
+
         script.id = callbackId;
         script.addEventListener('error', function () {
             callback({results: []});
@@ -292,7 +297,8 @@
             serviceUrl: 'https://api.opencagedata.com/geocode/v1/',
             geocodingQueryParams: {},
             reverseQueryParams: {},
-            limit: 5
+            limit: 5,
+            lite: false,
         },
 
         initialize: function (options) {
@@ -309,6 +315,7 @@
             L.Control.OpenCageSearch.jsonp(icinga.config.baseUrl + '/map/search', L.extend({
                     q: query,
                     limit: this.options.limit,
+                    lite: this.options.lite,
                 }, proximity, this.options.geocodingQueryParams),
                 function (data) {
                     var results = [];

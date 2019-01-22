@@ -28,6 +28,7 @@ class ConfigController extends Controller
         $moduleConfig = $this->Config();
         $config = [];
 
+        // TODO: Reuse the default values in config form?
         $defaults = array(
             "default_zoom" => "4",
             "default_long" => '13.377485',
