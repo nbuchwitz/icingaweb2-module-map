@@ -69,7 +69,7 @@
             // Protect Icinga filter syntax
             if (isFilterParameter(sURLVariables[i])) {
                 params.push(sURLVariables[i]);
-                continue;
+
             }
         }
 
@@ -262,7 +262,7 @@
             var _this = this;
 
             if (cache.length == 0) {
-                this.removeTimer(id)
+                this.removeTimer(id);
                 return this
             }
 
@@ -314,7 +314,7 @@
                 $.each(json, function (type, element) {
                     $.each(element, function (identifier, data) {
                         if (data.length < 1 || data['coordinates'] == "") {
-                            console.log('found empty coordinates: ' + data)
+                            console.log('found empty coordinates: ' + data);
                             return true
                         }
 
@@ -364,8 +364,8 @@
                                 + service['service_name']
                                 + '">';
                             services += service_display_name;
-                            services += '</a>'
-                            services += '</div>'
+                            services += '</a>';
+                            services += '</div>';
                             services += '</td>';
 
                             services += '</tr>';
