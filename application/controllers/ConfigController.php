@@ -3,6 +3,7 @@
 namespace Icinga\Module\Map\Controllers;
 
 use Icinga\Module\Map\Forms\Config\GeneralConfigForm;
+use Icinga\Module\Map\Forms\Config\DirectorConfigForm;
 use Icinga\Web\Controller;
 
 class ConfigController extends Controller
@@ -23,8 +24,21 @@ class ConfigController extends Controller
         $this->view->tabs = $this->Module()->getConfigTabs()->activate('config');
     }
 
+    public function directorAction()
+    {
+        $this->assertPermission('map/director/configuration');
+        $form = new DirectorConfigForm();
+        $form->setIniConfig($this->Config());
+        $form->handleRequest();
+
+        $this->view->form = $form;
+        $this->view->tabs = $this->Module()->getConfigTabs()->activate('director');
+    }
+
+
     public function fetchAction()
     {
+        $type = strtolower($this->params->shift('type', ""));
         $moduleConfig = $this->Config();
         $config = [];
 
@@ -49,6 +63,15 @@ class ConfigController extends Controller
         if ($userPreferences->has("map")) {
             $moduleConfig->getSection("map")->merge($userPreferences->get("map"));
         }
+
+        if ($type === "director") {
+            $moduleConfig->getSection("map")->merge($moduleConfig->getSection("director"));
+
+            if($userPreferences->has("map-director")) {
+                $moduleConfig->getSection("map")->merge($userPreferences->get("map-director"));
+            }
+        }
+
 
         foreach ($defaults as $parameter => $default) {
             $config[$parameter] = $moduleConfig->get("map", $parameter, $default);
