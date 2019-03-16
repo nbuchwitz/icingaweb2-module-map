@@ -2,16 +2,16 @@
 ?>
 <script type="text/javascript">
     <?php
-    echo 'var map_default_zoom = ' . (!empty($this->default_zoom) ? $this->default_zoom : "null") . ";\n";
-    echo 'var map_default_long = ' . (!empty($this->default_long) ? $this->default_long : "null") . ";\n";
-    echo 'var map_default_lat = ' . (!empty($this->default_lat) ? $this->default_lat : "null") . ";\n";
-    echo 'var map_max_zoom = ' . $this->max_zoom . ";\n";
-    echo 'var map_max_native_zoom = ' . $this->max_native_zoom . ";\n";
-    echo 'var map_min_zoom = ' . $this->min_zoom . ";\n";
-    echo 'var disable_cluster_at_zoom = ' . $this->disable_cluster_at_zoom . ";\n";
-    echo "var tile_url = '" . $this->tile_url . "';\n";
-    echo "var cluster_problem_count = " . $this->cluster_problem_count . ";\n";
-    echo 'var map_show_host = "' . $this->host . "\";\n";
+    echo 'var map_default_zoom = ' . (!empty($this->default_zoom) ? intval($this->default_zoom) : "null") . ";\n";
+    echo 'var map_default_long = ' . (!empty($this->default_long) ? preg_replace("/[^0-9\.\,\-]/", "", $this->default_long) : "null") . ";\n";
+    echo 'var map_default_lat = ' . (!empty($this->default_lat) ? preg_replace("/[^0-9\.\,\-]/", "", $this->default_lat) : "null") . ";\n";
+    echo 'var map_max_zoom = ' . intval($this->max_zoom) . ";\n";
+    echo 'var map_max_native_zoom = ' . intval($this->max_native_zoom) . ";\n";
+    echo 'var map_min_zoom = ' . intval($this->min_zoom) . ";\n";
+    echo 'var disable_cluster_at_zoom = ' . intval($this->disable_cluster_at_zoom) . ";\n";
+    echo "var tile_url = '" . preg_replace("/[\'\;]/", "", $this->tile_url) . "';\n";
+    echo "var cluster_problem_count = " . intval($this->cluster_problem_count) . ";\n";
+    echo 'var map_show_host = "' . preg_replace("/[\'\;]/", "", $this->host) . "\";\n";
     ?>
     var service_status = {};
     service_status[0] = ['<?= $this->translate('OK', 'icinga.state') ?>', 'OK'];
