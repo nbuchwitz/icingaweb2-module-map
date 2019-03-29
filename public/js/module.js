@@ -69,11 +69,20 @@
             // Protect Icinga filter syntax
             if (isFilterParameter(sURLVariables[i])) {
                 params.push(sURLVariables[i]);
-                continue;
+
             }
         }
 
         return params.join("&")
+    }
+
+    function showHost(hostname) {
+        if (cache[id].hostMarkers[hostname]) {
+            var el = cache[id].hostMarkers[hostname];
+            cache[id].markers.zoomToShowLayer(el, function () {
+                el.openPopup();
+            })
+        }
     }
 
     function showDefaultView() {
@@ -217,7 +226,7 @@
         this.module = module;
         this.initialize();
         this.timer;
-        this.module.icinga.logger.debug('Map module loaded');
+        // this.module.icinga.logger.debug('Map module loaded');
     };
 
     Map.prototype = {
@@ -253,7 +262,7 @@
             var _this = this;
 
             if (cache.length == 0) {
-                this.removeTimer(id)
+                this.removeTimer(id);
                 return this
             }
 
@@ -270,15 +279,6 @@
             var id = parameters.id;
             var show_host = parameters.show_host;
             var $that = this;
-
-            function showHost(hostname) {
-                if (cache[id].hostMarkers[hostname]) {
-                    var el = cache[id].hostMarkers[hostname];
-                    cache[id].markers.zoomToShowLayer(el, function () {
-                        el.openPopup();
-                    })
-                }
-            }
 
             function removeOldMarkers(id, data) {
                 // remove old markers
@@ -314,7 +314,7 @@
                 $.each(json, function (type, element) {
                     $.each(element, function (identifier, data) {
                         if (data.length < 1 || data['coordinates'] == "") {
-                            console.log('found empty coordinates: ' + data)
+                            console.log('found empty coordinates: ' + data);
                             return true
                         }
 
@@ -364,8 +364,8 @@
                                 + service['service_name']
                                 + '">';
                             services += service_display_name;
-                            services += '</a>'
-                            services += '</div>'
+                            services += '</a>';
+                            services += '</div>';
                             services += '</td>';
 
                             services += '</tr>';
@@ -480,6 +480,37 @@
             });
             osm.addTo(cache[id].map);
 
+            var options = {
+                limit: 10,
+                filter: function () {
+                    return filterParams(id, cache[id].parameters);
+                }
+            };
+            var control = L.Control.openCageSearch(options).addTo(cache[id].map);
+
+            control.setMarker(function (el) {
+                if (el['id'] && cache[id].hostMarkers[el.id]) {
+                    showHost(el.id)
+                } else {
+                    var geocodeMarker = new L.Marker(el.center, {
+                        icon: L.AwesomeMarkers.icon({
+                            icon: 'globe',
+                            markerColor: 'blue',
+                            className: 'awesome-marker'
+                        })
+                    })
+                        .bindPopup(el.name)
+                        .addTo(cache[id].map)
+                        .openPopup();
+
+                    cache[id].map.setView(geocodeMarker.getLatLng(), map_max_zoom);
+
+                    geocodeMarker.on('popupclose', function (evt) {
+                        cache[id].map.removeLayer(evt.target);
+                    });
+                }
+            });
+
             cache[id].markers = new L.MarkerClusterGroup({
                 iconCreateFunction: function (cluster) {
                     var childCount = cluster_problem_count ? 0 : cluster.getChildCount();
@@ -487,7 +518,7 @@
                     var states = [];
                     $.each(cluster.getAllChildMarkers(), function (id, el) {
                         states.push(el.options.state);
-                        
+
                         if (cluster_problem_count && el.options.state > 0) {
                             childCount++;
                         }
@@ -605,7 +636,7 @@
                         marker.addTo(cache[id].markers);
 
                         marker.on('popupclose', function (evt) {
-                            cache[id].markers.removeLayer(marker);
+                            cache[id].markers.removeLayer(evt.target);
                         });
 
                         cache[id].markers.zoomToShowLayer(marker, function () {

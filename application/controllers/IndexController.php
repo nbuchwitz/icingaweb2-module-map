@@ -42,6 +42,7 @@ class IndexController extends ModuleActionController
             "disable_cluster_at_zoom" => null, // should be by default: max_zoom - 1
             "cluster_problem_count" => 0,
             "tile_url" => "//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            "opencage_apikey" => "",
         );
 
         /*

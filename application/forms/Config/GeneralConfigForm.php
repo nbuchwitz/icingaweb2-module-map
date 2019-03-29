@@ -93,6 +93,16 @@ class GeneralConfigForm extends ConfigForm
         );
         $this->addElement(
             'text',
+            'map_opencage_apikey',
+            array(
+                'placeholder' => 'OpenCage Geocoder API KEY',
+                'label' => $this->translate('OpenCage API key'),
+                'description' => $this->translate('Your personal OpenCage Geocoder API key'),
+                'required' => false,
+            )
+        );
+        $this->addElement(
+            'text',
             'map_dashlet_height',
             array(
                 'placeholder' => '300',
