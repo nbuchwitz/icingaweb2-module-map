@@ -50,7 +50,7 @@ To add a map widget to a dashboard (or a new one) click on the `Add to dashboard
 
 Besides the global map configuration in the module settings, it is possible to override these settings per user or per each map.
 
-The following parameters could be overriden:
+The following parameters can be overridden:
 
 | Parameter | 
 | --- |
