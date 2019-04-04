@@ -514,24 +514,39 @@
             cache[id].markers = new L.MarkerClusterGroup({
                 iconCreateFunction: function (cluster) {
                     var childCount = cluster_problem_count ? 0 : cluster.getChildCount();
-
+                    var childDown = cluster_problem_count ? cluster.getChildCount() : 0;
+                    
                     var states = [];
                     $.each(cluster.getAllChildMarkers(), function (id, el) {
                         states.push(el.options.state);
-
+                        
                         if (cluster_problem_count && el.options.state > 0) {
                             childCount++;
+                        }
+                        
+                        if (!cluster_problem_count && el.options.state > 0) {
+                            childDown++;
                         }
                     });
 
                     var worstState = getWorstState(states);
                     var c = ' marker-cluster-' + worstState;
 
-                    return new L.DivIcon({
-                        html: '<div><span>' + childCount + '</span></div>',
-                        className: 'marker-cluster' + c,
-                        iconSize: new L.Point(40, 40)
-                    });
+                    if (cluster_problem_count) {
+                        return new L.DivIcon({
+                            html: '<div><span>' + childCount + '</span></div>',
+                            className: 'marker-cluster' + c,
+                            iconSize: new L.Point(40, 40)
+                        });
+                    }
+                    
+                    if (!cluster_problem_count) {
+                        return new L.DivIcon({
+                            html: '<div><span>' + childCount + '/' + childDown '</span></div>',
+                            className: 'marker-cluster' + c,
+                            iconSize: new L.Point(40, 40)
+                        });
+                    }   
                 },
                 maxClusterRadius: function (zoom) {
                     return (zoom <= disable_cluster_at_zoom) ? 80 : 1; // radius in pixels
