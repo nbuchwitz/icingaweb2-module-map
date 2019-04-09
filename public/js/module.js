@@ -555,7 +555,7 @@
 
             L.control.zoom({
                     zoomInTitle: translation['btn-zoom-in'],
-                    zoomOutTitle: translation['btn-zoom-in']
+                    zoomOutTitle: translation['btn-zoom-out']
                 }
             ).addTo(cache[id].map);
 
