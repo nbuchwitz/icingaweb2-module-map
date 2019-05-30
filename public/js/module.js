@@ -513,22 +513,28 @@
 
             cache[id].markers = new L.MarkerClusterGroup({
                 iconCreateFunction: function (cluster) {
-                    var childCount = cluster_problem_count ? 0 : cluster.getChildCount();
+                    var childCount = cluster.getChildCount();
+                    var childProblem = 0;
 
                     var states = [];
                     $.each(cluster.getAllChildMarkers(), function (id, el) {
                         states.push(el.options.state);
-
-                        if (cluster_problem_count && el.options.state > 0) {
-                            childCount++;
+                        
+                        if (el.options.state > 0) {
+                            childProblem++;
                         }
                     });
 
                     var worstState = getWorstState(states);
                     var c = ' marker-cluster-' + worstState;
+                    var clusterLabel = childProblem + '/' + childCount;
 
+                    if (cluster_problem_count) {
+                        clusterLabel = childProblem;
+                    }
+                    
                     return new L.DivIcon({
-                        html: '<div><span>' + childCount + '</span></div>',
+                        html: '<div><span>' + clusterLabel + '</span></div>',
                         className: 'marker-cluster' + c,
                         iconSize: new L.Point(40, 40)
                     });
