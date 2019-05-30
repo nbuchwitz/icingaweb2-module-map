@@ -525,9 +525,11 @@
                         }
                     });
 
-                    var bigCluster = childCount > 99;
-                    var className = bigCluster ? 'marker-cluster marker-cluster-big' : 'marker-cluster';
+                    // TODO: Make threshold configurable
+                    var bigCluster = childCount > 50;
+                    // TODO: Make size configurable
                     var clusterSize = bigCluster ? 60 : 40;
+                    var className = bigCluster ? 'marker-cluster marker-cluster-big' : 'marker-cluster';
                     var worstState = getWorstState(states);
                     var c = ' marker-cluster-' + worstState;
                     var clusterLabel = childProblem + '/' + childCount;
