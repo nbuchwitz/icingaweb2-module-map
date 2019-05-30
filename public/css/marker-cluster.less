@@ -1,0 +1,86 @@
+@cluster-size: 50px;
+
+.marker-cluster-big {
+  border-radius: @cluster-size;
+}
+
+.marker-cluster-big div {
+  width: @cluster-size;
+  height: @cluster-size;
+  border-radius: ~"calc(@{cluster-size} / 2)";
+}
+
+.marker-cluster-big span {
+  line-height: @cluster-size;
+}
+
+.marker-cluster span {
+  font-weight: normal;
+  mix-blend-mode: difference;
+}
+
+// cluster OK
+.marker-cluster-0 {
+  color: @color-ok;
+  background-color: fade(@color-ok, @cluster-inner-transparency);
+}
+
+.marker-cluster-0 div {
+  background-color: fade(@color-ok, @cluster-outer-transparency);
+}
+
+.marker-cluster-0 span {
+  color: @color-ok;
+}
+
+// cluster WARNING
+.marker-cluster-1 {
+  background-color: fade(@color-warning, @cluster-inner-transparency);
+}
+
+.marker-cluster-1 div {
+  background-color: fade(@color-warning, @cluster-outer-transparency);
+}
+
+.marker-cluster-1 span {
+  color: @color-warning;
+}
+
+// cluster CRITICAL
+.marker-cluster-2 {
+  background-color: fade(@color-critical, @cluster-inner-transparency);
+}
+
+.marker-cluster-2 div {
+  background-color: fade(@color-critical, @cluster-outer-transparency);
+}
+
+.marker-cluster-2 span {
+  color: @color-critical;
+}
+
+// cluster UNKNOWN
+.marker-cluster-3 {
+  background-color: fade(@color-unknown, @cluster-inner-transparency);
+}
+
+.marker-cluster-3 div {
+  background-color: fade(@color-unknown, @cluster-outer-transparency);
+}
+
+.marker-cluster-3 span {
+  color: @color-unknown;
+}
+
+// cluster PENDING
+.marker-cluster-99 {
+  background-color: fade(@color-pending, @cluster-inner-transparency);
+}
+
+.marker-cluster-99 div {
+  background-color: fade(@color-pending, @cluster-outer-transparency);
+}
+
+.marker-cluster-99 span {
+  color: @color-pending;
+}

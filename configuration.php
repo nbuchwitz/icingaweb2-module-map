@@ -17,6 +17,7 @@ $this->provideCssFile('vendor/easy-button.css');
 $this->provideCssFile('vendor/leaflet.awesome-markers.css');
 $this->provideCssFile('vendor/leaflet.modal.css');
 $this->provideCssFile('vendor/L.Control.OpenCageData.Search.min.css');
+$this->provideCssFile('marker-cluster.less');
 
 // javascript libraries
 $this->provideJsFile('vendor/spin.js');

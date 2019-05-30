@@ -525,6 +525,9 @@
                         }
                     });
 
+                    var bigCluster = childCount > 99;
+                    var className = bigCluster ? 'marker-cluster marker-cluster-big' : 'marker-cluster';
+                    var clusterSize = bigCluster ? 60 : 40;
                     var worstState = getWorstState(states);
                     var c = ' marker-cluster-' + worstState;
                     var clusterLabel = childProblem + '/' + childCount;
@@ -535,8 +538,8 @@
                     
                     return new L.DivIcon({
                         html: '<div><span>' + clusterLabel + '</span></div>',
-                        className: 'marker-cluster' + c,
-                        iconSize: new L.Point(40, 40)
+                        className: className + c,
+                        iconSize: new L.Point(clusterSize, clusterSize)
                     });
                 },
                 maxClusterRadius: function (zoom) {
