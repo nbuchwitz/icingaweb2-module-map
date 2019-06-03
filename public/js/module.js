@@ -442,8 +442,8 @@
                                 this.openPopup();
                             });
                             marker.on('mouseout', function (e) {
-                                this.closePopup();
-                            });
+                                // this.closePopup();
+                            }); 
                         }
                     })
                 });
