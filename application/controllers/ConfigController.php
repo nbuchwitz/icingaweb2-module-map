@@ -51,6 +51,7 @@ class ConfigController extends Controller
             "max_zoom" => "19",
             "max_native_zoom" => "19",
             "cluster_problem_count" => 0,
+            "popup_mouseover" => 0,
             "tile_url" => "//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         );
 

@@ -144,6 +144,18 @@ class GeneralConfigForm extends ConfigForm
             )
         );
 
+
+        $this->addElement(
+            'checkbox',
+            'map_popup_mouseover',
+            array(
+                'label' => $this->translate('Show popup on mouseover'),
+                'description' => $this->translate('Show popup when hovering the object'),
+                'required' => false,
+                'default' => false,
+            )
+        );
+
     }
 }
 

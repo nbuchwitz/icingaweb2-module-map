@@ -436,6 +436,15 @@
                         }
 
                         marker.bindPopup(info);
+
+                        if (popup_mouseover) {
+                            marker.on('mouseover', function (e) {
+                                this.openPopup();
+                            });
+                            marker.on('mouseout', function (e) {
+                                // this.closePopup();
+                            }); 
+                        }
                     })
                 });
 
