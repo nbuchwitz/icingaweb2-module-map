@@ -2,7 +2,7 @@
 
 The map module allows you to filter objects by using the Icinga Web 2 filter syntax.
 
-For more details have look into the [https://icinga.com/docs/icingaweb2/latest/doc/06-Security/#restrictions](filter section) of the offical Icinga Web 2 documentation.
+For more details have look into the [filter section](https://icinga.com/docs/icingaweb2/latest/doc/06-Security/#restrictions) of the offical Icinga Web 2 documentation.
 
 ## Special Filters
 
