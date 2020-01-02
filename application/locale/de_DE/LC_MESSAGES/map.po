@@ -90,7 +90,7 @@ msgstr "Minimale Zoomstufe der Karte"
 #: ../../../../modules/map/application/views/scripts/index/index.phtml:14
 msgctxt "icinga.state"
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: ../../../../modules/map/application/views/scripts/index/index.phtml:18
 msgctxt "icinga.state"
@@ -117,7 +117,7 @@ msgstr "Art der angezeigten Statusinformationen"
 
 #: ../../../../modules/map/library/Map/ProvidedHook/CubeLinks.php:32
 msgid "This shows all matching hosts and their current state on the map module"
-msgstr ""
+msgstr "Hier werden alle passenden Hosts und deren aktueller Status im Map-Modul angezeigt"
 
 #: ../../../../modules/map/application/views/scripts/index/index.phtml:17
 msgctxt "icinga.state"
