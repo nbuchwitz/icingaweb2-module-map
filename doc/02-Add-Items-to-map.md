@@ -41,11 +41,11 @@ Markers will look like the following example showing the icons sitemap, flapping
 
 ## Using the Icinga Director
 
-If you're using the [Icinga Director](https://github.com/icinga/icingaweb2-module-director), you could use the new [mapDatatype](https://github.com/nbuchwitz/icingaweb2-module-mapDatatype) plugin. This plugin enables you to directly selected your coordinates on a map.
+If you're using the [Icinga Director](https://github.com/icinga/icingaweb2-module-director), you could use the new [mapDatatype](https://github.com/nbuchwitz/icingaweb2-module-mapDatatype) plugin. This plugin enables you to directly select the coordinates on a map.
 
 ![Using the Icinga Director](screenshot/director-plugin.png)
 
 
 ## What's next?
 
-After adding the first markers to your map, you wan't to [explore the map](03-Exploring-the-map.md).
+After adding the first markers to your map, you want to [explore the map](03-Exploring-the-map.md).
