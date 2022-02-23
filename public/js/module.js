@@ -328,10 +328,16 @@
                             states.push((data['host_state'] == 1 ? 2 : data['host_state']))
                         }
 
+                        var table = '<table class="icinga-module module-monitoring">';
+                        if (isUsingIcingadb) {
+                            //TODO add icingadb design
+                            table = '<table class="icinga-module module-icingadb">';
+                        }
+
                         services = '<div class="map-popup-services">';
                         services += '<h1><span class="icon-services"></span> Services</h1>';
                         services += '<div class="scroll-view">';
-                        services += '<table class="icinga-module module-monitoring">';
+                        services += table;
                         services += '<tbody>';
 
                         $.each(data['services'], function (service_display_name, service) {
@@ -342,6 +348,10 @@
                                 service_handled = " handled";
                             }
 
+                            var ServiceLink = '/monitoring/service/show?host=' + data['host_name'] + '&service=' + service['service_name'];
+                            if (isUsingIcingadb) {
+                                ServiceLink = '/icingadb/service?host.name=' + data['host_name'] + '&name=' + service['service_name'];
+                            }
                             services += '<tr>';
 
                             services += '<td class="';
@@ -358,10 +368,7 @@
                             services += '<div class="state-header">';
                             services += '<a data-hostname="' + data['host_name'] + '" data-base-target="_next" href="'
                                 + icinga.config.baseUrl
-                                + '/monitoring/service/show?host='
-                                + data['host_name']
-                                + '&service='
-                                + service['service_name']
+                                + ServiceLink
                                 + '">';
                             services += service_display_name;
                             services += '</a>';
@@ -400,12 +407,16 @@
 
                         var host_status = type === 'hosts' && data['host_state'] == 1 ? "<div id=\"hoststatus\">" + translation['host-down'] + "</div>" : "";
 
+                        var hostLink = '/monitoring/host/show?host=' + data['host_name'];
+                        if (isUsingIcingadb) {
+                            hostLink = '/icingadb/host?name=' + data['host_name'];
+                        }
+
                         var info = '<div class="map-popup">';
                         info += '<h1>';
                         info += '<a class="detail-link" data-hostname="' + data['host_name'] + '" data-base-target="_next" href="'
                             + icinga.config.baseUrl
-                            + '/monitoring/host/show?host='
-                            + data['host_name']
+                            + hostLink
                             + '">';
                         info += ' <span class="icon-eye"></span> ';
                         info += '</a>';

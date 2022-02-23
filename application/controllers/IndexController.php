@@ -2,7 +2,9 @@
 
 namespace Icinga\Module\Map\Controllers;
 
+use Icinga\Application\Modules\Module;
 use Icinga\Data\Filter\FilterException;
+use Icinga\Module\Map\ProvidedHook\Icingadb\IcingadbSupport;
 use Icinga\Web\Controller\ModuleActionController;
 
 class IndexController extends ModuleActionController
@@ -31,6 +33,11 @@ class IndexController extends ModuleActionController
         $this->view->host = $this->params->get("showHost");
         $this->view->expand = $this->params->get("expand");
         $this->view->fullscreen = ($this->params->get("showFullscreen") == 1);
+        $this->view->isUsingIcingadb = false;
+
+        if (Module::exists('icingadb') && IcingadbSupport::useIcingaDbAsBackend()) {
+            $this->view->isUsingIcingadb = true;
+        }
 
         $parameterDefaults = array(
             "default_zoom" => "4",
