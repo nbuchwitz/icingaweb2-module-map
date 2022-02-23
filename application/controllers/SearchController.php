@@ -3,11 +3,11 @@
 namespace Icinga\Module\Map\Controllers;
 
 use Icinga\Data\Filter\Filter;
-use Icinga\Module\Monitoring\Controller;
+use Icinga\Module\Map\Web\Controller\MapController;
 use Icinga\Module\Monitoring\DataView\DataView;
 use OpenCage\Geocoder\Geocoder;
 
-class SearchController extends Controller
+class SearchController extends MapController
 {
     private $geocoder;
     private $limit;
@@ -82,9 +82,7 @@ class SearchController extends Controller
             foreach ($hostQuery as $el) {
                 // @TODO: Move to library
                 // check for broken coordinates
-                $coordinate_pattern = '/^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$/';
-
-                if (!preg_match($coordinate_pattern, $el->coordinates)) {
+                if (!preg_match($this->coordinatePattern, $el->coordinates)) {
                     continue;
                 }
                 $coordinates = explode(",", $el->coordinates);
@@ -130,9 +128,7 @@ class SearchController extends Controller
             foreach ($hostQuery as $el) {
                 // @TODO: Move to library
                 // check for broken coordinates
-                $coordinate_pattern = '/^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$/';
-
-                if (!preg_match($coordinate_pattern, $el->coordinates)) {
+                if (!preg_match($this->coordinatePattern, $el->coordinates)) {
                     continue;
                 }
                 $coordinates = explode(",", $el->coordinates);

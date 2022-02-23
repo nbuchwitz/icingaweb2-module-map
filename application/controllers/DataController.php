@@ -3,10 +3,10 @@
 namespace Icinga\Module\Map\Controllers;
 
 use Icinga\Data\Filter\Filter;
-use Icinga\Module\Monitoring\Controller;
+use Icinga\Module\Map\Web\Controller\MapController;
 use Icinga\Module\Monitoring\DataView\DataView;
 
-class DataController extends Controller
+class DataController extends MapController
 {
     /**
      * Apply filters on a DataView
@@ -25,8 +25,6 @@ class DataController extends Controller
     private $stateChangeColumn;
     private $filter;
     private $points = [];
-    // Pattern to check for broken coordinates
-    private $coordinatePattern = '/^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$/';
 
     /**
      * Get JSON state objects
