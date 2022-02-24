@@ -57,11 +57,26 @@ class SearchController extends MapController
 
     private function serviceSearch($query)
     {
+        if (empty($query)) {
+            return [];
+        }
+
+        return $this->IdoServiceSearch($query);
+    }
+
+    private function hostSearch($query)
+    {
+        if (empty($query)) {
+            return [];
+        }
+
+        return $this->IdoHostSearch($query);
+    }
+
+    private function IdoServiceSearch($query)
+    {
         $results = [];
 
-        if (empty($query)) {
-            return $results;
-        }
         $filter = sprintf('(service=*%s*|service_display_name=*%s*)', $query, $query);
 
         $hostQuery = $this->backend
@@ -102,13 +117,9 @@ class SearchController extends MapController
         return $results;
     }
 
-    private function hostSearch($query)
-    {
+    private function IdoHostSearch($query) {
         $results = [];
 
-        if (empty($query)) {
-            return $results;
-        }
         $filter = sprintf('(host=*%s*|host_display_name=*%s*)', $query, $query);
 
         $hostQuery = $this->backend
@@ -147,6 +158,7 @@ class SearchController extends MapController
 
         return $results;
     }
+
 
     public function indexAction()
     {
