@@ -348,20 +348,22 @@
                                 service_handled = " handled";
                             }
 
+                            var ServiceStateClass = " state-" + service_status[service['service_state']][1].toLowerCase();
                             var ServiceLink = '/monitoring/service/show?host=' + data['host_name'] + '&service=' + service['service_name'];
+                            var tdClasses = "state-col" + ServiceStateClass + service_handled;
+                            var statelabel = '<div class="state-label">' + service_status[service['service_state']][0] + '</div>';
                             if (isUsingIcingadb) {
                                 ServiceLink = '/icingadb/service?host.name=' + data['host_name'] + '&name=' + service['service_name'];
+                                tdClasses = "state-ball center" + ServiceStateClass + " ball-size-l" + service_handled;
+                                statelabel = "";
+                                if (service_handled) {
+                                    statelabel = '<i class="icon fa fa-check"></i>';
+                                }
                             }
                             services += '<tr>';
 
-                            services += '<td class="';
-                            services += "state-col";
-                            services += " state-" + service_status[service['service_state']][1].toLowerCase();
-                            services += "" + service_handled;
-                            services += '">';
-                            services += '<div class="state-label">';
-                            services += service_status[service['service_state']][0];
-                            services += '</div>';
+                            services += '<td class="' + tdClasses + '">';
+                            services += statelabel;
                             services += '</td>';
 
                             services += '<td>';
