@@ -79,7 +79,7 @@ class IndexController extends ModuleActionController
         }
 
         $pattern = "/^([_]{0,1}(host|service))|\(|(object|state)Type/";
-        $urlParameters = $this->filterArray($this->getAllParams(), $pattern);
+        $urlParameters = $this->filterArray($this->params->toArray(false), $pattern);
 
         if (isset($map)) {
             $mapParameters = $this->filterArray($mapConfig->getSection($map)->toArray(), $pattern);
