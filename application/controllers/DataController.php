@@ -3,8 +3,13 @@
 namespace Icinga\Module\Map\Controllers;
 
 use Icinga\Data\Filter\Filter;
+use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Map\Web\Controller\MapController;
 use Icinga\Module\Monitoring\DataView\DataView;
+use ipl\Orm\Model;
+use ipl\Stdlib\Filter as IplFilter;
 
 class DataController extends MapController
 {
@@ -51,17 +56,31 @@ class DataController extends MapController
             if ($stateType === 'hard') {
                 $this->stateColumn = 'hard_state';
                 $this->stateChangeColumn = 'last_hard_state_change';
+                if ($this->isUsingIcingadb) {
+                    $this->stateChangeColumn = 'last_state_change';
+                }
             } else {
                 $this->stateColumn = 'state';
                 $this->stateChangeColumn = 'last_state_change';
+                if ($this->isUsingIcingadb) {
+                    $this->stateColumn = 'soft_state';
+                }
             }
 
             if (in_array($objectType, ['all', 'host'])) {
-                $this->addHostsToPoints();
+                if ($this->isUsingIcingadb) {
+                    $this->addIcingadbHostsToPoints();
+                } else {
+                    $this->addHostsToPoints();
+                }
             }
 
             if (in_array($objectType, ['all', 'service'])) {
-                $this->addServicesToPoints();
+                if ($this->isUsingIcingadb) {
+                   $this->addIcingadbServicesToPoints();
+                } else {
+                    $this->addServicesToPoints();
+                }
             }
         } catch (\Exception $e) {
             $this->points['message'] = $e->getMessage();
@@ -212,5 +231,121 @@ class DataController extends MapController
                 $this->points['services'][$identifier] = $host;
             }
         }
+    }
+
+    private function addIcingadbHostsToPoints()
+    {
+        $hostQuery = Host::on($this->getDb())->with(['state']);
+        $hostQuery->setResultSetClass(VolatileStateResults::class);
+        $hostQuery->filter(IplFilter::equal('host.vars.geolocation', '*'));
+        //TODO not working properly
+        $this->Filter($hostQuery, $this->getFilter());
+        $hostQuery = $hostQuery->execute();
+        if ($hostQuery->hasResult()) {
+            foreach ($hostQuery as $row) {
+                $hostname = $row->name;
+                $host = $this->populateObjectColumnsToArray($row);
+                $host['host_problem']               = $row->state->is_problem ? 1 : 0;
+                $host['coordinates']                = $row->vars['geolocation'];
+                $host['icon']                       = $row->vars['map_icon'] ?? null;
+
+                $host['services'] = [];
+                if (! preg_match($this->coordinatePattern, $host['coordinates'])) {
+                    continue;
+                }
+
+                $host['coordinates'] = explode(",", $host['coordinates']);
+
+                $this->points['hosts'][$hostname] = $host;
+            }
+        }
+
+        // add services to host
+        $serviceQuery = Service::on($this->getDb())->with(['state', 'host', 'host.state']);
+        $serviceQuery->setResultSetClass(VolatileStateResults::class);
+        $serviceQuery->filter(IplFilter::equal('host.vars.geolocation', '*'));
+
+        if ($this->filter) {
+            $serviceQuery->Filter(IplFilter::equal('state.is_problem', 'y'));
+        }
+
+        $this->Filter($serviceQuery, $this->getFilter());
+        $serviceQuery = $serviceQuery->execute();
+        if ($serviceQuery->hasResult()) {
+            foreach ($serviceQuery as $row) {
+                $hostname = $row->host->name;
+                $service = $this->populateObjectColumnsToArray($row);
+                if (isset($this->points['hosts'][$hostname])) {
+                    $this->points['hosts'][$hostname]['services'][$service['service_display_name']] = $service;
+                }
+            }
+        }
+
+        // remove hosts without problems and services
+        if ($this->filter) {
+            foreach ($this->points['hosts'] as $name => $host) {
+                if (empty($host['services']) && $host['host_problem'] !== 1) {
+                    unset($this->points['hosts'][$name]);
+                }
+            }
+        }
+    }
+
+    private function addIcingadbServicesToPoints()
+    {
+        $serviceQuery = Service::on($this->getDb())->with(['state', 'host']);
+        $serviceQuery->setResultSetClass(VolatileStateResults::class);
+        $serviceQuery->filter(IplFilter::equal('service.vars.geolocation', '*'));
+
+        if ($this->filter) {
+            $serviceQuery->Filter(IplFilter::equal('service.state.is_problem', 'y'));
+        }
+
+        $this->Filter($serviceQuery, $this->getFilter());
+        $serviceQuery = $serviceQuery->execute();
+        if ($serviceQuery->hasResult()) {
+            foreach ($serviceQuery as $row) {
+                $identifier = $row->host->name . "!" . $row->name;
+                $host = $this->populateObjectColumnsToArray($row->host);
+                $host['coordinates'] = $row->vars['geolocation'];
+                $host['icon'] = $row->vars['map_icon'] ?? null;
+
+                $service = $this->populateObjectColumnsToArray($row);
+
+                $host['services'][$service['service_display_name']] = $service;
+
+                if (! preg_match($this->coordinatePattern, $host['coordinates'])) {
+                    continue;
+                }
+
+                $host['coordinates'] = explode(",", $host['coordinates']);
+
+                $this->points['services'][$identifier] = $host;
+            }
+        }
+    }
+
+    /**
+     * @param Model $object
+     *
+     * @return array
+     */
+    private function populateObjectColumnsToArray(Model $object)
+    {
+        $objectType = $object instanceof Service ? 'service' : 'host';
+
+        $stateColumn = $this->stateColumn;
+        $lastStateChangeColumn = $this->stateChangeColumn;
+
+        $obj = [];
+
+        $obj["{$objectType}_display_name"]        = $object->display_name;
+        $obj["{$objectType}_name"]                = $object->name;
+        $obj["{$objectType}_acknowledged"]        = $object->state->is_acknowledged ? 1 : 0;
+        $obj["{$objectType}_state"]               = $object->state->$stateColumn;
+        $obj["{$objectType}_last_state_change"]   = $object->state->$lastStateChangeColumn;
+        $obj["{$objectType}_in_downtime"]         = $object->state->in_downtime ? 1 : 0;
+
+        return $obj;
     }
 }

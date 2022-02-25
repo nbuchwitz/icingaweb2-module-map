@@ -3,6 +3,9 @@
 namespace Icinga\Module\Map\Controllers;
 
 use Icinga\Data\Filter\Filter;
+use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Model\Service;
+use ipl\Stdlib\Filter as IplFilter;
 use Icinga\Module\Map\Web\Controller\MapController;
 use Icinga\Module\Monitoring\DataView\DataView;
 use OpenCage\Geocoder\Geocoder;
@@ -61,6 +64,10 @@ class SearchController extends MapController
             return [];
         }
 
+        if ($this->isUsingIcingadb) {
+            return $this->IcingadbSearch($query, 'service');
+        }
+
         return $this->IdoServiceSearch($query);
     }
 
@@ -68,6 +75,10 @@ class SearchController extends MapController
     {
         if (empty($query)) {
             return [];
+        }
+
+        if ($this->isUsingIcingadb) {
+            return $this->IcingadbSearch($query, 'host');
         }
 
         return $this->IdoHostSearch($query);
@@ -159,6 +170,60 @@ class SearchController extends MapController
         return $results;
     }
 
+    private function IcingadbSearch($query, $objectType)
+    {
+        $results = [];
+
+        $searchString = "*$query*";
+        $query = Host::on($this->getDb());
+
+        if ($objectType === 'service') {
+            $query = Service::on($this->getDb())->with(['host']);
+        }
+
+        $query->filter(IplFilter::equal("$objectType.vars.geolocation", '*'));
+        $query->filter(IplFilter::any(
+            IplFilter::equal("$objectType.name", $searchString),
+            IplFilter::equal("$objectType.display_name", $searchString)
+        ));
+
+        $query->limit($this->limit);
+        //TODO not working properly
+        //$this->Filter($serviceQuery, $this->getFilter());
+
+        $query = $query->execute();
+
+        if ($query->hasResult()) {
+            foreach ($query as $object) {
+                // check for broken coordinates
+                $coordinates = $object->vars['geolocation'];
+                if (!preg_match($this->coordinatePattern, $coordinates)) {
+                    continue;
+                }
+
+                $coordinates = explode(",", $coordinates);
+
+                $id = $object->name;
+                $name = $object->display_name;
+                if ($objectType === 'service') {
+                    $id = sprintf("%s!%s", $object->host->name, $object->name);
+                    $name = sprintf("%s (%s)", $object->name, $object->host->name);
+                }
+
+                $results[] = [
+                    "id"        => $id,
+                    "name"      => $name,
+                    "center"    => [
+                        "lat" => $coordinates[0],
+                        "lng" => $coordinates[1]
+                    ],
+                    "icon"      => "$objectType"
+                ];
+            }
+        }
+
+        return $results;
+    }
 
     public function indexAction()
     {
