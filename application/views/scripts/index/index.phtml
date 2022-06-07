@@ -44,6 +44,7 @@
     var id = '<?= $this->id ?>';
     var dashlet = <?= $this->compact ? 'true' : 'false' ?>;
     var expand = <?= $this->expand ? 'true' : 'false' ?>;
+    var isUsingIcingadb = <?= $this->isUsingIcingadb ? 'true' : 'false' ?>;
 </script>
 <div class="controls">
     <?php if (!$this->compact && !$this->fullscreen): ?>

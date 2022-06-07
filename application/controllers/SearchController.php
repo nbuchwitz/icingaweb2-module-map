@@ -3,11 +3,14 @@
 namespace Icinga\Module\Map\Controllers;
 
 use Icinga\Data\Filter\Filter;
-use Icinga\Module\Monitoring\Controller;
+use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Model\Service;
+use ipl\Stdlib\Filter as IplFilter;
+use Icinga\Module\Map\Web\Controller\MapController;
 use Icinga\Module\Monitoring\DataView\DataView;
 use OpenCage\Geocoder\Geocoder;
 
-class SearchController extends Controller
+class SearchController extends MapController
 {
     private $geocoder;
     private $limit;
@@ -57,11 +60,34 @@ class SearchController extends Controller
 
     private function serviceSearch($query)
     {
+        if (empty($query)) {
+            return [];
+        }
+
+        if ($this->isUsingIcingadb) {
+            return $this->IcingadbSearch($query, 'service');
+        }
+
+        return $this->IdoServiceSearch($query);
+    }
+
+    private function hostSearch($query)
+    {
+        if (empty($query)) {
+            return [];
+        }
+
+        if ($this->isUsingIcingadb) {
+            return $this->IcingadbSearch($query, 'host');
+        }
+
+        return $this->IdoHostSearch($query);
+    }
+
+    private function IdoServiceSearch($query)
+    {
         $results = [];
 
-        if (empty($query)) {
-            return $results;
-        }
         $filter = sprintf('(service=*%s*|service_display_name=*%s*)', $query, $query);
 
         $hostQuery = $this->backend
@@ -82,9 +108,7 @@ class SearchController extends Controller
             foreach ($hostQuery as $el) {
                 // @TODO: Move to library
                 // check for broken coordinates
-                $coordinate_pattern = '/^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$/';
-
-                if (!preg_match($coordinate_pattern, $el->coordinates)) {
+                if (!preg_match($this->coordinatePattern, $el->coordinates)) {
                     continue;
                 }
                 $coordinates = explode(",", $el->coordinates);
@@ -104,13 +128,9 @@ class SearchController extends Controller
         return $results;
     }
 
-    private function hostSearch($query)
-    {
+    private function IdoHostSearch($query) {
         $results = [];
 
-        if (empty($query)) {
-            return $results;
-        }
         $filter = sprintf('(host=*%s*|host_display_name=*%s*)', $query, $query);
 
         $hostQuery = $this->backend
@@ -130,9 +150,7 @@ class SearchController extends Controller
             foreach ($hostQuery as $el) {
                 // @TODO: Move to library
                 // check for broken coordinates
-                $coordinate_pattern = '/^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$/';
-
-                if (!preg_match($coordinate_pattern, $el->coordinates)) {
+                if (!preg_match($this->coordinatePattern, $el->coordinates)) {
                     continue;
                 }
                 $coordinates = explode(",", $el->coordinates);
@@ -145,6 +163,61 @@ class SearchController extends Controller
                         "lng" => $coordinates[1]
                     ],
                     "icon" => "host"
+                ];
+            }
+        }
+
+        return $results;
+    }
+
+    private function IcingadbSearch($query, $objectType)
+    {
+        $results = [];
+
+        $searchString = "*$query*";
+        $query = Host::on($this->getDb());
+
+        if ($objectType === 'service') {
+            $query = Service::on($this->getDb())->with(['host']);
+        }
+
+        $query->filter(IplFilter::equal("$objectType.vars.geolocation", '*'));
+        $query->filter(IplFilter::any(
+            IplFilter::equal("$objectType.name", $searchString),
+            IplFilter::equal("$objectType.display_name", $searchString)
+        ));
+
+        $query->limit($this->limit);
+        //TODO not working properly
+        //$this->Filter($serviceQuery, $this->getFilter());
+
+        $query = $query->execute();
+
+        if ($query->hasResult()) {
+            foreach ($query as $object) {
+                // check for broken coordinates
+                $coordinates = $object->vars['geolocation'];
+                if (!preg_match($this->coordinatePattern, $coordinates)) {
+                    continue;
+                }
+
+                $coordinates = explode(",", $coordinates);
+
+                $id = $object->name;
+                $name = $object->display_name;
+                if ($objectType === 'service') {
+                    $id = sprintf("%s!%s", $object->host->name, $object->name);
+                    $name = sprintf("%s (%s)", $object->name, $object->host->name);
+                }
+
+                $results[] = [
+                    "id"        => $id,
+                    "name"      => $name,
+                    "center"    => [
+                        "lat" => $coordinates[0],
+                        "lng" => $coordinates[1]
+                    ],
+                    "icon"      => "$objectType"
                 ];
             }
         }
