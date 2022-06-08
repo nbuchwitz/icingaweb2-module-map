@@ -3,9 +3,8 @@
 namespace Icinga\Module\Map\Web\Controller;
 
 use Icinga\Application\Modules\Module;
-use Icinga\Module\Icingadb\Common\Auth;
-use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Map\ProvidedHook\Icingadb\IcingadbSupport;
+use Icinga\Module\Map\Util\IcingadbUtils;
 use Icinga\Module\Monitoring\Controller;
 use ipl\Orm\Query;
 use ipl\Orm\UnionQuery;
@@ -14,11 +13,11 @@ use ipl\Web\Filter\QueryString;
 
 abstract class MapController extends Controller
 {
-    use Database;
-    use Auth;
-
     /** @var bool whether icingadb is set as backend */
     protected $isUsingIcingadb;
+
+    /** @var IcingadbUtils provide required icingadb utils */
+    protected $icingadbUtils;
 
     /** @var string Pattern to check for broken coordinates */
     protected $coordinatePattern = '/^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$/';
@@ -30,6 +29,7 @@ abstract class MapController extends Controller
     {
         if (Module::exists('icingadb') && IcingadbSupport::useIcingaDbAsBackend()) {
             $this->isUsingIcingadb = true;
+            $this->icingadbUtils = IcingadbUtils::getInstance();
 
             return;
         }
@@ -54,7 +54,7 @@ abstract class MapController extends Controller
     public function filter(Query $query, Filter\Rule $filter = null): self
     {
         if ($this->hasPermission('config/authentication/roles/show')) {
-            $this->applyRestrictions($query);
+            $this->icingadbUtils->applyRestrictions($query);
         }
 
         if ($query instanceof UnionQuery) {
