@@ -12,7 +12,7 @@
     echo "var tile_url = '" . preg_replace("/[\'\;]/", "", $this->tile_url) . "';\n";
     echo "var cluster_problem_count = " . intval($this->cluster_problem_count) . ";\n";
     echo "var popup_mouseover = " . intval($this->popup_mouseover) . ";\n";
-    echo 'var map_show_host = "' . preg_replace("/[\'\;]/", "", $this->host) . "\";\n";
+    echo 'var map_show_host = "' . preg_replace("/[\'\;]/", "", $this->host ?? '') . "\";\n";
     ?>
     var service_status = {};
     service_status[0] = ['<?= $this->translate('OK', 'icinga.state') ?>', 'OK'];
