@@ -235,7 +235,7 @@ class DataController extends MapController
 
     private function addIcingadbHostsToPoints()
     {
-        $hostQuery = Host::on($this->icingadbUtils->getDb())->with(['state']);
+        $hostQuery = Host::on($this->icingadbUtils->getDb())->with('state');
         $hostQuery->setResultSetClass(VolatileStateResults::class);
         $hostQuery->filter(IplFilter::like('host.vars.geolocation', '*'));
         //TODO not working properly
@@ -261,7 +261,10 @@ class DataController extends MapController
         }
 
         // add services to host
-        $serviceQuery = Service::on($this->icingadbUtils->getDb())->with(['state', 'host', 'host.state']);
+        $serviceQuery = Service::on($this->icingadbUtils->getDb())
+            ->with('state')
+            ->with('host')
+            ->with('host.state');
         $serviceQuery->setResultSetClass(VolatileStateResults::class);
         $serviceQuery->filter(IplFilter::like('host.vars.geolocation', '*'));
 
@@ -293,7 +296,9 @@ class DataController extends MapController
 
     private function addIcingadbServicesToPoints()
     {
-        $serviceQuery = Service::on($this->icingadbUtils->getDb())->with(['state', 'host']);
+        $serviceQuery = Service::on($this->icingadbUtils->getDb())
+            ->with('state')
+            ->with('host');
         $serviceQuery->setResultSetClass(VolatileStateResults::class);
         $serviceQuery->filter(IplFilter::like('service.vars.geolocation', '*'));
 
