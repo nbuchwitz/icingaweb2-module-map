@@ -181,10 +181,10 @@ class SearchController extends MapController
             $query = Service::on($this->icingadbUtils->getDb())->with(['host']);
         }
 
-        $query->filter(IplFilter::equal("$objectType.vars.geolocation", '*'));
+        $query->filter(IplFilter::like("$objectType.vars.geolocation", '*'));
         $query->filter(IplFilter::any(
-            IplFilter::equal("$objectType.name", $searchString),
-            IplFilter::equal("$objectType.display_name", $searchString)
+            IplFilter::like("$objectType.name", $searchString),
+            IplFilter::like("$objectType.display_name", $searchString)
         ));
 
         $query->limit($this->limit);
