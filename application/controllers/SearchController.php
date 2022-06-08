@@ -175,10 +175,10 @@ class SearchController extends MapController
         $results = [];
 
         $searchString = "*$query*";
-        $query = Host::on($this->getDb());
+        $query = Host::on($this->icingadbUtils->getDb());
 
         if ($objectType === 'service') {
-            $query = Service::on($this->getDb())->with(['host']);
+            $query = Service::on($this->icingadbUtils->getDb())->with(['host']);
         }
 
         $query->filter(IplFilter::equal("$objectType.vars.geolocation", '*'));
