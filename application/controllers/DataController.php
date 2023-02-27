@@ -238,8 +238,8 @@ class DataController extends MapController
         $hostQuery = Host::on($this->icingadbUtils->getDb())->with(['state']);
         $hostQuery->setResultSetClass(VolatileStateResults::class);
         $hostQuery->filter(IplFilter::like('host.vars.geolocation', '*'));
-        //TODO not working properly
-        $this->Filter($hostQuery, $this->getFilter());
+
+        $this->icingadbUtils->applyRestrictions($hostQuery);
         $hostQuery = $hostQuery->execute();
         if ($hostQuery->hasResult()) {
             foreach ($hostQuery as $row) {
@@ -269,7 +269,7 @@ class DataController extends MapController
             $serviceQuery->Filter(IplFilter::equal('state.is_problem', 'y'));
         }
 
-        $this->Filter($serviceQuery, $this->getFilter());
+        $this->icingadbUtils->applyRestrictions($serviceQuery);
         $serviceQuery = $serviceQuery->execute();
         if ($serviceQuery->hasResult()) {
             foreach ($serviceQuery as $row) {
@@ -301,7 +301,7 @@ class DataController extends MapController
             $serviceQuery->Filter(IplFilter::equal('service.state.is_problem', 'y'));
         }
 
-        $this->Filter($serviceQuery, $this->getFilter());
+        $this->icingadbUtils->applyRestrictions($serviceQuery);
         $serviceQuery = $serviceQuery->execute();
         if ($serviceQuery->hasResult()) {
             foreach ($serviceQuery as $row) {
