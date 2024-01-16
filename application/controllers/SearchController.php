@@ -244,6 +244,8 @@ class SearchController extends MapController
             $results["hosts"] = $this->hostSearch($query);
             $results["services"] = $this->serviceSearch($query);
         }
+
+        header('Content-Type: application/javascript; charset=utf-8');
         print $callback . "(" . json_encode($results) . ");";
         exit();
     }
