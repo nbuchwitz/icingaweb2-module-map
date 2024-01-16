@@ -241,7 +241,7 @@
             this.timer = this.module.icinga.timer.register(
                 this.updateAllMapData,
                 this,
-                10000
+                60000
             );
             return this;
         },

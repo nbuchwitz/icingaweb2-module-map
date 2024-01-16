@@ -235,51 +235,59 @@ class DataController extends MapController
 
     private function addIcingadbHostsToPoints()
     {
-        $hostQuery = Host::on($this->icingadbUtils->getDb())->with('state');
-        $hostQuery->setResultSetClass(VolatileStateResults::class);
-        $hostQuery->filter(IplFilter::like('host.vars.geolocation', '*'));
+        $hostQuery = Host::on($this->icingadbUtils->getDb())
+             ->columns([
+                 'id',
+                'name',
+                'display_name',
+                'vars.geolocation',
+                'vars.map_icon',
+                'state.is_acknowledged',
+                'state.hard_state',
+                'state.soft_state',
+                'state.last_state_change',
+                'state.is_acknowledged',
+                'state.in_downtime',
+                'state.is_problem',
+                'service.id',
+                'service.name',
+                'service.display_name',
+                'service.state.is_acknowledged',
+                'service.state.hard_state',
+                'service.state.soft_state',
+                'service.state.last_state_change',
+                'service.state.is_acknowledged',
+                'service.state.in_downtime',
+                'service.state.is_problem',
+            ])
+            ->filter(IplFilter::like('host.vars.geolocation', '*'))
+            ->setResultSetClass(VolatileStateResults::class);
 
         $this->icingadbUtils->applyRestrictions($hostQuery);
+
         $hostQuery = $hostQuery->execute();
         if ($hostQuery->hasResult()) {
             foreach ($hostQuery as $row) {
-                $hostname = $row->name;
-                $host = $this->populateObjectColumnsToArray($row);
-                $host['host_problem']               = $row->state->is_problem ? 1 : 0;
-                $host['coordinates']                = $row->vars['geolocation'];
-                $host['icon']                       = $row->vars['map_icon'] ?? null;
-
-                $host['services'] = [];
-                if (! preg_match($this->coordinatePattern, $host['coordinates'])) {
+                if (! preg_match($this->coordinatePattern, $row->vars['geolocation'])) {
                     continue;
                 }
 
-                $host['coordinates'] = explode(",", $host['coordinates']);
+                $hostname = $row->name;
+                if (! isset($this->points['hosts'][$hostname])) {
+                    $host = $this->populateObjectColumnsToArray($row);
+                    $host['host_problem']               = $row->state->is_problem ? 1 : 0;
+                    $host['coordinates']                = $row->vars['geolocation'];
+                    $host['icon']                       = $row->vars['map_icon'] ?? null;
+                    $host['coordinates'] = explode(",", $host['coordinates']);
 
-                $this->points['hosts'][$hostname] = $host;
-            }
-        }
+                    $host['services'] = [];
 
-        // add services to host
-        $serviceQuery = Service::on($this->icingadbUtils->getDb())
-            ->with('state')
-            ->with('host')
-            ->with('host.state');
-        $serviceQuery->setResultSetClass(VolatileStateResults::class);
-        $serviceQuery->filter(IplFilter::like('host.vars.geolocation', '*'));
+                    $this->points['hosts'][$row->name] = $host;
+                }
 
-        if ($this->filter) {
-            $serviceQuery->Filter(IplFilter::equal('state.is_problem', 'y'));
-        }
-
-        $this->icingadbUtils->applyRestrictions($serviceQuery);
-        $serviceQuery = $serviceQuery->execute();
-        if ($serviceQuery->hasResult()) {
-            foreach ($serviceQuery as $row) {
-                $hostname = $row->host->name;
-                $service = $this->populateObjectColumnsToArray($row);
-                if (isset($this->points['hosts'][$hostname])) {
-                    $this->points['hosts'][$hostname]['services'][$service['service_display_name']] = $service;
+                if ($row->service->id !== null) {
+                    $service = $this->populateObjectColumnsToArray($row->service);
+                    $this->points['hosts'][$hostname]['services'][$row->service->display_name] = $service;
                 }
             }
         }
@@ -297,10 +305,32 @@ class DataController extends MapController
     private function addIcingadbServicesToPoints()
     {
         $serviceQuery = Service::on($this->icingadbUtils->getDb())
-            ->with('state')
-            ->with('host');
-        $serviceQuery->setResultSetClass(VolatileStateResults::class);
-        $serviceQuery->filter(IplFilter::like('service.vars.geolocation', '*'));
+            ->columns([
+                'id',
+                'name',
+                'display_name',
+                'vars.geolocation',
+                'vars.map_icon',
+                'state.is_acknowledged',
+                'state.hard_state',
+                'state.soft_state',
+                'state.last_state_change',
+                'state.is_acknowledged',
+                'state.in_downtime',
+                'state.is_problem',
+                'host.id',
+                'host.name',
+                'host.display_name',
+                'host.state.is_acknowledged',
+                'host.state.hard_state',
+                'host.state.soft_state',
+                'host.state.last_state_change',
+                'host.state.is_acknowledged',
+                'host.state.in_downtime',
+                'host.state.is_problem',
+            ])
+            ->filter(IplFilter::like('service.vars.geolocation', '*'))
+            ->setResultSetClass(VolatileStateResults::class);
 
         if ($this->filter) {
             $serviceQuery->Filter(IplFilter::equal('service.state.is_problem', 'y'));
@@ -310,20 +340,19 @@ class DataController extends MapController
         $serviceQuery = $serviceQuery->execute();
         if ($serviceQuery->hasResult()) {
             foreach ($serviceQuery as $row) {
+                if (! preg_match($this->coordinatePattern, $row->vars['geolocation'])) {
+                    continue;
+                }
+
                 $identifier = $row->host->name . "!" . $row->name;
                 $host = $this->populateObjectColumnsToArray($row->host);
                 $host['coordinates'] = $row->vars['geolocation'];
                 $host['icon'] = $row->vars['map_icon'] ?? null;
+                $host['coordinates'] = explode(",", $host['coordinates']);
 
                 $service = $this->populateObjectColumnsToArray($row);
 
-                $host['services'][$service['service_display_name']] = $service;
-
-                if (! preg_match($this->coordinatePattern, $host['coordinates'])) {
-                    continue;
-                }
-
-                $host['coordinates'] = explode(",", $host['coordinates']);
+                $host['services'][$row->display_name] = $service;
 
                 $this->points['services'][$identifier] = $host;
             }
