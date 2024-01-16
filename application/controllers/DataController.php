@@ -281,29 +281,31 @@ class DataController extends MapController
         $this->icingadbUtils->applyRestrictions($hostQuery);
 
         $hostQuery = $hostQuery->execute();
-        if ($hostQuery->hasResult()) {
-            foreach ($hostQuery as $row) {
-                if (! preg_match($this->coordinatePattern, $row->vars['geolocation'])) {
-                    continue;
-                }
+        if (! $hostQuery->hasResult()) {
+            return;
+        }
 
-                $hostname = $row->name;
-                if (! isset($this->points['hosts'][$hostname])) {
-                    $host = $this->populateObjectColumnsToArray($row);
-                    $host['host_problem']               = $row->state->is_problem ? 1 : 0;
-                    $host['coordinates']                = $row->vars['geolocation'];
-                    $host['icon']                       = $row->vars['map_icon'] ?? null;
-                    $host['coordinates'] = explode(",", $host['coordinates']);
+        foreach ($hostQuery as $row) {
+            if (! preg_match($this->coordinatePattern, $row->vars['geolocation'])) {
+                continue;
+            }
 
-                    $host['services'] = [];
+            $hostname = $row->name;
+            if (! isset($this->points['hosts'][$hostname])) {
+                $host = $this->populateObjectColumnsToArray($row);
+                $host['host_problem']               = $row->state->is_problem ? 1 : 0;
+                $host['coordinates']                = $row->vars['geolocation'];
+                $host['icon']                       = $row->vars['map_icon'] ?? null;
+                $host['coordinates'] = explode(",", $host['coordinates']);
 
-                    $this->points['hosts'][$row->name] = $host;
-                }
+                $host['services'] = [];
 
-                if ($row->service->id !== null) {
-                    $service = $this->populateObjectColumnsToArray($row->service);
-                    $this->points['hosts'][$hostname]['services'][$row->service->display_name] = $service;
-                }
+                $this->points['hosts'][$row->name] = $host;
+            }
+
+            if ($row->service->id !== null) {
+                $service = $this->populateObjectColumnsToArray($row->service);
+                $this->points['hosts'][$hostname]['services'][$row->service->display_name] = $service;
             }
         }
 
@@ -357,24 +359,27 @@ class DataController extends MapController
 
         $this->icingadbUtils->applyRestrictions($serviceQuery);
         $serviceQuery = $serviceQuery->execute();
-        if ($serviceQuery->hasResult()) {
-            foreach ($serviceQuery as $row) {
-                if (! preg_match($this->coordinatePattern, $row->vars['geolocation'])) {
-                    continue;
-                }
 
-                $identifier = $row->host->name . "!" . $row->name;
-                $host = $this->populateObjectColumnsToArray($row->host);
-                $host['coordinates'] = $row->vars['geolocation'];
-                $host['icon'] = $row->vars['map_icon'] ?? null;
-                $host['coordinates'] = explode(",", $host['coordinates']);
+        if (! $serviceQuery->hasResult()) {
+            return;
+        }
 
-                $service = $this->populateObjectColumnsToArray($row);
-
-                $host['services'][$row->display_name] = $service;
-
-                $this->points['services'][$identifier] = $host;
+        foreach ($serviceQuery as $row) {
+            if (! preg_match($this->coordinatePattern, $row->vars['geolocation'])) {
+                continue;
             }
+
+            $identifier = $row->host->name . "!" . $row->name;
+            $host = $this->populateObjectColumnsToArray($row->host);
+            $host['coordinates'] = $row->vars['geolocation'];
+            $host['icon'] = $row->vars['map_icon'] ?? null;
+            $host['coordinates'] = explode(",", $host['coordinates']);
+
+            $service = $this->populateObjectColumnsToArray($row);
+
+            $host['services'][$row->display_name] = $service;
+
+            $this->points['services'][$identifier] = $host;
         }
     }
 
