@@ -10,6 +10,7 @@ use Icinga\Module\Map\Web\Controller\MapController;
 use Icinga\Module\Monitoring\DataView\DataView;
 use ipl\Orm\Model;
 use ipl\Stdlib\Filter as IplFilter;
+use ipl\Web\Filter\QueryString;
 
 class DataController extends MapController
 {
@@ -29,6 +30,9 @@ class DataController extends MapController
     private $stateColumn;
     private $stateChangeColumn;
     private $filter;
+
+    /** @var bool Whether to show ony problem services */
+    private $onlyProblems;
     private $points = [];
 
     /**
@@ -48,10 +52,13 @@ class DataController extends MapController
             if ($userPreferences->has("map")) {
                 $stateType = $userPreferences->getValue("map", "stateType", $stateType);
             }
-
-            $this->filter = (bool)$this->params->shift('problems', false) ? Filter::where('service_problem', 1) : null;
-
             $objectType = strtolower($this->params->shift('objectType', 'all'));
+
+            $this->onlyProblems = (bool)$this->params->shift('problems', false);
+
+            if ($this->isUsingIcingadb) {
+                $this->filter = QueryString::parse((string) $this->params);
+            }
 
             if ($stateType === 'hard') {
                 $this->stateColumn = 'hard_state';
@@ -126,8 +133,8 @@ class DataController extends MapController
             ))
             ->applyFilter(Filter::fromQueryString('_host_geolocation >'));
 
-        if ($this->filter) {
-            $serviceQuery->applyFilter($this->filter);
+        if ($this->onlyProblems) {
+            $serviceQuery->applyFilter(Filter::where('service_problem', 1));
         }
 
         $this->applyRestriction('monitoring/filter/objects', $serviceQuery);
@@ -165,7 +172,7 @@ class DataController extends MapController
         }
 
         // remove hosts without problems and services
-        if ($this->filter) {
+        if ($this->onlyProblems) {
             foreach ($this->points['hosts'] as $name => $host) {
                 if (empty($host['services']) && $host['host_problem'] != '1') {
                     unset($this->points['hosts'][$name]);
@@ -197,8 +204,8 @@ class DataController extends MapController
 
             ))->applyFilter(Filter::fromQueryString('_service_geolocation >'));
 
-        if ($this->filter) {
-            $geoServiceQuery->applyFilter($this->filter);
+        if ($this->onlyProblems) {
+            $geoServiceQuery->applyFilter(Filter::where('service_problem', 1));
         }
 
 
@@ -263,6 +270,14 @@ class DataController extends MapController
             ->filter(IplFilter::like('host.vars.geolocation', '*'))
             ->setResultSetClass(VolatileStateResults::class);
 
+        if ($this->filter) {
+            $hostQuery->Filter($this->filter);
+        }
+
+        if ($this->onlyProblems) {
+            $hostQuery->Filter(IplFilter::equal('service.state.is_problem', 'y'));
+        }
+
         $this->icingadbUtils->applyRestrictions($hostQuery);
         $hostQuery = $hostQuery->execute();
         if ($hostQuery->hasResult()) {
@@ -290,7 +305,7 @@ class DataController extends MapController
         }
 
         // remove hosts without problems and services
-        if ($this->filter) {
+        if ($this->onlyProblems) {
             foreach ($this->points['hosts'] as $name => $host) {
                 if (empty($host['services']) && $host['host_problem'] !== 1) {
                     unset($this->points['hosts'][$name]);
@@ -330,6 +345,10 @@ class DataController extends MapController
             ->setResultSetClass(VolatileStateResults::class);
 
         if ($this->filter) {
+            $serviceQuery->Filter($this->filter);
+        }
+
+        if ($this->onlyProblems) {
             $serviceQuery->Filter(IplFilter::equal('service.state.is_problem', 'y'));
         }
 
