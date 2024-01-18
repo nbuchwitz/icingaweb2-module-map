@@ -1,5 +1,5 @@
 Module: map
-Version: 1.1.0
+Version: 2.0.0
 Depends: monitoring, icingadb
 Description: Map - Visualize your hosts and service status
  This is a simple map for visualization of host and service status information based on Openstreetmap.

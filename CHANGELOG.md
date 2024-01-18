@@ -1,7 +1,56 @@
-# Change Log
+# Changelog
 
-## [1.1.0](https://github.com/nbuchwitz/icingaweb2-module-map/tree/1.1.0) (2018-11-06)
-[Full Changelog](https://github.com/nbuchwitz/icingaweb2-module-map/compare/v1.0.4...1.1.0)
+## [2.0.0](https://github.com/nbuchwitz/icingaweb2-module-map/tree/2.0.0) (2024-01-18)
+
+[Full Changelog](https://github.com/nbuchwitz/icingaweb2-module-map/compare/v1.1.0...2.0.0)
+
+**Implemented enhancements:**
+
+- Feature : Add icingadb support [\#105](https://github.com/nbuchwitz/icingaweb2-module-map/issues/105)
+- Release CTRL + f binding, when map is not open [\#85](https://github.com/nbuchwitz/icingaweb2-module-map/issues/85)
+- Feature: DataType for map\_icon [\#65](https://github.com/nbuchwitz/icingaweb2-module-map/issues/65)
+- Allow to save filtered maps [\#43](https://github.com/nbuchwitz/icingaweb2-module-map/issues/43)
+- Add icingadb support [\#106](https://github.com/nbuchwitz/icingaweb2-module-map/pull/106) ([sukhwinder33445](https://github.com/sukhwinder33445))
+- Update map.po [\#95](https://github.com/nbuchwitz/icingaweb2-module-map/pull/95) ([Domi-cc](https://github.com/Domi-cc))
+- Show popup on hover [\#94](https://github.com/nbuchwitz/icingaweb2-module-map/pull/94) ([nbuchwitz](https://github.com/nbuchwitz))
+- Show problem count and total count in cluster [\#92](https://github.com/nbuchwitz/icingaweb2-module-map/pull/92) ([nbuchwitz](https://github.com/nbuchwitz))
+- Feature/search [\#87](https://github.com/nbuchwitz/icingaweb2-module-map/pull/87) ([nbuchwitz](https://github.com/nbuchwitz))
+
+**Fixed bugs:**
+
+- Module broken without IcingaDB module [\#107](https://github.com/nbuchwitz/icingaweb2-module-map/issues/107)
+- IcingaDB Web Modul Error [\#98](https://github.com/nbuchwitz/icingaweb2-module-map/issues/98)
+- Fix icingadb db queries [\#123](https://github.com/nbuchwitz/icingaweb2-module-map/pull/123) ([sukhwinder33445](https://github.com/sukhwinder33445))
+- module.js - zoom button translation fix [\#88](https://github.com/nbuchwitz/icingaweb2-module-map/pull/88) ([Animancorda](https://github.com/Animancorda))
+- Fix XSS Vulnerability [\#86](https://github.com/nbuchwitz/icingaweb2-module-map/pull/86) ([jason0x90](https://github.com/jason0x90))
+
+**Closed issues:**
+
+- Config Option "URL for tile server" issue [\#120](https://github.com/nbuchwitz/icingaweb2-module-map/issues/120)
+- Broken Map module with Icinga 2.11.4 [\#115](https://github.com/nbuchwitz/icingaweb2-module-map/issues/115)
+- "ACL" for Users  [\#114](https://github.com/nbuchwitz/icingaweb2-module-map/issues/114)
+- markers not shown in current version without mapDatatype [\#112](https://github.com/nbuchwitz/icingaweb2-module-map/issues/112)
+- Error: Error while evaluating expression: String index is out of range [\#102](https://github.com/nbuchwitz/icingaweb2-module-map/issues/102)
+- Icons on Latest Master [\#99](https://github.com/nbuchwitz/icingaweb2-module-map/issues/99)
+- 404 in GitHub repository description [\#97](https://github.com/nbuchwitz/icingaweb2-module-map/issues/97)
+
+**Merged pull requests:**
+
+- Fix js error: `Uncaught SyntaxError: Unexpected token '<'` [\#117](https://github.com/nbuchwitz/icingaweb2-module-map/pull/117) ([sukhwinder33445](https://github.com/sukhwinder33445))
+- Icingadb map: Apply restrictions correctly [\#116](https://github.com/nbuchwitz/icingaweb2-module-map/pull/116) ([sukhwinder33445](https://github.com/sukhwinder33445))
+- Update libs [\#113](https://github.com/nbuchwitz/icingaweb2-module-map/pull/113) ([nbuchwitz](https://github.com/nbuchwitz))
+- Use separate calls to `ipl\Orm\Query::with()` [\#111](https://github.com/nbuchwitz/icingaweb2-module-map/pull/111) ([sukhwinder33445](https://github.com/sukhwinder33445))
+- Icingadb: Use ipl `Filter::like()` for wildcard search [\#110](https://github.com/nbuchwitz/icingaweb2-module-map/pull/110) ([sukhwinder33445](https://github.com/sukhwinder33445))
+- Don't depend on icingadb module [\#109](https://github.com/nbuchwitz/icingaweb2-module-map/pull/109) ([sukhwinder33445](https://github.com/sukhwinder33445))
+- Fix php 8.1 deprecation errors [\#108](https://github.com/nbuchwitz/icingaweb2-module-map/pull/108) ([sukhwinder33445](https://github.com/sukhwinder33445))
+- Typos [\#101](https://github.com/nbuchwitz/icingaweb2-module-map/pull/101) ([bebehei](https://github.com/bebehei))
+- Upload icons for the module [\#100](https://github.com/nbuchwitz/icingaweb2-module-map/pull/100) ([theFeu](https://github.com/theFeu))
+- module.js - clusters marks with label "total\_count/down\_count" [\#89](https://github.com/nbuchwitz/icingaweb2-module-map/pull/89) ([Animancorda](https://github.com/Animancorda))
+- documentation extended [\#84](https://github.com/nbuchwitz/icingaweb2-module-map/pull/84) ([jschanz](https://github.com/jschanz))
+
+## [v1.1.0](https://github.com/nbuchwitz/icingaweb2-module-map/tree/v1.1.0) (2018-11-06)
+
+[Full Changelog](https://github.com/nbuchwitz/icingaweb2-module-map/compare/v1.0.4...v1.1.0)
 
 **Implemented enhancements:**
 
@@ -51,6 +100,7 @@
 - Feature/fancy marker icons [\#55](https://github.com/nbuchwitz/icingaweb2-module-map/pull/55) ([nbuchwitz](https://github.com/nbuchwitz))
 
 ## [v1.0.4](https://github.com/nbuchwitz/icingaweb2-module-map/tree/v1.0.4) (2017-12-26)
+
 [Full Changelog](https://github.com/nbuchwitz/icingaweb2-module-map/compare/v1.0.3...v1.0.4)
 
 **Implemented enhancements:**
@@ -84,6 +134,7 @@
 - Filtering host objects [\#27](https://github.com/nbuchwitz/icingaweb2-module-map/pull/27) ([nbuchwitz](https://github.com/nbuchwitz))
 
 ## [v1.0.3](https://github.com/nbuchwitz/icingaweb2-module-map/tree/v1.0.3) (2017-08-15)
+
 [Full Changelog](https://github.com/nbuchwitz/icingaweb2-module-map/compare/v1.0.2...v1.0.3)
 
 **Fixed bugs:**
@@ -99,6 +150,7 @@
 - Add GitHub issue template [\#23](https://github.com/nbuchwitz/icingaweb2-module-map/pull/23) ([dnsmichi](https://github.com/dnsmichi))
 
 ## [v1.0.2](https://github.com/nbuchwitz/icingaweb2-module-map/tree/v1.0.2) (2017-08-08)
+
 [Full Changelog](https://github.com/nbuchwitz/icingaweb2-module-map/compare/v1.0.1...v1.0.2)
 
 **Implemented enhancements:**
@@ -115,6 +167,7 @@
 - Fix undefined variable error if there are no data points fetched [\#15](https://github.com/nbuchwitz/icingaweb2-module-map/pull/15) ([dnsmichi](https://github.com/dnsmichi))
 
 ## [v1.0.1](https://github.com/nbuchwitz/icingaweb2-module-map/tree/v1.0.1) (2017-08-06)
+
 [Full Changelog](https://github.com/nbuchwitz/icingaweb2-module-map/compare/v1.0.0...v1.0.1)
 
 **Implemented enhancements:**
@@ -132,14 +185,16 @@
 - Docs: Add release tarball installation [\#6](https://github.com/nbuchwitz/icingaweb2-module-map/pull/6) ([dnsmichi](https://github.com/dnsmichi))
 
 ## [v1.0.0](https://github.com/nbuchwitz/icingaweb2-module-map/tree/v1.0.0) (2017-08-04)
+
+[Full Changelog](https://github.com/nbuchwitz/icingaweb2-module-map/compare/dd2f6ba71a8977be17f82ec00bdc7134ffc574a5...v1.0.0)
+
 **Merged pull requests:**
 
 - Rename menu entry, adopt module description [\#5](https://github.com/nbuchwitz/icingaweb2-module-map/pull/5) ([dnsmichi](https://github.com/dnsmichi))
 - Add CONTRIBUTING details [\#4](https://github.com/nbuchwitz/icingaweb2-module-map/pull/4) ([dnsmichi](https://github.com/dnsmichi))
 - Add missing LICENSE file [\#3](https://github.com/nbuchwitz/icingaweb2-module-map/pull/3) ([dnsmichi](https://github.com/dnsmichi))
 - Update README [\#2](https://github.com/nbuchwitz/icingaweb2-module-map/pull/2) ([dnsmichi](https://github.com/dnsmichi))
-- Load map tiles via protocol that is used to access icingaweb2 [\#1](https://github.com/nbuchwitz/icingaweb2-module-map/pull/1) ([Mikesch-mp](https://github.com/Mikesch-mp))
 
 
 
-\* *This Change Log was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
+\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*
