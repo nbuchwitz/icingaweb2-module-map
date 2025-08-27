@@ -410,6 +410,13 @@
                                 + ' class="host-icon-image icon">';
                         }
 
+                        var host_status = type === 'hosts' && data['host_state'] == 1 ? "<div id=\"hoststatus\">" + translation['host-down'] + "</div>" : "";
+    
+                        var hostLink = '/monitoring/host/show?host=' + data['host_name'];
+                        if (isUsingIcingadb) {
+                            hostLink = '/icingadb/host?name=' + data['host_name'];
+                        }
+
                         if (data['hosts_total'] == 1) {
                             var info = '<div id="layout"><div class="main">';
                             info += '<table><tr>';
@@ -427,24 +434,18 @@
                             if ( data['services_total'] > 0 ) {
                                 info += '<table><tr>';
                                 info += '<td><a href="'+ icinga.config.baseUrl + '/icingadb/services?host.name=' + data['host_name'] +'" data-base-target="_next" ><div class="vertical-key-value" title="' + data['services_total'] + '"><span class="value">' + data['services_total'] + '</span><br /><span class="key">Services</span></div></a></td>';
-                                if ( data['services_critical_unhandled'] > 0 ) { info += '<td><a href="'+ icinga.config.baseUrl + '/icingadb/services?(service.state.soft_state=2&service.state.is_handled=n&service.state.is_reachable=y)&host.name=' + data['host_name'] +'" data-base-target="_next" ><span class="state-badge state-critical">' + data['services_critical_unhandled'] + '</span></a></td>'; };
-                                if ( data['services_critical_handled'] > 0 ) { info += '<td><a href="'+ icinga.config.baseUrl + '/icingadb/services?(service.state.soft_state=2&(service.state.is_handled=y|service.state.is_reachable=n))&host.name=' + data['host_name'] +'" data-base-target="_next" ><span class="state-badge state-critical handled">' + data['services_critical_handled'] + '</span></a></td>'; };
-                                if ( data['services_warning_unhandled'] > 0 ) { info += '<td><a href="'+ icinga.config.baseUrl + '/icingadb/services?(service.state.soft_state=1&service.state.is_handled=n&service.state.is_reachable=y)&host.name=' + data['host_name'] +'" data-base-target="_next" ><span class="state-badge state-warning">' + data['services_warning_unhandled'] + '</span></a></td>'; };
-                                if ( data['services_warning_handled'] > 0 ) { info += '<td><a href="'+ icinga.config.baseUrl + '/icingadb/services?(service.state.soft_state=1&(service.state.is_handled=y|service.state.is_reachable=n))&host.name=' + data['host_name'] +'" data-base-target="_next" ><span class="state-badge state-warning handled">' + data['services_warning_handled'] + '</span></a></td>'; };
-                                if ( data['services_unknown_unhandled'] > 0 ) { info += '<td><a href="'+ icinga.config.baseUrl + 'icingadb/services?(service.state.soft_state=3&service.state.is_handled=n&service.state.is_reachable=y)&host.name=' + data['host_name'] +'" data-base-target="_next" ><span class="state-badge state-unknown">' + data['services_unknown_unhandled'] + '</span></a></td>'; };
-                                if ( data['services_unknown_handled'] > 0 ) { info += '<td><a href="'+ icinga.config.baseUrl + '/icingadb/services?(service.state.soft_state=3&(service.state.is_handled=y|service.state.is_reachable=n))&host.name=' + data['host_name'] +'" data-base-target="_next" ><span class="state-badge state-unknown handled">' + data['services_unknown_handled'] + '</span></a></td>'; };
-                                if ( data['services_ok'] > 0 ) { info += '<td><a href="'+ icinga.config.baseUrl + '/icingadb/services?service.state.soft_state=0&host.name=' + data['host_name'] +'" data-base-target="_next" ><span class="state-badge state-ok">' + data['services_ok'] +'</span></a></td>'; };
-                                if ( data['services_pending'] > 0 ) { info += '<td><a href="'+ icinga.config.baseUrl + '/icingadb/services?service.state.soft_state=99&host.name=' + data['host_name'] +'" data-base-target="_next" ><span class="state-badge state-pending">' + data['services_pending'] +'</span></a></td>'; };
+                                if ( data['services_critical_unhandled'] > 0 ) { info += '<td><a href="'+ icinga.config.baseUrl + '/icingadb/services?(service.state.soft_state=2&service.state.is_handled=n&service.state.is_reachable=y)&host.name=' + data['host_name'] + '" data-base-target="_next" ><span class="state-badge state-critical">' + data['services_critical_unhandled'] + '</span></a></td>'; };
+                                if ( data['services_critical_handled'] > 0 ) { info += '<td><a href="'+ icinga.config.baseUrl + '/icingadb/services?(service.state.soft_state=2&(service.state.is_handled=y|service.state.is_reachable=n))&host.name=' + data['host_name'] + '" data-base-target="_next" ><span class="state-badge state-critical handled">' + data['services_critical_handled'] + '</span></a></td>'; };
+                                if ( data['services_warning_unhandled'] > 0 ) { info += '<td><a href="'+ icinga.config.baseUrl + '/icingadb/services?(service.state.soft_state=1&service.state.is_handled=n&service.state.is_reachable=y)&host.name=' + data['host_name'] + '" data-base-target="_next" ><span class="state-badge state-warning">' + data['services_warning_unhandled'] + '</span></a></td>'; };
+                                if ( data['services_warning_handled'] > 0 ) { info += '<td><a href="'+ icinga.config.baseUrl + '/icingadb/services?(service.state.soft_state=1&(service.state.is_handled=y|service.state.is_reachable=n))&host.name=' + data['host_name'] + '" data-base-target="_next" ><span class="state-badge state-warning handled">' + data['services_warning_handled'] + '</span></a></td>'; };
+                                if ( data['services_unknown_unhandled'] > 0 ) { info += '<td><a href="'+ icinga.config.baseUrl + '/icingadb/services?(service.state.soft_state=3&service.state.is_handled=n&service.state.is_reachable=y)&host.name=' + data['host_name'] + '" data-base-target="_next" ><span class="state-badge state-unknown">' + data['services_unknown_unhandled'] + '</span></a></td>'; };
+                                if ( data['services_unknown_handled'] > 0 ) { info += '<td><a href="'+ icinga.config.baseUrl + '/icingadb/services?(service.state.soft_state=3&(service.state.is_handled=y|service.state.is_reachable=n))&host.name=' + data['host_name'] + '" data-base-target="_next" ><span class="state-badge state-unknown handled">' + data['services_unknown_handled'] + '</span></a></td>'; };
+                                if ( data['services_ok'] > 0 ) { info += '<td><a href="'+ icinga.config.baseUrl + '/icingadb/services?service.state.soft_state=0&host.name=' + data['host_name'] +'" data-base-target="_next" ><span class="state-badge state-ok">' + data['services_ok'] + '</span></a></td>'; };
+                                if ( data['services_pending'] > 0 ) { info += '<td><a href="'+ icinga.config.baseUrl + '/icingadb/services?service.state.soft_state=99&host.name=' + data['host_name'] +'" data-base-target="_next" ><span class="state-badge state-pending">' + data['services_pending'] + '</span></a></td>'; };
                                 info += '</tr></table>';
                             }
                             info += '</div></div>';
                         } else {
-                            var host_status = type === 'hosts' && data['host_state'] == 1 ? "<div id=\"hoststatus\">" + translation['host-down'] + "</div>" : "";
-    
-                            var hostLink = '/monitoring/host/show?host=' + data['host_name'];
-                            if (isUsingIcingadb) {
-                                hostLink = '/icingadb/host?name=' + data['host_name'];
-                            }
     
                             var info = '<div class="map-popup">';
                             info += '<h1>';
