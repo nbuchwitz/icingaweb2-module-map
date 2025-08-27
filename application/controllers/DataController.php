@@ -11,6 +11,7 @@ use Icinga\Module\Monitoring\DataView\DataView;
 use ipl\Orm\Model;
 use ipl\Stdlib\Filter as IplFilter;
 use ipl\Web\Filter\QueryString;
+use ipl\Sql\Expression;
 
 class DataController extends MapController
 {
@@ -74,21 +75,26 @@ class DataController extends MapController
                 }
             }
 
-            if (in_array($objectType, ['all', 'host'])) {
-                if ($this->isUsingIcingadb) {
-                    $this->addIcingadbHostsToPoints();
-                } else {
-                    $this->addHostsToPoints();
+            if (in_array($objectType, ['icingadb']) && $this->isUsingIcingadb) {                
+                $this->addIcingadbIcingadbToPoints();
+            } else {           
+                if (in_array($objectType, ['all', 'host'])) {
+                    if ($this->isUsingIcingadb) {
+                        $this->addIcingadbHostsToPoints();
+                    } else {
+                        $this->addHostsToPoints();
+                    }
                 }
+
+                if (in_array($objectType, ['all', 'service'])) {
+                    if ($this->isUsingIcingadb) {
+                        $this->addIcingadbServicesToPoints();
+                    } else {
+                        $this->addServicesToPoints();
+                    }
+                }               
             }
 
-            if (in_array($objectType, ['all', 'service'])) {
-                if ($this->isUsingIcingadb) {
-                   $this->addIcingadbServicesToPoints();
-                } else {
-                    $this->addServicesToPoints();
-                }
-            }
         } catch (\Exception $e) {
             $this->points['message'] = $e->getMessage();
             $this->points['trace'] = $e->getTraceAsString();
@@ -236,6 +242,99 @@ class DataController extends MapController
                 $host['coordinates'] = explode(",", $host['coordinates']);
                 $host['icon'] = $ar['icon'];
                 $this->points['services'][$identifier] = $host;
+            }
+        }
+    }
+
+    private function addIcingadbIcingadbToPoints()
+    {
+        $hostQuery = Host::on($this->icingadbUtils->getDb())
+            ->with(['host.state', 'service', 'service.state'])
+            ->columns([
+                'host.id',
+                'host.name',
+                'host.display_name',
+                'vars.geolocation',
+                'vars.map_icon',
+                'hosts_down_handled'          => new Expression('SUM(CASE WHEN host_state.soft_state = 1 AND (host_state.is_handled = \'y\' OR host_state.is_reachable = \'n\') THEN 1 ELSE 0 END)'),
+                'hosts_down_unhandled'        => new Expression('SUM(CASE WHEN host_state.soft_state = 1 AND host_state.is_handled = \'n\' AND host_state.is_reachable = \'y\' THEN 1 ELSE 0 END)'),
+                'hosts_pending'               => new Expression('SUM(CASE WHEN host_state.soft_state = 99 THEN 1 ELSE 0 END)'),
+                'hosts_total'                 => new Expression('SUM(CASE WHEN host.id IS NOT NULL THEN 1 ELSE 0 END)'),
+                'hosts_up'                    => new Expression('SUM(CASE WHEN host_state.soft_state = 0 THEN 1 ELSE 0 END)'),
+                'services_critical_handled'   => new Expression('SUM(CASE WHEN host_service_state.soft_state = 2 AND (host_service_state.is_handled = \'y\' OR host_service_state.is_reachable = \'n\') THEN 1 ELSE 0 END)'),
+                'services_critical_unhandled' => new Expression('SUM(CASE WHEN host_service_state.soft_state = 2 AND host_service_state.is_handled = \'n\' AND host_service_state.is_reachable = \'y\' THEN 1 ELSE 0 END)'),
+                'services_ok'                 => new Expression('SUM(CASE WHEN host_service_state.soft_state = 0 THEN 1 ELSE 0 END)'),
+                'services_pending'            => new Expression('SUM(CASE WHEN host_service_state.soft_state = 99 THEN 1 ELSE 0 END)'),
+                'services_total'              => new Expression('SUM(CASE WHEN service_id IS NOT NULL THEN 1 ELSE 0 END)'),
+                'services_unknown_handled'    => new Expression('SUM(CASE WHEN host_service_state.soft_state = 3 AND (host_service_state.is_handled = \'y\' OR host_service_state.is_reachable = \'n\') THEN 1 ELSE 0 END)'),
+                'services_unknown_unhandled'  => new Expression('SUM(CASE WHEN host_service_state.soft_state = 3 AND host_service_state.is_handled = \'n\' AND host_service_state.is_reachable = \'y\' THEN 1 ELSE 0 END)'),
+                'services_warning_handled'    => new Expression('SUM(CASE WHEN host_service_state.soft_state = 1 AND (host_service_state.is_handled = \'y\' OR host_service_state.is_reachable = \'n\') THEN 1 ELSE 0 END)'),
+                'services_warning_unhandled'  => new Expression('SUM(CASE WHEN host_service_state.soft_state = 1 AND host_service_state.is_handled = \'n\' AND host_service_state.is_reachable = \'y\' THEN 1 ELSE 0 END)')
+	    ])
+            ->filter(IplFilter::like('host.vars.geolocation', '*'))
+            ->setResultSetClass(VolatileStateResults::class);
+
+        $hostQuery 
+           ->getSelectBase()
+           ->groupBy(['host.id','host.name','host.display_name','host_vars_geolocation','host_vars_map_icon']);
+
+        if ($this->filter) {
+            $hostQuery->Filter($this->filter);
+        }
+
+        if ($this->onlyProblems) {
+            $hostQuery->Filter(IplFilter::equal('service.state.is_problem', 'y'));
+        }
+
+        $this->icingadbUtils->applyRestrictions($hostQuery);
+
+        $hostQuery = $hostQuery->execute();
+        if (! $hostQuery->hasResult()) {
+            return;
+        }
+
+        foreach ($hostQuery as $row) {
+            if (! preg_match($this->coordinatePattern, $row->vars['geolocation'])) {
+                continue;
+            }
+
+            $hostname = $row->name;
+            if (! isset($this->points['hosts'][$hostname])) {
+                $host = $this->populateObjectColumnsToArray($row);
+                $host['host_problem']               = $row->state->is_problem ? 1 : 0;
+                $host['coordinates']                = $row->vars['geolocation'];
+                $host['icon']                       = $row->vars['map_icon'] ?? null;
+                $host['coordinates'] = explode(",", $host['coordinates']);
+
+                if ( $row->hosts_down_handled > 0 ) { $host['hosts_down_handled'] = 1; } else { $host['hosts_down_handled'] = 0; };
+                if ( $row->hosts_down_unhandled > 0 ) { $host['hosts_down_unhandled'] = 1; } else { $host['hosts_down_unhandled'] = 0; };
+                if ( $row->hosts_pending > 0 ) { $host['hosts_pending'] = 1; } else { $host['hosts_pending'] = 0; };
+                if ( $row->hosts_total > 0 ) { $host['hosts_total'] = 1; } else { $host['hosts_total'] = 0; };
+                if ( $row->hosts_up > 0 ) { $host['hosts_up'] = 1; } else { $host['hosts_up'] = 0; };
+
+                $host['services_critical_handled'] = $row->services_critical_handled;
+                $host['services_critical_unhandled'] = $row->services_critical_unhandled;
+                $host['services_ok'] = $row->services_ok;
+                $host['services_pending'] = $row->services_pending;
+                $host['services_total'] = $row->services_total;
+                $host['services_unknown_handled'] = $row->services_unknown_handled;
+                $host['services_unknown_unhandled'] = $row->services_unknown_unhandled;
+                $host['services_warning_handled'] = $row->services_warning_handled;
+                $host['services_warning_unhandled'] = $row->services_warning_unhandled;
+
+                $host['services'] = [];
+
+		        if ( $row->services_critical_unhandled > 0) {
+			        $host['host_state_service'] = 2;
+		        } elseif ( $row->services_warning_unhandled > 0 ) {
+			        $host['host_state_service'] = 1;
+		        } elseif ( $row->services_unknown_unhandled > 0 ) {
+			        $host['host_state_service'] = 3;
+		        } else {
+			        $host['host_state_service'] = 0;
+		        }
+	        
+                $this->points['hosts'][$row->name] = $host;
             }
         }
     }
