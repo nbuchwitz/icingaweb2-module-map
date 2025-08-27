@@ -330,6 +330,8 @@ class DataController extends MapController
 			        $host['host_state_service'] = 1;
 		        } elseif ( $row->services_unknown_unhandled > 0 ) {
 			        $host['host_state_service'] = 3;
+		        } elseif ( $row->services_unknown_unhandled > 0 ) {
+			        $host['services_pending'] = 4;
 		        } else {
 			        $host['host_state_service'] = 0;
 		        }

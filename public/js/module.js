@@ -418,13 +418,20 @@
                         }
 
                         if (data['hosts_total'] == 1) {
+
                             var info = '<div id="layout"><div class="main">';
                             info += '<table><tr>';
                             info += '<td><a data-hostname="' + data['host_name'] + '" data-base-target="_next" href="' + icinga.config.baseUrl + hostLink + '">';
-                            if (data['host_state'] == 1) {
+                            switch (data['host_state']) {
+                            case 1:
                                 info += '<span class="state-ball ball-size-l state-down"></span>';
-                            } else {
+                                break;
+                            case 99:
+                                info += '<span class="state-ball ball-size-l state-pending"></span>';
+                                break;
+                            default:
                                 info += '<span class="state-ball ball-size-l state-up"></span>';
+                                break;
                             }
                             info += '</a></td>';
                             info += '<td><a data-hostname="' + data['host_name'] + '" data-base-target="_next" href="' + icinga.config.baseUrl + hostLink + '">';
@@ -445,6 +452,7 @@
                                 info += '</tr></table>';
                             }
                             info += '</div></div>';
+
                         } else {
     
                             var info = '<div class="map-popup">';
@@ -460,6 +468,7 @@
     
                             info += services;
                             info += '</div>';
+                            
                         }
 
                         var marker;
