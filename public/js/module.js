@@ -422,16 +422,14 @@
                             var info = '<div id="layout"><div class="main">';
                             info += '<table><tr>';
                             info += '<td><a data-hostname="' + data['host_name'] + '" data-base-target="_next" href="' + icinga.config.baseUrl + hostLink + '">';
-                            switch (data['host_state']) {
-                            case 1:
+                            if ( data['hosts_down_handled'] > 0 ) {
+                                info += '<span class="state-ball ball-size-l state-down handled"><i class="icon fa-plug fa" title="DOWN (handled by Downtime)"></i></span>';
+                            } else if ( data['hosts_down_unhandled'] > 0 ) {
                                 info += '<span class="state-ball ball-size-l state-down"></span>';
-                                break;
-                            case 99:
+                            } else if ( data['hosts_pending'] > 0 ) {
                                 info += '<span class="state-ball ball-size-l state-pending"></span>';
-                                break;
-                            default:
+                            } else {
                                 info += '<span class="state-ball ball-size-l state-up"></span>';
-                                break;
                             }
                             info += '</a></td>';
                             info += '<td><a data-hostname="' + data['host_name'] + '" data-base-target="_next" href="' + icinga.config.baseUrl + hostLink + '">';
