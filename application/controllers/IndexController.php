@@ -2,9 +2,11 @@
 
 namespace Icinga\Module\Map\Controllers;
 
+use Icinga\Module\Map\Common\ModuleConfig;
+use Icinga\Module\Map\ProvidedHook\Icingadb\IcingadbSupport;
+
 use Icinga\Application\Modules\Module;
 use Icinga\Data\Filter\FilterException;
-use Icinga\Module\Map\ProvidedHook\Icingadb\IcingadbSupport;
 use Icinga\Util\Json;
 
 use ipl\Html\Attributes;
@@ -19,11 +21,11 @@ class IndexController extends CompatController
      **/
     public function indexAction()
     {
-        $config = $this->Config();
+        $config = ModuleConfig::getConfig();
         $map = null;
         $mapConfig = null;
 
-        // try to load stored map
+        // Check if the URL Param 'load' is set and load config from the maps.ini
         if ($this->params->has("load")) {
             $map = $this->params->get("load");
 
@@ -31,52 +33,43 @@ class IndexController extends CompatController
                 throw new FilterException("Invalid character in map name. Allow characters: a-zA-Z0-9_");
             }
 
-            $mapConfig = $this->Config("maps");
+            $mapConfig = ModuleConfig::getMapsConfig();
             if (!$mapConfig->hasSection($map)) {
                 throw new FilterException("Could not find stored map with name = " . $map);
             }
         }
 
-        $parameterDefaults = [
-            "default_zoom" => "4",
-            "default_long" => '13.377485',
-            "default_lat" => '52.515855',
-            "min_zoom" => "2",
-            "max_zoom" => "19",
-            "max_native_zoom" => "19",
-            "disable_cluster_at_zoom" => null, // should be by default: max_zoom - 1
-            "cluster_problem_count" => 0,
-            "popup_mouseover" => 0,
-            "tile_url" => "//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            "opencage_apikey" => "",
-        ];
+        $defaults = ModuleConfig::DEFAULTS;
+        $defaults['disable_cluster_at_zoom'] = $defaults['max_zoom'] - 1; // should be by default: max_zoom - 1
 
-        /*
-         * 1. url
-         * 2. stored map
-         * 3. user config
-         * 4. config
-         */
+        // Precedence for loading configuration:
+        // 1. The URL parameters
+        // 2. A stored map in the maps.ini
+        // 3. The user's preferences
+        // 4. The module's configuration
+
+        // Merge the user preferences into the default
         $userPreferences = $this->Auth()->getUser()->getPreferences();
         if ($userPreferences->has("map")) {
             $config->getSection("map")->merge($userPreferences->get("map"));
         }
 
-        foreach ($parameterDefaults as $parameter => $default) {
+        // Check the URL parameters and override config if they are set
+        foreach ($defaults as $parameter => $default) {
             if ($this->params->has($parameter)) {
+                // If the parameter is present in the URL
                 $this->view->$parameter = $this->params->get($parameter);
             } elseif (isset($map) && $mapConfig->getSection($map)->offsetExists($parameter)) {
+                // If a maps.ini is set and has the given parameter
                 $this->view->$parameter = $mapConfig->get($map, $parameter);
             } else {
+                // Use the module config and its defaults as fallback
                 $this->view->$parameter = $config->get("map", $parameter, $default);
             }
         }
 
-        if (!$this->view->disable_cluster_at_zoom) {
-            $this->view->disable_cluster_at_zoom = $this->view->max_zoom - 1;
-        }
-
         $pattern = "/^([_]{0,1}(host|service))|\(|(object|state)Type/";
+
         $urlParameters = $this->filterArray($this->params->toArray(false), $pattern);
 
         if (isset($map)) {
@@ -91,6 +84,8 @@ class IndexController extends CompatController
         $id = uniqid();
         $showHost = $this->params->get("showHost");
 
+        // The map-script element holds the configuration for the module that
+        // we need in the JavaScript part to render the map.
         $this->addContent(new HtmlElement('div', Attributes::create([
             'id' => 'map-script',
             'data-map-attrs' => Json::encode([
@@ -107,6 +102,7 @@ class IndexController extends CompatController
                 'map_show_host' => (! empty($showHost) ? preg_replace("/[\'\;]/", "", $showHost) : null),
                 'url_parameters' => implode('&', $urlParameters),
                 'id' => $id,
+                // TODO: Why use another attribute name here?
                 'dashlet' => (bool) $this->view->compact,
                 'expand' => (bool) $this->params->get('expand'),
                 'isUsingIcingadb' => Module::exists('icingadb') && IcingadbSupport::useIcingaDbAsBackend(),
@@ -129,6 +125,8 @@ class IndexController extends CompatController
             ])
         ])));
 
+        // The map element is the element we render the map in.
+        // It can have the compact class for when it is rendered in a smaller space (e.g. dashbaord).
         $this->addContent(new HtmlElement('div', Attributes::create([
             'id' => 'map-' . $id,
             'class' => 'map' . ($this->view->compact ? ' compact' : '')

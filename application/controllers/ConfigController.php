@@ -2,8 +2,13 @@
 
 namespace Icinga\Module\Map\Controllers;
 
+use Icinga\Module\Map\Common\ModuleConfig;
 use Icinga\Module\Map\Forms\Config\DirectorConfigForm;
 use Icinga\Module\Map\Forms\Config\GeneralConfigForm;
+
+use Icinga\Application\Config;
+use Icinga\Util\Json;
+use Icinga\Exception\Json\JsonEncodeException;
 use Icinga\Web\Widget\Tabs;
 
 use ipl\Html\HtmlString;
@@ -11,6 +16,8 @@ use ipl\Web\Compat\CompatController;
 
 class ConfigController extends CompatController
 {
+    protected bool $disableDefaultAutoRefresh = true;
+
     public function init()
     {
     }
@@ -22,8 +29,11 @@ class ConfigController extends CompatController
     public function indexAction(): void
     {
         $this->assertPermission('config/modules');
+
+        $config = ModuleConfig::getConfig();
+
         $form = new GeneralConfigForm();
-        $form->setIniConfig($this->Config());
+        $form->setIniConfig($config);
         $form->handleRequest();
 
         $this->addContent(HtmlString::create($form));
@@ -39,8 +49,11 @@ class ConfigController extends CompatController
     public function directorAction(): void
     {
         $this->assertPermission('map/director/configuration');
+
+        $config = ModuleConfig::getConfig();
+
         $form = new DirectorConfigForm();
-        $form->setIniConfig($this->Config());
+        $form->setIniConfig($config);
         $form->handleRequest();
 
         $this->addContent(HtmlString::create($form));
@@ -56,33 +69,21 @@ class ConfigController extends CompatController
     public function fetchAction(): void
     {
         $type = strtolower($this->params->shift('type', ""));
-        $moduleConfig = $this->Config();
+        $moduleConfig = ModuleConfig::getConfig();
         $config = [];
 
-        // TODO: Reuse the default values in config form?
-        $defaults = [
-            "default_zoom" => "4",
-            "default_long" => '13.377485',
-            "default_lat" => '52.515855',
-            "min_zoom" => "2",
-            "max_zoom" => "19",
-            "max_native_zoom" => "19",
-            "cluster_problem_count" => 0,
-            "popup_mouseover" => 0,
-            "tile_url" => "//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        ];
-
+        $defaults = ModuleConfig::DEFAULTS;
         $defaults['disable_cluster_at_zoom'] = $defaults['max_zoom'] - 1; // should be by default: max_zoom - 1
 
-        // Override module config with user's config
+        // Override module config with user's preferences
         $userPreferences = $this->Auth()->getUser()->getPreferences();
         if ($userPreferences->has("map")) {
             $moduleConfig->getSection("map")->merge($userPreferences->get("map"));
         }
 
+        // Merge director and user's preferences
         if ($type === "director") {
             $moduleConfig->getSection("map")->merge($moduleConfig->getSection("director"));
-
             if ($userPreferences->has("map-director")) {
                 $moduleConfig->getSection("map")->merge($userPreferences->get("map-director"));
             }
@@ -92,7 +93,12 @@ class ConfigController extends CompatController
             $config[$parameter] = $moduleConfig->get("map", $parameter, $default);
         }
 
-        print json_encode($config);
+        try {
+            print Json::encode($config);
+        } catch (JsonEncodeException $e) {
+            Logger::error('Failed to encode configuration: %s', $e);
+        }
+
         exit();
     }
 
