@@ -31,7 +31,7 @@ class DataController extends MapController
     private $stateChangeColumn;
     private $filter;
 
-    /** @var bool Whether to show ony problem services */
+    /** @var bool Whether to show only problem services */
     private $onlyProblems;
     private $points = [];
 
