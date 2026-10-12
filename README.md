@@ -42,12 +42,11 @@ This module uses Leaflet and several plugins:
 
 ## Support
 
-Join the [Icinga community channels](https://www.icinga.com/community/get-involved/) for questions.
+Join the [Icinga community channels](https://community.icinga.com/) for questions.
 
 ## Requirements
 
-* [Icinga Web 2](https://www.icinga.com/products/icinga-web-2/) (>= 2.4.1)
-
+* [Icinga Web 2](github.com/icinga/icingaweb2/) (>= 2.4.1)
 
 ## Thanks
 
