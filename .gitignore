@@ -1,3 +1,15 @@
+# Exclude editor files
 .idea
 *.sw*
 *~
+\#*
+.\#*
+TODO*
+
+# Other artifacts
+_icingaweb2/
+_libraries/
+.phpunit.cache/
+.phplint.cache/
+reports/
+/*.phar
