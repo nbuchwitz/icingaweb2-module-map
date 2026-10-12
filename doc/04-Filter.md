@@ -2,7 +2,7 @@
 
 The map module allows you to filter objects by using the Icinga Web 2 filter syntax.
 
-For more details have look into the [filter section](https://icinga.com/docs/icingaweb2/latest/doc/06-Security/#restrictions) of the official Icinga Web 2 documentation.
+For more details have a look into the [filter section](https://icinga.com/docs/icingaweb2/latest/doc/06-Security/#restrictions) of the official Icinga Web 2 documentation.
 
 ## Special Filters
 
@@ -12,7 +12,7 @@ This filter could be used to show only hosts, services or both object types.
 
 **Example URL:** ``/icingaweb2/map?objectType=host``
 
-**Allows values:**
+**Allowed values:**
 
 | Values | Description |
 | ------ | ----------- |
