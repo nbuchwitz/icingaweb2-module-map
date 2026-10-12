@@ -19,7 +19,7 @@
 **Fixed bugs:**
 
 - Module broken without IcingaDB module [\#107](https://github.com/nbuchwitz/icingaweb2-module-map/issues/107)
-- IcingaDB Web Modul Error [\#98](https://github.com/nbuchwitz/icingaweb2-module-map/issues/98)
+- IcingaDB Web Module Error [\#98](https://github.com/nbuchwitz/icingaweb2-module-map/issues/98)
 - Fix icingadb db queries [\#123](https://github.com/nbuchwitz/icingaweb2-module-map/pull/123) ([sukhwinder33445](https://github.com/sukhwinder33445))
 - module.js - zoom button translation fix [\#88](https://github.com/nbuchwitz/icingaweb2-module-map/pull/88) ([Animancorda](https://github.com/Animancorda))
 - Fix XSS Vulnerability [\#86](https://github.com/nbuchwitz/icingaweb2-module-map/pull/86) ([jason0x90](https://github.com/jason0x90))
