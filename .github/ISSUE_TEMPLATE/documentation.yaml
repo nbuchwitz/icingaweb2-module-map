@@ -1,0 +1,10 @@
+name: Documentation
+description: Suggest documentation improvements
+title: "[Documentation]: "
+labels: ["documentation"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the improvements you'd like.
+      description: Please provide as much context as possible. You can use markdown.

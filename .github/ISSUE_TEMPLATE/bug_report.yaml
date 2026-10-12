@@ -1,0 +1,27 @@
+name: Bug Report
+description: File a bug report
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Please try to fill out as much of the information below as you can. Thank you!
+      options:
+        - label: Yes, I've searched similar issues on GitHub and didn't find any.
+          required: true
+  - type: input
+    id: app_version
+    attributes:
+      label: Which version contains the bug?
+      placeholder: 1.0.0
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: Please provide a concise description of the bug, add any relevant output or error messages. You can use markdown.
+  - type: textarea
+    id: recreate
+    attributes:
+      label: How to recreate the bug?
+      description: Please provide the steps to recreate the issue.
