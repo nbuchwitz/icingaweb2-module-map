@@ -5,9 +5,10 @@ namespace Icinga\Module\Map\Web\Controller;
 use Icinga\Application\Modules\Module;
 use Icinga\Module\Map\ProvidedHook\Icingadb\IcingadbSupport;
 use Icinga\Module\Map\Util\IcingadbUtils;
-use Icinga\Module\Monitoring\Controller;
 
-abstract class MapController extends Controller
+use ipl\Web\Compat\CompatController;
+
+abstract class MapController extends CompatController
 {
     /** @var bool whether icingadb is set as backend */
     protected $isUsingIcingadb;
