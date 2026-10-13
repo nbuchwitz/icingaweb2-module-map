@@ -36,17 +36,13 @@ This module uses Leaflet and several plugins:
 
 ## Documentation
 
-* [Installation](doc/01-Installation.md)
+* [Installation and requirements](doc/01-Installation.md)
 * [Adding markers to your map](doc/02-Add-Items-to-map.md)
 * [Exploring the map](doc/03-Exploring-the-map.md)
 
 ## Support
 
 Join the [Icinga community channels](https://community.icinga.com/) for questions.
-
-## Requirements
-
-* [Icinga Web 2](github.com/icinga/icingaweb2/) (>= 2.4.1)
 
 ## Thanks
 

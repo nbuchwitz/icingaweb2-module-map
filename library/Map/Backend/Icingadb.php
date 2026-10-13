@@ -1,14 +1,14 @@
 <?php
 
-namespace Icinga\Module\Map\Util;
+namespace Icinga\Module\Map\Backend;
 
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 
 /**
- * Class for initialising icingadb utils
+ * Icingadb is used to initialize the IcingaDB backend
  */
-class IcingadbUtils
+class Icingadb
 {
     use Database;
     use Auth;
@@ -23,11 +23,11 @@ class IcingadbUtils
     }
 
     /**
-     * Get the IcingadbUtils instance
+     * Get the IcingadbBackend instance
      *
-     * @return IcingadbUtils
+     * @return Icingadb
      */
-    public static function getInstance(): IcingadbUtils
+    public static function getInstance(): Icingadb
     {
         if (self::$instance === null) {
             self::$instance = new self();

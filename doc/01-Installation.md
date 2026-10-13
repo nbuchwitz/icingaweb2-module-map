@@ -5,7 +5,7 @@ Requirements
 ------------
 
 * Icinga Web 2 (&gt;= 2.4.1)
-* PHP (&gt;= 5.6 or 7.x)
+* PHP (&gt;= 8.2)
 * The Icinga Web 2 `monitoring` or `icingadb` module
 
 Installation from .tar.gz
