@@ -10,17 +10,20 @@ use Icinga\Exception\QueryException;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filterable;
 
+use ipl\I18n\Translation;
+
 /**
  * Monitoring is used to initialize the Monitoring module backend
  */
 class Monitoring
 {
+    use Translation;
+
     protected ?Auth $auth = null;
     protected ?MonitoringBackend $backend = null;
 
     public function __construct()
     {
-        // TODO: Do we need the _getParam('backend') parameter?
         $this->backend = MonitoringBackend::instance();
     }
 

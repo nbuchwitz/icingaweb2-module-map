@@ -4,7 +4,8 @@
 Requirements
 ------------
 
-* Icinga Web 2 (&gt;= 2.4.1)
+* Icinga Web 2 (&gt;= 2.13)
+* Icinga PHP Library - IPL
 * PHP (&gt;= 8.2)
 * The Icinga Web 2 `monitoring` or `icingadb` module
 
