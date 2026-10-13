@@ -90,7 +90,7 @@ class SearchController extends MapController
 
         $filter = sprintf('(service=*%s*|service_display_name=*%s*)', $query, $query);
 
-        $hostQuery = $this->backend
+        $hostQuery = $this->monitoringBackend->getDb()
             ->select()
             ->from('servicestatus', array(
                 'service_display_name',
@@ -102,7 +102,7 @@ class SearchController extends MapController
             ->applyFilter(Filter::fromQueryString($filter))
             ->limit($this->limit);
         $this->filterQuery($hostQuery);
-        $this->applyRestriction('monitoring/filter/objects', $hostQuery);
+        $this->monitoringBackend->applyRestriction('monitoring/filter/objects', $hostQuery);
 
         if ($hostQuery->count() > 0) {
             foreach ($hostQuery as $el) {
@@ -133,7 +133,7 @@ class SearchController extends MapController
 
         $filter = sprintf('(host=*%s*|host_display_name=*%s*)', $query, $query);
 
-        $hostQuery = $this->backend
+        $hostQuery = $this->monitoringBackend->getDb()
             ->select()
             ->from('hoststatus', array(
                 'host_display_name',
@@ -144,7 +144,7 @@ class SearchController extends MapController
             ->applyFilter(Filter::fromQueryString($filter))
             ->limit($this->limit);
         $this->filterQuery($hostQuery);
-        $this->applyRestriction('monitoring/filter/objects', $hostQuery);
+        $this->monitoringBackend->applyRestriction('monitoring/filter/objects', $hostQuery);
 
         if ($hostQuery->count() > 0) {
             foreach ($hostQuery as $el) {
@@ -175,10 +175,10 @@ class SearchController extends MapController
         $results = [];
 
         $searchString = "*$query*";
-        $query = Host::on($this->icingadbUtils->getDb());
+        $query = Host::on($this->icingadbBackend->getDb());
 
         if ($objectType === 'service') {
-            $query = Service::on($this->icingadbUtils->getDb())->with('host');
+            $query = Service::on($this->icingadbBackend->getDb())->with('host');
         }
 
         $query->filter(IplFilter::like("$objectType.vars.geolocation", '*'));

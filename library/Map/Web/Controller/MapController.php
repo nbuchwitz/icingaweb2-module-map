@@ -2,18 +2,27 @@
 
 namespace Icinga\Module\Map\Web\Controller;
 
-use Icinga\Application\Modules\Module;
 use Icinga\Module\Map\ProvidedHook\Icingadb\IcingadbSupport;
-use Icinga\Module\Map\Util\IcingadbUtils;
-use Icinga\Module\Monitoring\Controller;
+use Icinga\Module\Map\Backend\Icingadb;
+use Icinga\Module\Map\Backend\Monitoring;
 
-abstract class MapController extends Controller
+use Icinga\Application\Modules\Module;
+
+use ipl\Web\Compat\CompatController;
+
+/**
+ * MapController is used to support for the IcingaDB and Monitoring module.
+ **/
+abstract class MapController extends CompatController
 {
-    /** @var bool whether icingadb is set as backend */
+    /** @var bool whether or not IcingaDB is set as backend */
     protected $isUsingIcingadb;
 
-    /** @var IcingadbUtils provide required icingadb utils */
-    protected $icingadbUtils;
+    /** @var Icingadb backend when IcingaDB is used */
+    protected $icingadbBackend;
+
+    /** @var Monitoring backend when Monitoring module is used */
+    protected $monitoringBackend;
 
     /** @var string Pattern to check for broken coordinates */
     protected $coordinatePattern = '/^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$/';
@@ -22,11 +31,12 @@ abstract class MapController extends Controller
     {
         if (Module::exists('icingadb') && IcingadbSupport::useIcingaDbAsBackend()) {
             $this->isUsingIcingadb = true;
-            $this->icingadbUtils = IcingadbUtils::getInstance();
+            $this->icingadbBackend = Icingadb::getInstance();
 
             return;
         }
 
-        parent::moduleInit();
+        // If we didn't return before we assume the Monitoring module is used
+        $this->monitoringBackend = new Monitoring();
     }
 }

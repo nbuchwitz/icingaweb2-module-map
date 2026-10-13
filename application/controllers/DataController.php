@@ -78,7 +78,7 @@ class DataController extends MapController
                 if ($this->isUsingIcingadb) {
                     $this->addIcingadbHostsToPoints();
                 } else {
-                    $this->addHostsToPoints();
+                    $this->addIdoHostsToPoints();
                 }
             }
 
@@ -86,7 +86,7 @@ class DataController extends MapController
                 if ($this->isUsingIcingadb) {
                    $this->addIcingadbServicesToPoints();
                 } else {
-                    $this->addServicesToPoints();
+                    $this->addIdoServicesToPoints();
                 }
             }
         } catch (\Exception $e) {
@@ -98,10 +98,10 @@ class DataController extends MapController
         exit();
     }
 
-    private function addHostsToPoints()
+    private function addIdoHostsToPoints()
     {
         // get host data
-        $hostQuery = $this->backend
+        $hostQuery = $this->monitoringBackend->getDb()
             ->select()
             ->from('hoststatus', array(
                 'host_display_name',
@@ -115,12 +115,11 @@ class DataController extends MapController
                 'icon' => '_host_map_icon',
             ))
             ->applyFilter(Filter::fromQueryString('_host_geolocation >'));
-
-        $this->applyRestriction('monitoring/filter/objects', $hostQuery);
+        $this->monitoringBackend->applyRestriction('monitoring/filter/objects', $hostQuery);
         $this->filterQuery($hostQuery);
 
         // get service data
-        $serviceQuery = $this->backend
+        $serviceQuery = $this->monitoringBackend->getDb()
             ->select()
             ->from('servicestatus', array(
                 'host_name',
@@ -137,7 +136,7 @@ class DataController extends MapController
             $serviceQuery->applyFilter(Filter::where('service_problem', 1));
         }
 
-        $this->applyRestriction('monitoring/filter/objects', $serviceQuery);
+        $this->monitoringBackend->applyRestriction('monitoring/filter/objects', $serviceQuery);
         $this->filterQuery($serviceQuery);
 
         if ($hostQuery->count() > 0) {
@@ -181,10 +180,10 @@ class DataController extends MapController
         }
     }
 
-    private function addServicesToPoints()
+    private function addIdoServicesToPoints()
     {
         // get services with geolocation
-        $geoServiceQuery = $this->backend
+        $geoServiceQuery = $this->monitoringBackend->getDb()
             ->select()
             ->from('servicestatus', array(
                 'host_display_name',
@@ -208,10 +207,8 @@ class DataController extends MapController
             $geoServiceQuery->applyFilter(Filter::where('service_problem', 1));
         }
 
-
-        $this->applyRestriction('monitoring/filter/objects', $geoServiceQuery);
+        $this->monitoringBackend->applyRestriction('monitoring/filter/objects', $geoServiceQuery);
         $this->filterQuery($geoServiceQuery);
-        // ---
 
         if ($geoServiceQuery->count() > 0) {
             foreach ($geoServiceQuery as $row) {
@@ -242,7 +239,7 @@ class DataController extends MapController
 
     private function addIcingadbHostsToPoints()
     {
-        $hostQuery = Host::on($this->icingadbUtils->getDb())
+        $hostQuery = Host::on($this->icingadbBackend->getDb())
              ->columns([
                  'id',
                 'name',
@@ -278,7 +275,7 @@ class DataController extends MapController
             $hostQuery->Filter(IplFilter::equal('service.state.is_problem', 'y'));
         }
 
-        $this->icingadbUtils->applyRestrictions($hostQuery);
+        $this->icingadbBackend->applyRestrictions($hostQuery);
 
         $hostQuery = $hostQuery->execute();
         if (! $hostQuery->hasResult()) {
@@ -321,7 +318,7 @@ class DataController extends MapController
 
     private function addIcingadbServicesToPoints()
     {
-        $serviceQuery = Service::on($this->icingadbUtils->getDb())
+        $serviceQuery = Service::on($this->icingadbBackend->getDb())
             ->columns([
                 'id',
                 'name',
@@ -357,7 +354,7 @@ class DataController extends MapController
             $serviceQuery->Filter(IplFilter::equal('service.state.is_problem', 'y'));
         }
 
-        $this->icingadbUtils->applyRestrictions($serviceQuery);
+        $this->icingadbBackend->applyRestrictions($serviceQuery);
         $serviceQuery = $serviceQuery->execute();
 
         if (! $serviceQuery->hasResult()) {
