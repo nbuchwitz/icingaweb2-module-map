@@ -92,4 +92,3 @@ class DirectorConfigForm extends ConfigForm
         );
     }
 }
-

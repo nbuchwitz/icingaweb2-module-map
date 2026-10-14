@@ -7,6 +7,7 @@
 TODO*
 
 # Other artifacts
+vendor/
 _icingaweb2/
 _libraries/
 .phpunit.cache/

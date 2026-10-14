@@ -27,7 +27,7 @@ class Monitoring
         $this->backend = MonitoringBackend::instance();
     }
 
-    public function Auth()
+    public function getAuth()
     {
         if ($this->auth === null) {
             $this->auth = Auth::getInstance();
@@ -37,7 +37,7 @@ class Monitoring
 
     public function getRestrictions($name)
     {
-        return $this->Auth()->getRestrictions($name);
+        return $this->getAuth()->getRestrictions($name);
     }
 
     /**

@@ -1,0 +1,44 @@
+name: PHP Tests
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - release/*
+  pull_request:
+    branches:
+      - main
+      - master
+      - release/*
+
+jobs:
+  lint:
+    name: Lint and Code Style
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2']
+        os: ['ubuntu-24.04']
+
+    steps:
+      - name: Checkout code base
+        uses: actions/checkout@v7
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+
+      - name: Setup dependencies
+        run: composer install
+
+      - name: PHP Lint
+        if: success() || matrix.allow_failure
+        run: ./vendor/bin/phplint -n --exclude={^vendor/.*} application library configuration.php run.php
+
+      - name: PHP CodeSniffer
+        if: ${{ !cancelled() }}
+        run: ./vendor/bin/phpcs

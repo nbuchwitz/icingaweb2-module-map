@@ -132,7 +132,7 @@ class IndexController extends CompatController
         ])));
     }
 
-    function filterArray($array, $pattern)
+    private function filterArray($array, $pattern)
     {
         $matches = preg_grep($pattern, array_keys($array));
         return array_intersect_key($array, array_flip($matches));

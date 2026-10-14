@@ -38,11 +38,9 @@ $this->provideConfigTab('config', array(
 ));
 
 if ($this->app->getModuleManager()->hasEnabled("mapDatatype") && $this->app->getModuleManager()->hasEnabled("director")) {
-
     $this->provideConfigTab('director', array(
         'title' => $this->translate('Configure the director map datatype'),
         'label' => $this->translate('Director'),
         'url' => 'config/director'
     ));
-
 }

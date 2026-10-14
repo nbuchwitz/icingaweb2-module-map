@@ -44,7 +44,8 @@ class DataController extends MapController
             // Borrowed from monitoring module
             // Handle soft and hard states
             $config = $this->config();
-            $stateType = strtolower($this->params->shift('stateType',
+            $stateType = strtolower($this->params->shift(
+                'stateType',
                 $config->get('map', 'stateType', 'soft')
             ));
 
@@ -84,7 +85,7 @@ class DataController extends MapController
 
             if (in_array($objectType, ['all', 'service'])) {
                 if ($this->isUsingIcingadb) {
-                   $this->addIcingadbServicesToPoints();
+                    $this->addIcingadbServicesToPoints();
                 } else {
                     $this->addIdoServicesToPoints();
                 }

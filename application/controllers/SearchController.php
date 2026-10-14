@@ -27,8 +27,12 @@ class SearchController extends MapController
 
     protected function filterQuery(DataView $dataView)
     {
-        $this->setupFilterControl($dataView, null, null,
-            ['stateType', 'objectType', 'problems', 'jsonp', 'q', 'proximity', 'lite']);
+        $this->setupFilterControl(
+            $dataView,
+            null,
+            null,
+            ['stateType', 'objectType', 'problems', 'jsonp', 'q', 'proximity', 'lite']
+        );
         return $dataView;
     }
 
@@ -65,10 +69,10 @@ class SearchController extends MapController
         }
 
         if ($this->isUsingIcingadb) {
-            return $this->IcingadbSearch($query, 'service');
+            return $this->icingadbSearch($query, 'service');
         }
 
-        return $this->IdoServiceSearch($query);
+        return $this->idoServiceSearch($query);
     }
 
     private function hostSearch($query)
@@ -78,13 +82,13 @@ class SearchController extends MapController
         }
 
         if ($this->isUsingIcingadb) {
-            return $this->IcingadbSearch($query, 'host');
+            return $this->icingadbSearch($query, 'host');
         }
 
-        return $this->IdoHostSearch($query);
+        return $this->idoHostSearch($query);
     }
 
-    private function IdoServiceSearch($query)
+    private function idoServiceSearch($query)
     {
         $results = [];
 
@@ -128,7 +132,8 @@ class SearchController extends MapController
         return $results;
     }
 
-    private function IdoHostSearch($query) {
+    private function idoHostSearch($query)
+    {
         $results = [];
 
         $filter = sprintf('(host=*%s*|host_display_name=*%s*)', $query, $query);
@@ -170,7 +175,7 @@ class SearchController extends MapController
         return $results;
     }
 
-    private function IcingadbSearch($query, $objectType)
+    private function icingadbSearch($query, $objectType)
     {
         $results = [];
 
