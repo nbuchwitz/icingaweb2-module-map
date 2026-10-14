@@ -24,12 +24,12 @@ To show more details about a host click on the host marker. If you want to show 
 ### Control elements
 
 In the upper left corner of the map there are six control elements:
- 
+
 ![Control elements](screenshot/02_getting-started/0205_control-elements.png)
 
 ## Filtering host objects
 
-The usual icingaweb2 filter syntax can be used to filter the set of hosts being displayed. Filters have to be appended to the url (eg. `?host=web*`)
+The usual Icinga Web 2 filter syntax can be used to filter the set of hosts being displayed. Filters have to be appended to the URL (eg. `?host=web*`)
 
 **Filter examples (IDO backend):**
 
@@ -40,7 +40,7 @@ The usual icingaweb2 filter syntax can be used to filter the set of hosts being 
 | host_in_downtime=0&host_acknowledged=0 | Don't show acknowledged or objects in downtime |
 |problems&host_state=1 | Show all hosts in state DOWN `1` (`0` = UP, `1`= DOWN) |
 
-**Filter examples (icingadb backend):**
+**Filter examples (IcingaDB backend):**
 
 | Filter expression                                         | Description                                                                                               |
 |-----------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|
@@ -54,14 +54,13 @@ The usual icingaweb2 filter syntax can be used to filter the set of hosts being 
 
 To add a map widget to a dashboard (or a new one) click on the `Add to dashboard` button as shown above. Any filters which are applied to the current view, are also stored in the dashlet.
 
-
 ## Settings
 
 Besides the global map configuration in the module settings, it is possible to override these settings per user or per each map.
 
 The following parameters can be overridden:
 
-| Parameter | 
+| Parameter |
 | --- |
 | min_zoom |
 | max_zoom |
@@ -101,6 +100,7 @@ insert into icingaweb_user_preference values ("USER", "map", "default_long", "-8
 ```
 
 ### Disable clustering
+
 In some environments it is desired not to cluster the markers.
 The cluster function can be deactivated with the configuration option ``disable_cluster_at_zoom``, either at a certain zoom level (e.g. ``disable_cluster_at_zoom=10`` or completely (``disable_cluster_at_zoom=1``)
 
