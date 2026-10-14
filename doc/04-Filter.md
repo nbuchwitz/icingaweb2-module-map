@@ -20,7 +20,7 @@ This filter could be used to show only hosts, services or both object types.
 | ``host`` | Show only hosts on the map |
 | ``service`` | Show only services on the map |
 
-### problems
+### Problems
 
 If you only want to see hosts or services with states distinct from ``OK``, use this filter.
 
@@ -28,7 +28,7 @@ If you only want to see hosts or services with states distinct from ``OK``, use 
 
 ## Filtering host objects
 
-The usual icingaweb2 filter syntax can be used to filter the set of hosts being displayed. Filters have to be appended to the url (eg. `?host=web*`)
+The usual Icinga Web 2 filter syntax can be used to filter the set of hosts being displayed. Filters have to be appended to the URL (eg. `?host=web*`)
 
 **Filter examples:**
 
@@ -39,7 +39,7 @@ The usual icingaweb2 filter syntax can be used to filter the set of hosts being 
 
 ### Change default parameters
 
-It's possible to change the parameters ``default_zoom``, ``default_long`` and ``default_lat`` for a map by adding the parameters to the url:
+It's possible to change the parameters ``default_zoom``, ``default_long`` and ``default_lat`` for a map by adding the parameters to the URL:
 
 ```map?default_zoom=20&default_long=13.370324&default_lat=52.500859```
 
