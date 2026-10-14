@@ -155,7 +155,5 @@ class GeneralConfigForm extends ConfigForm
                 'default' => false,
             )
         );
-
     }
 }
-

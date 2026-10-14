@@ -12,7 +12,6 @@ class ConfigController extends CompatController
 {
     public function init()
     {
-
     }
 
     public function indexAction(): void
@@ -74,7 +73,7 @@ class ConfigController extends CompatController
         if ($type === "director") {
             $moduleConfig->getSection("map")->merge($moduleConfig->getSection("director"));
 
-            if($userPreferences->has("map-director")) {
+            if ($userPreferences->has("map-director")) {
                 $moduleConfig->getSection("map")->merge($userPreferences->get("map-director"));
             }
         }
@@ -86,7 +85,6 @@ class ConfigController extends CompatController
 
         print json_encode($config);
         exit();
-
     }
 
     /**
@@ -103,4 +101,3 @@ class ConfigController extends CompatController
         }
     }
 }
-
