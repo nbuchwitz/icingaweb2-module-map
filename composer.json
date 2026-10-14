@@ -1,0 +1,16 @@
+{
+    "name": "nbuchwitz/icingaweb2-module-map",
+    "description": "Map module for Icinga Web 2",
+    "license": "GPL-2.0-only",
+    "type": "project",
+    "homepage": "https://github.com/nbuchwitz/icingaweb2-module-map",
+    "config": {
+        "platform": {
+            "php": "8.2"
+        }
+    },
+    "require-dev": {
+        "overtrue/phplint": "^9.6",
+        "squizlabs/php_codesniffer": "^4.0"
+    }
+}
