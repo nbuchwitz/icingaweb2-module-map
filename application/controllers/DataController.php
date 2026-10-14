@@ -8,6 +8,7 @@ use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Map\Web\Controller\MapController;
 use Icinga\Module\Monitoring\DataView\DataView;
+
 use ipl\Orm\Model;
 use ipl\Stdlib\Filter as IplFilter;
 use ipl\Web\Filter\QueryString;
@@ -36,7 +37,8 @@ class DataController extends MapController
     private $points = [];
 
     /**
-     * Get JSON state objects
+     * pointsAction returns the Icinga state objects as JSON.
+     * This is used in the JavaScript section of the module to add the markers on the Leaflet map.
      */
     public function pointsAction()
     {

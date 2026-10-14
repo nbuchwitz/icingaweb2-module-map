@@ -6,12 +6,17 @@ use Icinga\Application\Modules\Module;
 use Icinga\Data\Filter\FilterException;
 use Icinga\Module\Map\ProvidedHook\Icingadb\IcingadbSupport;
 use Icinga\Util\Json;
+
 use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Web\Compat\CompatController;
 
 class IndexController extends CompatController
 {
+    /**
+     * indexAction returns the main HTML element for the Map module.
+     * This HTML element is then associated with Leaflet by the JavaScript section of this module.
+     **/
     public function indexAction()
     {
         $config = $this->Config();

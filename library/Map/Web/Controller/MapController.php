@@ -27,6 +27,9 @@ abstract class MapController extends CompatController
     /** @var string Pattern to check for broken coordinates */
     protected $coordinatePattern = '/^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$/';
 
+    /**
+     * moduleInit initializes the controller by determining which backend should be used to fetch Icinga objects.
+     **/
     protected function moduleInit()
     {
         if (Module::exists('icingadb') && IcingadbSupport::useIcingaDbAsBackend()) {

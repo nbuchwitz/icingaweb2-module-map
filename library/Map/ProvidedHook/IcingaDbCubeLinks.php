@@ -17,7 +17,7 @@ class IcingaDbCubeLinks extends ActionsHook
             return;
         }
 
-        $vars = ["objectType"=>"host"];
+        $vars = ["objectType" => "host"];
         foreach ($cube->getSlices() as $dimension => $slice) {
             $vars['host.vars.' . $dimension] = trim($slice, '"');
         }

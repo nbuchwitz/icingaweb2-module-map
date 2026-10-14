@@ -5,9 +5,11 @@ namespace Icinga\Module\Map\Controllers;
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
-use ipl\Stdlib\Filter as IplFilter;
 use Icinga\Module\Map\Web\Controller\MapController;
 use Icinga\Module\Monitoring\DataView\DataView;
+
+use ipl\Stdlib\Filter as IplFilter;
+
 use OpenCage\Geocoder\Geocoder;
 
 class SearchController extends MapController
@@ -230,6 +232,10 @@ class SearchController extends MapController
         return $results;
     }
 
+    /**
+     * indexAction implements a JSONP search endpoint that returns OpenCage geocoding,
+     * host and service results for the given query.
+     **/
     public function indexAction()
     {
         $config = $this->config();

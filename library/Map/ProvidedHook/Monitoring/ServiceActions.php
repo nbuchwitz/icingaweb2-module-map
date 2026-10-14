@@ -10,6 +10,10 @@ use Icinga\Web\Url;
 
 class ServiceActions extends ServiceActionsHook
 {
+    /**
+     * getActionsForService adds an action link for the given object if
+     * it has a geolocation associated.
+     **/
     public function getActionsForService(Service $service)
     {
         $nav = new Navigation();

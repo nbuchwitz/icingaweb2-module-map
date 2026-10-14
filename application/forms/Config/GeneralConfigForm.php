@@ -5,6 +5,9 @@ namespace Icinga\Module\Map\Forms\Config;
 use Icinga\Application\Config;
 use Icinga\Forms\ConfigForm;
 
+/**
+ * GeneralConfigForm is the main configuration form used for this module
+ */
 class GeneralConfigForm extends ConfigForm
 {
     /**
@@ -132,7 +135,6 @@ class GeneralConfigForm extends ConfigForm
                 'required' => false,
             )
         );
-
         $this->addElement(
             'checkbox',
             'map_cluster_problem_count',
@@ -143,8 +145,6 @@ class GeneralConfigForm extends ConfigForm
                 'default' => false,
             )
         );
-
-
         $this->addElement(
             'checkbox',
             'map_popup_mouseover',

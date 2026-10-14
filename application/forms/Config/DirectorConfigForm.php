@@ -4,6 +4,9 @@ namespace Icinga\Module\Map\Forms\Config;
 
 use Icinga\Forms\ConfigForm;
 
+/**
+ * DirectorConfigForm is the configuration form used for Director specific configuration
+ */
 class DirectorConfigForm extends ConfigForm
 {
     /**
