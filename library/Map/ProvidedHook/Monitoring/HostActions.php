@@ -22,11 +22,11 @@ class HostActions extends HostActionsHook
 
         $host->fetchCustomvars();
         if (array_key_exists("geolocation", $host->customvars)) {
-            $nav->addItem(new NavigationItem(t('Show on map'), array(
-                'url' => Url::fromPath('map/', array('showHost' => $host->getName())),
+            $nav->addItem(new NavigationItem(t('Show on map'), [
+                'url' => Url::fromPath('map/', ['showHost' => $host->getName()]),
                 'target' => '_next',
                 'icon' => 'globe',
-            )));
+            ]));
         }
 
         return $nav;

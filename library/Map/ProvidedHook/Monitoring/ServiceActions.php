@@ -20,11 +20,11 @@ class ServiceActions extends ServiceActionsHook
 
         $service->fetchCustomvars();
         if (array_key_exists("geolocation", $service->customvars)) {
-            $nav->addItem(new NavigationItem(t('Show on map'), array(
-                'url' => Url::fromPath('map/', array('showHost' => $service->host_name . "!" . $service->getName())),
+            $nav->addItem(new NavigationItem(t('Show on map'), [
+                'url' => Url::fromPath('map/', ['showHost' => $service->host_name . "!" . $service->getName()]),
                 'target' => '_next',
                 'icon' => 'globe',
-            )));
+            ]));
         }
 
         return $nav;

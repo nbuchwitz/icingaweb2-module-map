@@ -15,6 +15,16 @@ use ipl\Web\Filter\QueryString;
 
 class DataController extends MapController
 {
+    private string $stateColumn;
+    private string $stateChangeColumn;
+    private ?IplFilter\Rule $filter = null;
+
+    /** @var bool Whether to show only problem services */
+    private bool $onlyProblems = false;
+
+    /** @var array The list of data points that are returned */
+    private array $points = [];
+
     /**
      * Apply filters on a DataView
      *
@@ -22,25 +32,17 @@ class DataController extends MapController
      *
      * @return DataView $dataView
      */
-    protected function filterQuery(DataView $dataView)
+    protected function filterQuery(DataView $dataView): DataView
     {
         $this->setupFilterControl($dataView, null, null, ['stateType', 'objectType', 'problems']);
         return $dataView;
     }
 
-    private $stateColumn;
-    private $stateChangeColumn;
-    private $filter;
-
-    /** @var bool Whether to show only problem services */
-    private $onlyProblems;
-    private $points = [];
-
     /**
      * pointsAction returns the Icinga state objects as JSON.
      * This is used in the JavaScript section of the module to add the markers on the Leaflet map.
      */
-    public function pointsAction()
+    public function pointsAction(): void
     {
         try {
             // Borrowed from monitoring module
@@ -57,7 +59,7 @@ class DataController extends MapController
             }
             $objectType = strtolower($this->params->shift('objectType', 'all'));
 
-            $this->onlyProblems = (bool)$this->params->shift('problems', false);
+            $this->onlyProblems = (bool) $this->params->shift('problems', false);
 
             if ($this->isUsingIcingadb) {
                 $this->filter = QueryString::parse((string) $this->params);
@@ -101,12 +103,12 @@ class DataController extends MapController
         exit();
     }
 
-    private function addIdoHostsToPoints()
+    private function addIdoHostsToPoints(): void
     {
         // get host data
         $hostQuery = $this->monitoringBackend->getDb()
             ->select()
-            ->from('hoststatus', array(
+            ->from('hoststatus', [
                 'host_display_name',
                 'host_name',
                 'host_acknowledged',
@@ -116,7 +118,7 @@ class DataController extends MapController
                 'host_problem',
                 'coordinates' => '_host_geolocation',
                 'icon' => '_host_map_icon',
-            ))
+            ])
             ->applyFilter(Filter::fromQueryString('_host_geolocation >'));
         $this->monitoringBackend->applyRestriction('monitoring/filter/objects', $hostQuery);
         $this->filterQuery($hostQuery);
@@ -124,7 +126,7 @@ class DataController extends MapController
         // get service data
         $serviceQuery = $this->monitoringBackend->getDb()
             ->select()
-            ->from('servicestatus', array(
+            ->from('servicestatus', [
                 'host_name',
                 'service_display_name',
                 'service_name' => 'service',
@@ -132,7 +134,7 @@ class DataController extends MapController
                 'service_state' => 'service_' . $this->stateColumn,
                 'service_last_state_change' => 'service_' . $this->stateChangeColumn,
                 'service_in_downtime'
-            ))
+            ])
             ->applyFilter(Filter::fromQueryString('_host_geolocation >'));
 
         if ($this->onlyProblems) {
@@ -147,7 +149,7 @@ class DataController extends MapController
                 $hostname = $row->host_name;
 
                 $host = (array)$row;
-                $host['services'] = array();
+                $host['services'] = [];
 
                 if (!preg_match($this->coordinatePattern, $host['coordinates'])) {
                     continue;
@@ -183,12 +185,12 @@ class DataController extends MapController
         }
     }
 
-    private function addIdoServicesToPoints()
+    private function addIdoServicesToPoints(): void
     {
         // get services with geolocation
         $geoServiceQuery = $this->monitoringBackend->getDb()
             ->select()
-            ->from('servicestatus', array(
+            ->from('servicestatus', [
                 'host_display_name',
                 'host_name',
                 'host_acknowledged',
@@ -203,8 +205,7 @@ class DataController extends MapController
                 'service_in_downtime',
                 'coordinates' => '_service_geolocation',
                 'icon' => '_service_map_icon',
-
-            ))->applyFilter(Filter::fromQueryString('_service_geolocation >'));
+            ])->applyFilter(Filter::fromQueryString('_service_geolocation >'));
 
         if ($this->onlyProblems) {
             $geoServiceQuery->applyFilter(Filter::where('service_problem', 1));
@@ -240,7 +241,7 @@ class DataController extends MapController
         }
     }
 
-    private function addIcingadbHostsToPoints()
+    private function addIcingadbHostsToPoints(): void
     {
         $hostQuery = Host::on($this->icingadbBackend->getDb())
              ->columns([
@@ -293,9 +294,9 @@ class DataController extends MapController
             $hostname = $row->name;
             if (! isset($this->points['hosts'][$hostname])) {
                 $host = $this->populateObjectColumnsToArray($row);
-                $host['host_problem']               = $row->state->is_problem ? 1 : 0;
-                $host['coordinates']                = $row->vars['geolocation'];
-                $host['icon']                       = $row->vars['map_icon'] ?? null;
+                $host['host_problem'] = $row->state->is_problem ? 1 : 0;
+                $host['coordinates'] = $row->vars['geolocation'];
+                $host['icon'] = $row->vars['map_icon'] ?? null;
                 $host['coordinates'] = explode(",", $host['coordinates']);
 
                 $host['services'] = [];
@@ -319,7 +320,7 @@ class DataController extends MapController
         }
     }
 
-    private function addIcingadbServicesToPoints()
+    private function addIcingadbServicesToPoints(): void
     {
         $serviceQuery = Service::on($this->icingadbBackend->getDb())
             ->columns([
@@ -388,7 +389,7 @@ class DataController extends MapController
      *
      * @return array
      */
-    private function populateObjectColumnsToArray(Model $object)
+    private function populateObjectColumnsToArray(Model $object): array
     {
         $objectType = $object instanceof Service ? 'service' : 'host';
 

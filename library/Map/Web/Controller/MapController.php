@@ -16,16 +16,16 @@ use ipl\Web\Compat\CompatController;
 abstract class MapController extends CompatController
 {
     /** @var bool whether or not IcingaDB is set as backend */
-    protected $isUsingIcingadb;
+    protected bool $isUsingIcingadb = false;
 
     /** @var Icingadb backend when IcingaDB is used */
-    protected $icingadbBackend;
+    protected ?Icingadb $icingadbBackend = null;
 
     /** @var Monitoring backend when Monitoring module is used */
-    protected $monitoringBackend;
+    protected ?Monitoring $monitoringBackend = null;
 
     /** @var string Pattern to check for broken coordinates */
-    protected $coordinatePattern = '/^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$/';
+    protected string $coordinatePattern = '/^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$/';
 
     /**
      * moduleInit initializes the controller by determining which backend should be used to fetch Icinga objects.

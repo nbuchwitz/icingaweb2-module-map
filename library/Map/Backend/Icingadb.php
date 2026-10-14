@@ -13,7 +13,7 @@ class Icingadb
     use Database;
     use Auth;
 
-    protected static $instance;
+    protected static ?Icingadb $instance = null;
 
     /**
      * @see getInstance()

@@ -60,7 +60,7 @@ class ConfigController extends CompatController
         $config = [];
 
         // TODO: Reuse the default values in config form?
-        $defaults = array(
+        $defaults = [
             "default_zoom" => "4",
             "default_long" => '13.377485',
             "default_lat" => '52.515855',
@@ -70,7 +70,7 @@ class ConfigController extends CompatController
             "cluster_problem_count" => 0,
             "popup_mouseover" => 0,
             "tile_url" => "//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        );
+        ];
 
         $defaults['disable_cluster_at_zoom'] = $defaults['max_zoom'] - 1; // should be by default: max_zoom - 1
 
