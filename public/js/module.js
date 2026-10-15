@@ -1,283 +1,65 @@
-(function (Icinga) {
+;(function (Icinga, $) {
 
     'use strict';
 
-    function colorMarker(worstState, icon) {
-        const markerColor = 'awesome-marker';
+    let cache = {};
 
-        // TODO: Different marker icon for not-OK states
-        // if(worstState > 0) {
-        //     markerColor = markerColor + ' awesome-marker-square';
-        // }
-
-        const marker = L.AwesomeMarkers.icon({
-            icon: icon,
-            markerColor: state2color(worstState),
-            className: markerColor
-        });
-
-        return marker
-    }
-
-    function state2color(state) {
-        switch (parseInt(state)) {
-            case 0:
-                return "green";
-            case 1:
-                return "orange";
-            case 2:
-                return "red";
-            case 3:
-                return "purple";
-            default:
-                return "blue";
-        }
-    }
-
-    function isFilterParameter(parameter) {
-        return (parameter.charAt(0) === '(' || parameter.match('^[_]{0,1}(host|service)') || parameter.match('^(object|state)Type') || parameter.match('^problems'));
-    }
-
-    function getParameters(id) {
-        const params = decodeURIComponent($('#map-' + id).closest('.module-map').data('icingaUrl')).split('&');
-
-        // remove module path from url parameters
-        if (params.length > 0) {
-            params[0] = params[0].replace(/^.*\?/, '')
-        }
-
-        return params
-    }
-
-    function unique(list) {
-        const result = [];
-        $.each(list, function (i, e) {
-            if ($.inArray(e, result) == -1) result.push(e);
-        });
-        return result;
-    }
-
-    function filterParams(id, extra) {
-        let sURLVariables = getParameters(id);
-        const params = [];
-
-        if (extra !== undefined) {
-            sURLVariables = $.merge(extra.split('&'), sURLVariables);
-            sURLVariables = unique(sURLVariables);
-        }
-
-        for (let i = 0; i < sURLVariables.length; i++) {
-            // Protect Icinga filter syntax
-            if (isFilterParameter(sURLVariables[i])) {
-                params.push(sURLVariables[i]);
-
-            }
-        }
-
-        return params.join("&")
-    }
-
-    function showHost(hostname) {
-        if (cache[id].hostMarkers[hostname]) {
-            const el = cache[id].hostMarkers[hostname];
-            cache[id].markers.zoomToShowLayer(el, function () {
-                el.openPopup();
-            })
-        }
-    }
-
-    function showDefaultView() {
-        if (map_default_lat !== null && map_default_long !== null) {
-            if (map_default_zoom !== null) {
-                cache[id].map.setView([map_default_lat, map_default_long], map_default_zoom);
-            } else {
-                cache[id].map.setView([map_default_lat, map_default_long]);
-            }
-        } else {
-            cache[id].map.fitWorld()
-        }
-    }
-
-    function toggleFullscreen() {
-        icinga.ui.toggleFullscreen();
-        cache[id].map.invalidateSize();
-        cache[id].fullscreen = !cache[id].fullscreen;
-        if (cache[id].fullscreen) {
-            $('.controls').hide();
-        } else {
-            $('.controls').show();
-        }
-    }
-
-    // TODO: Allow update of multiple parameters
-    function updateUrl(pkey, pvalue) {
-        // Don't update URL if in dashlet mode
-        if (dashlet) {
-            return;
-        }
-
-        const $target = $('.module-map');
-        const $currentUrl = $target.data('icingaUrl');
-        const basePath = $currentUrl.replace(/\?.*$/, '');
-        const searchPath = $currentUrl.replace(/^.*\?/, '');
-
-        const sURLVariables = (searchPath === basePath ? [] : searchPath.split('&'));
-
-        let updated = false;
-        for (let i = 0; i < sURLVariables.length; i++) {
-            // Don't replace Icinga filters
-            if (isFilterParameter(sURLVariables[i])) {
-                continue;
-            }
-
-            const tmp = sURLVariables[i].split('=');
-            if (tmp[0] == pkey) {
-                sURLVariables[i] = tmp[0] + '=' + pvalue;
-                updated = true;
-                break;
-            }
-        }
-
-        // Parameter is to be added
-        if (!updated) {
-            sURLVariables.push(pkey + "=" + pvalue);
-        }
-
-        $target.data('icingaUrl', basePath + '?' + sURLVariables.join('&'));
-        icinga.history.pushCurrentState();
-    }
-
-    function getWorstState(states) {
-        let worstState = 0;
-        let allPending = -1;
-        let allUnknown = -1;
-        let last = -1;
-
-        if (states.length == 1) {
-            return states[0];
-        }
-
-        for (const state of states) {
-            if (state < 3) {
-                if (allPending == 1) {
-                    allPending = 0;
-                } else if (allUnknown == 1) {
-                    allUnknown = 0;
-                }
-            }
-
-            if (state > 2) {
-                // PENDING
-                if (state == 99) {
-                    if (allPending < 0 && last < 0) {
-                        allPending = 1;
-                    }
-
-                    // OK -> PENDING -> UNKNOWN -> WARNING -> CRITICAL
-                    state = 0.25;
-                }
-
-                // UNKNOWN
-                if (state == 3) {
-                    if (allUnknown < 0 && last < 0) {
-                        allUnknown = 1;
-                    }
-
-                    // OK -> PENDING -> UNKNOWN -> WARNING -> CRITICAL
-                    state = 0.5;
-                }
-            }
-
-            if (state > worstState) {
-                worstState = state;
-            }
-
-            last = state;
-        }
-
-        if (allPending == 1) {
-            worstState = 99;
-        }
-
-        if (allUnknown == 1) {
-            worstState = 3;
-        }
-
-        // Restore PENDING and UNKNOWN
-        if (worstState == 0.25) {
-            worstState = 99;
-        } else if (worstState == 0.5) {
-            worstState = 3;
-        }
-
-        return worstState;
-    }
-
-    function mapCenter(hostname) {
-        if (cache[id].hostMarkers[hostname]) {
-            const el = cache[id].hostMarkers[hostname];
-            cache[id].map.panTo(cache[id].hostMarkers[hostname].getLatLng())
-        }
-    }
-
-    const cache = {};
-
-    const Map = function (module) {
-        this.module = module;
-        this.initialize();
-        this.timer;
-    };
-
-    Map.prototype = {
-
-        initialize: function () {
+    class MapModule {
+        constructor(module) {
             this.timer = {};
-            this.module.on('rendered', this.onRenderedContainer);
+            this.icinga = module.icinga;
+
+            module.on('rendered', this.onRenderedContainer);
+
             this.registerTimer();
-        },
+        }
 
-        registerTimer: function (id) {
-            this.timer = this.module.icinga.timer.register(
-                this.updateAllMapData,
-                this,
-                60000
-            );
+        /**
+         * Allow to destroy and clean up this module
+         */
+        destroy() {
+            this.removeTimer();
+            cache = {};
+        }
+
+        registerTimer(id) {
+            this.timer = this.icinga.timer.register(this.updateAllMapData, this, 60000);
             return this;
-        },
+        }
 
-        removeTimer: function (id) {
-            this.module.icinga.timer.unregister(this.timer);
-            return this
-        },
+        removeTimer(id) {
+            this.icinga.timer.unregister(this.timer);
+            return this;
+        }
 
-        onPopupOpen: function (evt) {
+        onPopupOpen(evt) {
             $('.detail-link').on("click", function (ievt) {
                 mapCenter(evt.popup._source.options.id);
                 cache[id].map.invalidateSize();
             });
-        },
+        }
 
-        updateAllMapData: function () {
+        updateAllMapData() {
             const _this = this;
 
             if (cache.length == 0) {
                 this.removeTimer(id);
-                return this
+                return this;
             }
 
             $.each(cache, function (id) {
                 if (!$('#map-' + id).length) {
-                    delete cache[id]
+                    delete cache[id];
                 } else {
-                    _this.updateMapData({id: id})
+                    _this.updateMapData({id: id});
                 }
             });
-        },
+        }
 
-        updateMapData: function (parameters) {
+        updateMapData(parameters) {
             const id = parameters.id;
             let show_host = parameters.show_host;
-            const $that = this;
+            const _this = this;
 
             function removeOldMarkers(id, data) {
                 // remove old markers
@@ -291,14 +73,13 @@
 
             function errorMessage(msg) {
                 cache[id].map.spin(false);
-                $map = cache[id].map;
-                $map.openModal({
+                cache[id].map.openModal({
                     content: "<p>Could not fetch data from API:</p><pre>" + msg + "</pre>",
                     onShow: function (evt) {
-                        $that.removeTimer(id)
+                        _this.removeTimer(id);
                     },
                     onHide: function (evt) {
-                        $that.registerTimer(id);
+                        _this.registerTimer(id);
                     }
                 });
             }
@@ -314,17 +95,17 @@
                     $.each(element, function (identifier, data) {
                         if (data.length < 1 || data['coordinates'] == "") {
                             console.log('found empty coordinates: ' + data);
-                            return true
+                            return true;
                         }
 
                         let states = [];
                         let icon;
                         let services;
                         let worstState;
-                        let display_name = (data['host_display_name'] ? data['host_display_name'] : false);
+                        let display_name = (data['host_display_name'] ? data['host_display_name'] : data['host_name']);
 
                         if (type === 'hosts') {
-                            states.push((data['host_state'] == 1 ? 2 : data['host_state']))
+                            states.push((data['host_state'] == 1 ? 2 : data['host_state']));
                         }
 
                         let table = '<table class="icinga-module module-monitoring">';
@@ -471,7 +252,7 @@
 
                 if (show_host != "") {
                     showHost(show_host);
-                    show_host = ""
+                    show_host = "";
                 }
             }
 
@@ -481,9 +262,9 @@
                 .fail(function (jqxhr, textStatus, error) {
                     errorMessage(error);
                 });
-        },
+        }
 
-        onRenderedContainer: function (event) {
+        onRenderedContainer(event) {
             const mapElem = event.currentTarget.querySelector('.icinga-module.module-map > .content > #map-script');
 
             if (mapElem === null) {
@@ -648,8 +429,7 @@
                 }).addTo(cache[id].map);
 
                 cache[id].map.on('map-container-resize', function () {
-                    map.invalidateSize();
-                    console.log("Resize")
+                    cache[id].map.invalidateSize();
                 });
 
                 cache[id].map.on('moveend', function (e) {
@@ -697,11 +477,228 @@
             cache[id].markers.addTo(cache[id].map);
 
             cache[id].map.spin(true);
-            this.updateMapData({id: id, show_host: map_show_host})
-
+            this.updateMapData({id: id, show_host: map_show_host});
         }
     };
 
-    Icinga.availableModules.map = Map;
+    function colorMarker(worstState, icon) {
+        const markerColor = 'awesome-marker';
 
-}(Icinga));
+        // TODO: Different marker icon for not-OK states
+        // if(worstState > 0) {
+        //     markerColor = markerColor + ' awesome-marker-square';
+        // }
+
+        const marker = L.AwesomeMarkers.icon({
+            icon: icon,
+            markerColor: state2color(worstState),
+            className: markerColor
+        });
+
+        return marker
+    }
+
+    function state2color(state) {
+        switch (parseInt(state)) {
+            case 0:
+                return "green";
+            case 1:
+                return "orange";
+            case 2:
+                return "red";
+            case 3:
+                return "purple";
+            default:
+                return "blue";
+        }
+    }
+
+    function isFilterParameter(parameter) {
+        return (parameter.charAt(0) === '(' || parameter.match('^[_]{0,1}(host|service)') || parameter.match('^(object|state)Type') || parameter.match('^problems'));
+    }
+
+    function getParameters(id) {
+        const params = decodeURIComponent($('#map-' + id).closest('.module-map').data('icingaUrl')).split('&');
+
+        // remove module path from url parameters
+        if (params.length > 0) {
+            params[0] = params[0].replace(/^.*\?/, '')
+        }
+
+        return params;
+    }
+
+    function unique(list) {
+        const result = [];
+        $.each(list, function (i, e) {
+            if ($.inArray(e, result) == -1) result.push(e);
+        });
+        return result;
+    }
+
+    function filterParams(id, extra) {
+        let sURLVariables = getParameters(id);
+        const params = [];
+
+        if (extra !== undefined) {
+            sURLVariables = $.merge(extra.split('&'), sURLVariables);
+            sURLVariables = unique(sURLVariables);
+        }
+
+        for (let i = 0; i < sURLVariables.length; i++) {
+            // Protect Icinga filter syntax
+            if (isFilterParameter(sURLVariables[i])) {
+                params.push(sURLVariables[i]);
+
+            }
+        }
+
+        return params.join('&');
+    }
+
+    function showHost(hostname) {
+        if (cache[id].hostMarkers[hostname]) {
+            const el = cache[id].hostMarkers[hostname];
+            cache[id].markers.zoomToShowLayer(el, function () {
+                el.openPopup();
+            })
+        }
+    }
+
+    function showDefaultView() {
+        if (map_default_lat !== null && map_default_long !== null) {
+            if (map_default_zoom !== null) {
+                cache[id].map.setView([map_default_lat, map_default_long], map_default_zoom);
+            } else {
+                cache[id].map.setView([map_default_lat, map_default_long]);
+            }
+        } else {
+            cache[id].map.fitWorld()
+        }
+    }
+
+    function toggleFullscreen() {
+        icinga.ui.toggleFullscreen();
+        cache[id].map.invalidateSize();
+        cache[id].fullscreen = !cache[id].fullscreen;
+        if (cache[id].fullscreen) {
+            $('.controls').hide();
+        } else {
+            $('.controls').show();
+        }
+    }
+
+    // TODO: Allow update of multiple parameters
+    function updateUrl(pkey, pvalue) {
+        // Don't update URL if in dashlet mode
+        if (dashlet) {
+            return;
+        }
+
+        const $target = $('.module-map');
+        const $currentUrl = $target.data('icingaUrl');
+        const basePath = $currentUrl.replace(/\?.*$/, '');
+        const searchPath = $currentUrl.replace(/^.*\?/, '');
+
+        const sURLVariables = (searchPath === basePath ? [] : searchPath.split('&'));
+
+        let updated = false;
+        for (let i = 0; i < sURLVariables.length; i++) {
+            // Don't replace Icinga filters
+            if (isFilterParameter(sURLVariables[i])) {
+                continue;
+            }
+
+            const tmp = sURLVariables[i].split('=');
+            if (tmp[0] == pkey) {
+                sURLVariables[i] = tmp[0] + '=' + pvalue;
+                updated = true;
+                break;
+            }
+        }
+
+        // Parameter is to be added
+        if (!updated) {
+            sURLVariables.push(pkey + "=" + pvalue);
+        }
+
+        $target.data('icingaUrl', basePath + '?' + sURLVariables.join('&'));
+        icinga.history.pushCurrentState();
+    }
+
+    function getWorstState(states) {
+        let worstState = 0;
+        let allPending = -1;
+        let allUnknown = -1;
+        let last = -1;
+
+        if (states.length == 1) {
+            return states[0];
+        }
+
+        for (let state of states) {
+            if (state < 3) {
+                if (allPending == 1) {
+                    allPending = 0;
+                } else if (allUnknown == 1) {
+                    allUnknown = 0;
+                }
+            }
+
+            if (state > 2) {
+                // PENDING
+                if (state == 99) {
+                    if (allPending < 0 && last < 0) {
+                        allPending = 1;
+                    }
+
+                    // OK -> PENDING -> UNKNOWN -> WARNING -> CRITICAL
+                    state = 0.25;
+                }
+
+                // UNKNOWN
+                if (state == 3) {
+                    if (allUnknown < 0 && last < 0) {
+                        allUnknown = 1;
+                    }
+
+                    // OK -> PENDING -> UNKNOWN -> WARNING -> CRITICAL
+                    state = 0.5;
+                }
+            }
+
+            if (state > worstState) {
+                worstState = state;
+            }
+
+            last = state;
+        }
+
+        if (allPending == 1) {
+            worstState = 99;
+        }
+
+        if (allUnknown == 1) {
+            worstState = 3;
+        }
+
+        // Restore PENDING and UNKNOWN
+        if (worstState == 0.25) {
+            worstState = 99;
+        } else if (worstState == 0.5) {
+            worstState = 3;
+        }
+
+        return worstState;
+    }
+
+    function mapCenter(hostname) {
+        if (cache[id].hostMarkers[hostname]) {
+            const el = cache[id].hostMarkers[hostname];
+            cache[id].map.panTo(cache[id].hostMarkers[hostname].getLatLng());
+        }
+    }
+
+    Icinga.availableModules.map = MapModule;
+
+}(Icinga, jQuery));
