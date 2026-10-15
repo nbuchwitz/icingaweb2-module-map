@@ -109,9 +109,9 @@ class IndexController extends CompatController
                 'map_show_host' => (! empty($showHost) ? preg_replace("/[\'\;]/", "", $showHost) : "null"),
                 'url_parameters' => implode('&', $urlParameters),
                 'id' => $id,
-                'dashlet' => $this->view->compact ? 'true' : 'false',
-                'expand' => $this->params->get("expand") ? 'true' : 'false',
-                'isUsingIcingadb' => Module::exists('icingadb') && IcingadbSupport::useIcingaDbAsBackend() ? 'true' : 'false',
+                'dashlet' => (bool) $this->view->compact,
+                'expand' => (bool) $this->params->get('expand'),
+                'isUsingIcingadb' => Module::exists('icingadb') && IcingadbSupport::useIcingaDbAsBackend(),
                 'service_status' => [
                     0 => [$this->translate('OK', 'icinga.state'), 'OK'],
                     1 => [$this->translate('WARNING', 'icinga.state'), 'WARNING'],

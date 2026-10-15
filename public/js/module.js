@@ -273,6 +273,7 @@
 
             let attrs = JSON.parse(mapElem.dataset.mapAttrs);
 
+            // TODO: Move this to the Map class as config
             for (const [key, value] of Object.entries(attrs)) {
                 if (typeof value === 'object') {
                     for (const [key2, value2] of Object.entries(value)) {
