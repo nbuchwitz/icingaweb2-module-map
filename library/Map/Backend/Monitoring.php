@@ -35,7 +35,7 @@ class Monitoring
         return $this->auth;
     }
 
-    public function getRestrictions($name)
+    public function getRestrictions(string $name)
     {
         return $this->getAuth()->getRestrictions($name);
     }
@@ -57,7 +57,7 @@ class Monitoring
      *
      * @return Filterable The filterable having the restriction applied
      */
-    public function applyRestriction($name, Filterable $filterable)
+    public function applyRestriction(string $name, Filterable $filterable)
     {
         $filterable->applyFilter($this->getRestriction($name));
         return $filterable;
@@ -71,10 +71,10 @@ class Monitoring
      * @return Filter Filter object
      * @throws ConfigurationError If the restriction contains invalid filter columns
      */
-    protected function getRestriction($name)
+    protected function getRestriction(string $name)
     {
         $restriction = Filter::matchAny();
-        $restriction->setAllowedFilterColumns(array(
+        $restriction->setAllowedFilterColumns([
             'host_name',
             'hostgroup_name',
             'instance_name',
@@ -83,7 +83,7 @@ class Monitoring
             function ($c) {
                 return preg_match('/^_(?:host|service)_/i', $c);
             }
-        ));
+        ]);
         foreach ($this->getRestrictions($name) as $filter) {
             if ($filter === '*') {
                 return Filter::matchAll();
@@ -97,14 +97,14 @@ class Monitoring
                     ),
                     $name,
                     $filter,
-                    implode(', ', array(
+                    implode(', ', [
                         'instance_name',
                         'host_name',
                         'hostgroup_name',
                         'service_description',
                         'servicegroup_name',
                         '_(host|service)_<customvar-name>'
-                    )),
+                    ]),
                     $e
                 );
             }

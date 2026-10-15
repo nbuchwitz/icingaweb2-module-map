@@ -5,15 +5,20 @@ namespace Icinga\Module\Map\Controllers;
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
-use ipl\Stdlib\Filter as IplFilter;
 use Icinga\Module\Map\Web\Controller\MapController;
 use Icinga\Module\Monitoring\DataView\DataView;
+
+use ipl\Stdlib\Filter as IplFilter;
+
 use OpenCage\Geocoder\Geocoder;
 
 class SearchController extends MapController
 {
-    private $geocoder;
-    private $limit;
+    /** @var ?Geocoder The OpenCage Geocoder that can be used for the search */
+    private ?Geocoder $geocoder = null;
+
+    /** @var int Limit for the search results */
+    private int $limit;
 
     public function init()
     {
@@ -25,7 +30,7 @@ class SearchController extends MapController
         }
     }
 
-    protected function filterQuery(DataView $dataView)
+    protected function filterQuery(DataView $dataView): DataView
     {
         $this->setupFilterControl(
             $dataView,
@@ -36,7 +41,7 @@ class SearchController extends MapController
         return $dataView;
     }
 
-    private function opencageSearch($query)
+    private function opencageSearch(string $query): array
     {
         $results = [];
 
@@ -62,7 +67,7 @@ class SearchController extends MapController
         return $results;
     }
 
-    private function serviceSearch($query)
+    private function serviceSearch(string $query): array
     {
         if (empty($query)) {
             return [];
@@ -75,7 +80,7 @@ class SearchController extends MapController
         return $this->idoServiceSearch($query);
     }
 
-    private function hostSearch($query)
+    private function hostSearch(string $query): array
     {
         if (empty($query)) {
             return [];
@@ -88,7 +93,7 @@ class SearchController extends MapController
         return $this->idoHostSearch($query);
     }
 
-    private function idoServiceSearch($query)
+    private function idoServiceSearch(string $query): array
     {
         $results = [];
 
@@ -96,12 +101,12 @@ class SearchController extends MapController
 
         $hostQuery = $this->monitoringBackend->getDb()
             ->select()
-            ->from('servicestatus', array(
+            ->from('servicestatus', [
                 'service_display_name',
                 'service',
                 'host_name',
                 'coordinates' => '_service_geolocation',
-            ))
+            ])
             ->applyFilter(Filter::fromQueryString('_service_geolocation >'))
             ->applyFilter(Filter::fromQueryString($filter))
             ->limit($this->limit);
@@ -132,7 +137,7 @@ class SearchController extends MapController
         return $results;
     }
 
-    private function idoHostSearch($query)
+    private function idoHostSearch(string $query): array
     {
         $results = [];
 
@@ -140,14 +145,15 @@ class SearchController extends MapController
 
         $hostQuery = $this->monitoringBackend->getDb()
             ->select()
-            ->from('hoststatus', array(
+            ->from('hoststatus', [
                 'host_display_name',
                 'host_name',
                 'coordinates' => '_host_geolocation',
-            ))
+            ])
             ->applyFilter(Filter::fromQueryString('_host_geolocation >'))
             ->applyFilter(Filter::fromQueryString($filter))
             ->limit($this->limit);
+
         $this->filterQuery($hostQuery);
         $this->monitoringBackend->applyRestriction('monitoring/filter/objects', $hostQuery);
 
@@ -175,7 +181,7 @@ class SearchController extends MapController
         return $results;
     }
 
-    private function icingadbSearch($query, $objectType)
+    private function icingadbSearch(string $query, string $objectType): array
     {
         $results = [];
 
@@ -216,13 +222,13 @@ class SearchController extends MapController
                 }
 
                 $results[] = [
-                    "id"        => $id,
-                    "name"      => $name,
-                    "center"    => [
+                    "id" => $id,
+                    "name" => $name,
+                    "center" => [
                         "lat" => $coordinates[0],
                         "lng" => $coordinates[1]
                     ],
-                    "icon"      => "$objectType"
+                    "icon" => "$objectType"
                 ];
             }
         }
@@ -230,12 +236,16 @@ class SearchController extends MapController
         return $results;
     }
 
+    /**
+     * indexAction implements a JSONP search endpoint that returns OpenCage geocoding,
+     * host and service results for the given query.
+     **/
     public function indexAction()
     {
         $config = $this->config();
         $query = strtolower($this->params->shift('q', ''));
         $callback = strtolower($this->params->shift('jsonp', ''));
-        $this->limit = $this->params->shift('limit', 5);
+        $this->limit = intval($this->params->shift('limit', 5));
         $lite = boolval($this->params->shift('lite', 0));
 
         $results = [

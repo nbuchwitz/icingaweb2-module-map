@@ -1,12 +1,12 @@
 <?php
-$section = $this->menuSection(N_('Maps'), array('icon' => 'globe'));
+$section = $this->menuSection(N_('Maps'), ['icon' => 'globe']);
 
-$mapModule = $section->add(N_($this->translate('Default map')), array(
+$mapModule = $section->add(N_($this->translate('Default map')), [
     'icon' => 'globe',
     'description' => $this->translate('Visualize your hosts and services on a map'),
     'url' => 'map',
     'priority' => 10
-));
+]);
 
 // stylesheets
 $this->provideCssFile('vendor/leaflet.css');
@@ -31,16 +31,16 @@ $this->provideJsFile('vendor/Leaflet.Modal.js');
 $this->provideJsFile('vendor/L.Control.OpenCageSearch.js');
 
 // configuration menu
-$this->provideConfigTab('config', array(
+$this->provideConfigTab('config', [
     'title' => $this->translate('Configure the map module'),
     'label' => $this->translate('Configuration'),
     'url' => 'config'
-));
+]);
 
 if ($this->app->getModuleManager()->hasEnabled("mapDatatype") && $this->app->getModuleManager()->hasEnabled("director")) {
-    $this->provideConfigTab('director', array(
+    $this->provideConfigTab('director', [
         'title' => $this->translate('Configure the director map datatype'),
         'label' => $this->translate('Director'),
         'url' => 'config/director'
-    ));
+    ]);
 }

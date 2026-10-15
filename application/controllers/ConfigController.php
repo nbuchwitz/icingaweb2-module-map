@@ -2,9 +2,10 @@
 
 namespace Icinga\Module\Map\Controllers;
 
-use Icinga\Module\Map\Forms\Config\GeneralConfigForm;
 use Icinga\Module\Map\Forms\Config\DirectorConfigForm;
+use Icinga\Module\Map\Forms\Config\GeneralConfigForm;
 use Icinga\Web\Widget\Tabs;
+
 use ipl\Html\HtmlString;
 use ipl\Web\Compat\CompatController;
 
@@ -14,6 +15,10 @@ class ConfigController extends CompatController
     {
     }
 
+    /**
+     * indexAction is used on the Icinga Web configuration page
+     * to display the Map module configuration form.
+     **/
     public function indexAction(): void
     {
         $this->assertPermission('config/modules');
@@ -27,6 +32,10 @@ class ConfigController extends CompatController
         $this->getTabs()->activate('config');
     }
 
+    /**
+     * directorAction is used on the Icinga Web configuration page
+     * to display the Director specific Map module configuration form.
+     **/
     public function directorAction(): void
     {
         $this->assertPermission('map/director/configuration');
@@ -40,7 +49,10 @@ class ConfigController extends CompatController
         $this->getTabs()->activate('director');
     }
 
-
+    /**
+     * fetchAction is used in the mapDatatype module to fetch this module's
+     * configuration in the mapDatatype's module.js
+     **/
     public function fetchAction(): void
     {
         $type = strtolower($this->params->shift('type', ""));
@@ -48,7 +60,7 @@ class ConfigController extends CompatController
         $config = [];
 
         // TODO: Reuse the default values in config form?
-        $defaults = array(
+        $defaults = [
             "default_zoom" => "4",
             "default_long" => '13.377485',
             "default_lat" => '52.515855',
@@ -58,13 +70,11 @@ class ConfigController extends CompatController
             "cluster_problem_count" => 0,
             "popup_mouseover" => 0,
             "tile_url" => "//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        );
+        ];
 
         $defaults['disable_cluster_at_zoom'] = $defaults['max_zoom'] - 1; // should be by default: max_zoom - 1
 
-        /*
-         * Override module config with user's config
-         */
+        // Override module config with user's config
         $userPreferences = $this->Auth()->getUser()->getPreferences();
         if ($userPreferences->has("map")) {
             $moduleConfig->getSection("map")->merge($userPreferences->get("map"));
@@ -77,7 +87,6 @@ class ConfigController extends CompatController
                 $moduleConfig->getSection("map")->merge($userPreferences->get("map-director"));
             }
         }
-
 
         foreach ($defaults as $parameter => $default) {
             $config[$parameter] = $moduleConfig->get("map", $parameter, $default);

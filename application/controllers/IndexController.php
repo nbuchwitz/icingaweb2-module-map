@@ -6,12 +6,17 @@ use Icinga\Application\Modules\Module;
 use Icinga\Data\Filter\FilterException;
 use Icinga\Module\Map\ProvidedHook\Icingadb\IcingadbSupport;
 use Icinga\Util\Json;
+
 use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Web\Compat\CompatController;
 
 class IndexController extends CompatController
 {
+    /**
+     * indexAction returns the main HTML element for the Map module.
+     * This HTML element is then associated with Leaflet by the JavaScript section of this module.
+     **/
     public function indexAction()
     {
         $config = $this->Config();
@@ -32,7 +37,7 @@ class IndexController extends CompatController
             }
         }
 
-        $parameterDefaults = array(
+        $parameterDefaults = [
             "default_zoom" => "4",
             "default_long" => '13.377485',
             "default_lat" => '52.515855',
@@ -44,7 +49,7 @@ class IndexController extends CompatController
             "popup_mouseover" => 0,
             "tile_url" => "//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
             "opencage_apikey" => "",
-        );
+        ];
 
         /*
          * 1. url
@@ -115,13 +120,13 @@ class IndexController extends CompatController
                     99 => [$this->translate('PENDING', 'icinga.state'), 'PENDING']
                 ],
                 'translation' => [
-                    'btn-zoom-in'       => $this->translate('Zoom in'),
-                    'btn-zoom-out'      => $this->translate('Zoom out'),
-                    'btn-dashboard'     => $this->translate('Add to dashboard'),
-                    'btn-fullscreen'    => $this->translate('Fullscreen'),
-                    'btn-default'       => $this->translate('Show default view'),
-                    'btn-locate'        => $this->translate('Show current location'),
-                    'host-down'         => $this->translate('Host is down')
+                    'btn-zoom-in' => $this->translate('Zoom in'),
+                    'btn-zoom-out' => $this->translate('Zoom out'),
+                    'btn-dashboard' => $this->translate('Add to dashboard'),
+                    'btn-fullscreen' => $this->translate('Fullscreen'),
+                    'btn-default' => $this->translate('Show default view'),
+                    'btn-locate' => $this->translate('Show current location'),
+                    'host-down' => $this->translate('Host is down')
                 ],
             ])
         ])));
@@ -132,7 +137,7 @@ class IndexController extends CompatController
         ])));
     }
 
-    private function filterArray($array, $pattern)
+    private function filterArray(array $array, string $pattern): array
     {
         $matches = preg_grep($pattern, array_keys($array));
         return array_intersect_key($array, array_flip($matches));

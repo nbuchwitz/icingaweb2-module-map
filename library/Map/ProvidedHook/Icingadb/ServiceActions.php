@@ -4,11 +4,16 @@ namespace Icinga\Module\Map\ProvidedHook\Icingadb;
 
 use Icinga\Module\Icingadb\Hook\ServiceActionsHook;
 use Icinga\Module\Icingadb\Model\Service;
+
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
 
 class ServiceActions extends ServiceActionsHook
 {
+    /**
+     * getActionsForObject adds an action link for the given object if
+     * it has a geolocation associated.
+     **/
     public function getActionsForObject(Service $service): array
     {
         if (! isset($service->vars['geolocation'])) {

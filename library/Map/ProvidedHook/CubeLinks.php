@@ -19,7 +19,7 @@ class CubeLinks extends ActionsHook
             return;
         }
 
-        $vars = array("objectType"=>"host");
+        $vars = ["objectType" => "host"];
         foreach ($cube->getSlices() as $key => $val) {
             $vars['_host_' . $key] = $val;
         }
