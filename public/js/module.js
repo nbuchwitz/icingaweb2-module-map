@@ -233,7 +233,7 @@
         initialize: function () {
             this.timer = {};
             this.module.on('rendered', this.onRenderedContainer);
-            this.registerTimer()
+            this.registerTimer();
         },
 
         registerTimer: function (id) {
@@ -484,9 +484,13 @@
         },
 
         onRenderedContainer: function (event) {
-            let attrs = event.currentTarget.querySelector('.icinga-module.module-map > .content > #map-script').dataset;
+            const mapElem = event.currentTarget.querySelector('.icinga-module.module-map > .content > #map-script');
 
-            attrs = JSON.parse(attrs.mapAttrs);
+            if (mapElem === null) {
+                return;
+            }
+
+            let attrs = JSON.parse(mapElem.dataset.mapAttrs);
 
             for (const [key, value] of Object.entries(attrs)) {
                 if (typeof value === 'object') {
