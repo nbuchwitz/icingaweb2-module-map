@@ -27,68 +27,6 @@
   overflow-y: auto;
 }
 
-.leaflet-control-zoom-in {
-  background: @body-bg-color !important;
-  color: @text-color !important;
-}
-
-.leaflet-control-zoom-out {
-  background: @body-bg-color !important;
-  color: @text-color !important;
-}
-
-.leaflet-control {
-  background: @body-bg-color !important;
-}
-
-.leaflet-popup-content-wrapper {
-  background: @default-bg;
-  color: @text-color;
-}
-
-.leaflet-control-ocd-search-alternatives {
-  color: @text-color !important;
-}
-
-.leaflet-control-ocd-search-form {
-  background: @default-bg !important;
-  color: @text-color;
-}
-.leaflet-control-ocd-search-form input {
-  background: @menu-bg-color !important;
-  color: @text-color;
-}
-
-.leaflet-search-result-host > a {
-  color: @text-color-light !important;
-  border-color: @body-bg-color !important;
-}
-
-.leaflet-control-ocd-search-error {
-  background: @default-bg !important;
-  color: @text-color;
-}
-
-.leaflet-bar > button, .leaflet-bar > a {
-  color: @text-color !important;
-  background: @body-bg-color !important;
-}
-
-.leaflet-control-locate {
-  --locate-control-icon-color: @text-color;
-}
-
-.leaflet-control-attribution {
-  color: @text-color;
-}
-.leaflet-control-attribution a {
-  color: @icinga-blue;
-}
-
-.map-popup a {
-  color: @icinga-blue !important;
-}
-
 .scroll-view table {
   white-space: nowrap;
   border-collapse: separate;
@@ -179,7 +117,44 @@
   color: @color-pending;
 }
 
-
 .state-ball.center {
   margin-top: 2px;
+}
+
+// Leaflet overrides to support dark/light mode
+.leaflet-control,
+.leaflet-bar > button, .leaflet-bar > a,
+.leaflet-control-ocd-search-form input
+{
+  background: @body-bg-color !important;
+  color: @text-color !important;
+}
+
+.leaflet-bar > button:hover,
+.leaflet-bar > a:hover {
+  background: @tr-hover-color !important;
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-control-ocd-search-form,
+.leaflet-control-ocd-search-error {
+  background: @default-bg;
+  color: @text-color;
+}
+
+.leaflet-control-ocd-search-alternatives, .leaflet-control-attribution {
+  color: @text-color;
+}
+
+.leaflet-search-result-host > a {
+  color: @text-color-light;
+  border-color: @body-bg-color;
+}
+
+.leaflet-control-locate {
+  --locate-control-icon-color: @text-color;
+}
+
+.leaflet-control-attribution a, .map-popup a {
+  color: @icinga-blue;
 }
