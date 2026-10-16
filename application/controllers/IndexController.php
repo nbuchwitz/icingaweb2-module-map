@@ -88,8 +88,6 @@ class IndexController extends CompatController
             $a = $b . "=" . $a;
         });
 
-        $this->view->dashletHeight = $config->get('map', 'dashlet_height', '300');
-
         $id = uniqid();
         $showHost = $this->params->get("showHost");
 

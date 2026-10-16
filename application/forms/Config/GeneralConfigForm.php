@@ -105,16 +105,6 @@ class GeneralConfigForm extends ConfigForm
             ]
         );
         $this->addElement(
-            'text',
-            'map_dashlet_height',
-            [
-                'placeholder' => '300',
-                'label' => $this->translate('Dashlet height'),
-                'description' => $this->translate('Dashlet height'),
-                'required' => false
-            ]
-        );
-        $this->addElement(
             'select',
             'map_stateType',
             [
