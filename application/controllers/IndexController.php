@@ -96,9 +96,9 @@ class IndexController extends CompatController
         $this->addContent(new HtmlElement('div', Attributes::create([
             'id' => 'map-script',
             'data-map-attrs' => Json::encode([
-                'map_default_zoom' => !empty($this->view->default_zoom) ? (int) $this->view->default_zoom : "null",
-                'map_default_long' => !empty($this->view->default_long) ? preg_replace("/[^0-9\.\,\-]/", "", $this->view->default_long) : "null",
-                'map_default_lat' => !empty($this->view->default_lat) ? preg_replace("/[^0-9\.\,\-]/", "", $this->view->default_lat) : "null",
+                'map_default_zoom' => !empty($this->view->default_zoom) ? (int) $this->view->default_zoom : null,
+                'map_default_long' => !empty($this->view->default_long) ? preg_replace("/[^0-9\.\,\-]/", "", $this->view->default_long) : null,
+                'map_default_lat' => !empty($this->view->default_lat) ? preg_replace("/[^0-9\.\,\-]/", "", $this->view->default_lat) : null,
                 'map_max_zoom' => (int)$this->view->max_zoom,
                 'map_max_native_zoom' => (int)$this->view->max_native_zoom,
                 'map_min_zoom' => (int)$this->view->min_zoom,
@@ -106,7 +106,7 @@ class IndexController extends CompatController
                 'tile_url' => preg_replace("/[\'\;]/", "", $this->view->tile_url),
                 'cluster_problem_count' => (int) $this->view->cluster_problem_count,
                 'popup_mouseover' => (int) $this->view->popup_mouseover,
-                'map_show_host' => (! empty($showHost) ? preg_replace("/[\'\;]/", "", $showHost) : "null"),
+                'map_show_host' => (! empty($showHost) ? preg_replace("/[\'\;]/", "", $showHost) : null),
                 'url_parameters' => implode('&', $urlParameters),
                 'id' => $id,
                 'dashlet' => (bool) $this->view->compact,

@@ -275,7 +275,7 @@
 
             // TODO: Move this to the Map class as config
             for (const [key, value] of Object.entries(attrs)) {
-                if (typeof value === 'object') {
+                if (value !== null && typeof value === 'object') {
                     for (const [key2, value2] of Object.entries(value)) {
                         if (typeof window[key] === 'undefined') {
                             window[key] = {};
