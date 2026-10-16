@@ -117,7 +117,44 @@
   color: @color-pending;
 }
 
-
 .state-ball.center {
   margin-top: 2px;
+}
+
+// Leaflet overrides to support dark/light mode
+.leaflet-control,
+.leaflet-bar > button, .leaflet-bar > a,
+.leaflet-control-ocd-search-form input
+{
+  background: @body-bg-color !important;
+  color: @text-color !important;
+}
+
+.leaflet-bar > button:hover,
+.leaflet-bar > a:hover {
+  background: @tr-hover-color !important;
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-control-ocd-search-form,
+.leaflet-control-ocd-search-error {
+  background: @default-bg;
+  color: @text-color;
+}
+
+.leaflet-control-ocd-search-alternatives, .leaflet-control-attribution {
+  color: @text-color;
+}
+
+.leaflet-search-result-host > a {
+  color: @text-color-light;
+  border-color: @body-bg-color;
+}
+
+.leaflet-control-locate {
+  --locate-control-icon-color: @text-color;
+}
+
+.leaflet-control-attribution a, .map-popup a {
+  color: @icinga-blue;
 }
