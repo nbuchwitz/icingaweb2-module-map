@@ -1,29 +1,33 @@
-// Marker transparency
-@cluster-outer-transparency: 70%;
-@cluster-inner-transparency: 47%;
+// Opacity for the map markers
+@cluster-outer-opacity: 70%;
+@cluster-inner-opacity: 47%;
 
 [class^="icon-"]:before, [class*=" icon-"]:before {
   margin-right: 0;
 }
 
+// Icon for the map markers
 .awesome-marker i {
   margin-top: 8px;
 }
 
+// Central element in which the map is rendered
 .map {
   width: 100%;
   height: 100%;
+  // The fixed min height is required for maps on dashboards
+  min-height: 33dvh;
   z-index: 0;
 }
 
+// Remove the default padding so the map goes to the edges
 .content {
-  height: 100%;
   padding: 0 !important;
 }
 
+// Pop-up when clicking on a map marker
 .scroll-view {
-  max-height: 50vh;
-  height: 100%;
+  max-height: 50dvh;
   overflow-y: auto;
 }
 
@@ -31,6 +35,11 @@
   white-space: nowrap;
   border-collapse: separate;
   border-spacing: 0 1px;
+}
+
+// On the dashboard we use the compact class and a smaller pop-up
+.map.compact .scroll-view {
+  max-height: 25dvh;
 }
 
 .map-popup-services {
@@ -54,11 +63,11 @@
 // cluster OK
 .marker-cluster-0 {
   color: @color-ok;
-  background-color: fade(@color-ok, @cluster-inner-transparency);
+  background-color: fade(@color-ok, @cluster-inner-opacity);
 }
 
 .marker-cluster-0 div {
-  background-color: fade(@color-ok, @cluster-outer-transparency);
+  background-color: fade(@color-ok, @cluster-outer-opacity);
 }
 
 .marker-cluster-0 span {
@@ -67,11 +76,11 @@
 
 // cluster WARNING
 .marker-cluster-1 {
-  background-color: fade(@color-warning, @cluster-inner-transparency);
+  background-color: fade(@color-warning, @cluster-inner-opacity);
 }
 
 .marker-cluster-1 div {
-  background-color: fade(@color-warning, @cluster-outer-transparency);
+  background-color: fade(@color-warning, @cluster-outer-opacity);
 }
 
 .marker-cluster-1 span {
@@ -80,11 +89,11 @@
 
 // cluster CRITICAL
 .marker-cluster-2 {
-  background-color: fade(@color-critical, @cluster-inner-transparency);
+  background-color: fade(@color-critical, @cluster-inner-opacity);
 }
 
 .marker-cluster-2 div {
-  background-color: fade(@color-critical, @cluster-outer-transparency);
+  background-color: fade(@color-critical, @cluster-outer-opacity);
 }
 
 .marker-cluster-2 span {
@@ -93,11 +102,11 @@
 
 // cluster UNKNOWN
 .marker-cluster-3 {
-  background-color: fade(@color-unknown, @cluster-inner-transparency);
+  background-color: fade(@color-unknown, @cluster-inner-opacity);
 }
 
 .marker-cluster-3 div {
-  background-color: fade(@color-unknown, @cluster-outer-transparency);
+  background-color: fade(@color-unknown, @cluster-outer-opacity);
 }
 
 .marker-cluster-3 span {
@@ -106,11 +115,11 @@
 
 // cluster PENDING
 .marker-cluster-99 {
-  background-color: fade(@color-pending, @cluster-inner-transparency);
+  background-color: fade(@color-pending, @cluster-inner-opacity);
 }
 
 .marker-cluster-99 div {
-  background-color: fade(@color-pending, @cluster-outer-transparency);
+  background-color: fade(@color-pending, @cluster-outer-opacity);
 }
 
 .marker-cluster-99 span {

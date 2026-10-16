@@ -2,22 +2,23 @@
 # Copyright (C) 2018 Icinga Development Team
 # This file is distributed under the same license as Map Module.
 # Nicolai Buchwitz <nb@odly.de>, 2017.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Map Module (1.0.4)\n"
 "Report-Msgid-Bugs-To: dev@icinga.com\n"
 "POT-Creation-Date: 2018-06-18 12:46+0200\n"
-"PO-Revision-Date: 2017-10-20 16:42+0200\n"
+"PO-Revision-Date: 2026-10-16 14:18+0200\n"
 "Last-Translator: Nicolai Buchwitz <nb@odly.de>\n"
+"Language-Team: \n"
 "Language: de_DE\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-Basepath: .\n"
+"X-Generator: Poedit 3.9\n"
 "X-Poedit-SearchPath-0: .\n"
 
 #: ../../../../modules/map/application/views/scripts/index/index.phtml:16
@@ -32,11 +33,6 @@ msgstr "Konfiguration"
 #: ../../../../modules/map/configuration.php:32
 msgid "Configure the map module"
 msgstr "Konfiguration des Karten Moduls"
-
-#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:79
-#: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:80
-msgid "Dashlet height"
-msgstr "Höhe des Dashlets"
 
 #: ../../../../modules/map/application/forms/Config/GeneralConfigForm.php:29
 msgid "Default latitude (WGS84)"
