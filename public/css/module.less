@@ -47,7 +47,7 @@
 }
 
 #hoststatus {
-  color: white;
+  color: @white;
   text-align: center;
   font-weight: bold;
   background-color: @color-down;
@@ -55,77 +55,75 @@
   text-transform: uppercase;
 }
 
-.marker-cluster span {
-  font-weight: normal;
-  mix-blend-mode: difference;
+.marker-cluster div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-// cluster OK
+.marker-cluster span {
+  color: @text-color;
+  border-radius: 10%;
+  line-height: inherit;
+  padding: 0.1em;
+}
+
+// Marker for an OK cluster
 .marker-cluster-0 {
-  color: @color-ok;
   background-color: fade(@color-ok, @cluster-inner-opacity);
 }
-
 .marker-cluster-0 div {
   background-color: fade(@color-ok, @cluster-outer-opacity);
 }
-
 .marker-cluster-0 span {
-  color: @color-ok;
+  background-color: fade(@color-ok, @cluster-outer-opacity);
 }
 
-// cluster WARNING
+// Marker for a WARNING cluster
 .marker-cluster-1 {
   background-color: fade(@color-warning, @cluster-inner-opacity);
 }
-
 .marker-cluster-1 div {
   background-color: fade(@color-warning, @cluster-outer-opacity);
 }
-
 .marker-cluster-1 span {
-  color: @color-warning;
+  background-color: fade(@color-warning, @cluster-outer-opacity);
 }
 
-// cluster CRITICAL
+// Marker for a CRITICAL cluster
 .marker-cluster-2 {
   background-color: fade(@color-critical, @cluster-inner-opacity);
 }
-
 .marker-cluster-2 div {
   background-color: fade(@color-critical, @cluster-outer-opacity);
 }
-
 .marker-cluster-2 span {
-  color: @color-critical;
+  background-color: fade(@color-critical, @cluster-outer-opacity);
 }
 
-// cluster UNKNOWN
+// Marker for a UNKNOWN cluster
 .marker-cluster-3 {
   background-color: fade(@color-unknown, @cluster-inner-opacity);
 }
-
 .marker-cluster-3 div {
   background-color: fade(@color-unknown, @cluster-outer-opacity);
 }
-
 .marker-cluster-3 span {
-  color: @color-unknown;
+  background-color: fade(@color-unknown, @cluster-outer-opacity);
 }
 
-// cluster PENDING
+// Marker for a PENDING cluster
 .marker-cluster-99 {
   background-color: fade(@color-pending, @cluster-inner-opacity);
 }
-
 .marker-cluster-99 div {
   background-color: fade(@color-pending, @cluster-outer-opacity);
 }
-
 .marker-cluster-99 span {
-  color: @color-pending;
+  background-color: fade(@color-pending, @cluster-outer-opacity);
 }
 
+// State ball inside a pop-up
 .state-ball.center {
   margin-top: 2px;
 }
