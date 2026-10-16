@@ -1,5 +1,42 @@
 # Changelog
 
+## [2.1.0](https://github.com/nbuchwitz/icingaweb2-module-map/tree/2.1.0) (tbd)
+
+[Full Changelog](https://github.com/nbuchwitz/icingaweb2-module-map/compare/v2.0.0...2.1.0)
+
+**Implemented enhancements:**
+
+- Update Leaflet to 1.9.4
+- Add support for Icinga Web dark and light mode
+- Add support for CSP
+- Improve readability for large cluster markers
+- Modernize PHP and JavaScript
+
+**Fixed bugs:**
+
+- Fix map control buttons not being visible
+- Fix maps in dashboards not being displayed
+- Fix PHP error when Monitoring module is not present
+
+**Merged pull requests:**
+
+- Add support for CSP [\#130](https://github.com/nbuchwitz/icingaweb2-module-map/pull/130)
+- Various minor repository updates [\#137](https://github.com/nbuchwitz/icingaweb2-module-map/pull/137)
+- Use IPL controller instead of Monitoring module controller [\#138](https://github.com/nbuchwitz/icingaweb2-module-map/pull/138)
+- Update JS libraries [\#141](https://github.com/nbuchwitz/icingaweb2-module-map/pull/141)
+- Fix and improve module.js [\#150](https://github.com/nbuchwitz/icingaweb2-module-map/pull/150)
+- feat: improve CSS for cluster marker text [\#153](https://github.com/nbuchwitz/icingaweb2-module-map/pull/153)
+
+**Closed issues:**
+
+- Bug: Could not fetch data from api. On systems without monitoring module [\#135](https://github.com/nbuchwitz/icingaweb2-module-map/issues/135)
+- outdated installation documentation [\#127](https://github.com/nbuchwitz/icingaweb2-module-map/issues/127)
+- [Feature Request]: Update js libraries [\#140](https://github.com/nbuchwitz/icingaweb2-module-map/issues/140)
+- Verify the isUsingIcingadb in the JavaScript part is working [\#143](https://github.com/nbuchwitz/icingaweb2-module-map/issues/143)
+- Numbers Outgrow Circles [\#126](https://github.com/nbuchwitz/icingaweb2-module-map/issues/126)
+- Maps embedded in dashboards are not visible [\#132](https://github.com/nbuchwitz/icingaweb2-module-map/issues/132)
+- [Bug]: Search icon not visible in dark mode [\#149](https://github.com/nbuchwitz/icingaweb2-module-map/issues/149)
+
 ## [2.0.0](https://github.com/nbuchwitz/icingaweb2-module-map/tree/2.0.0) (2024-01-18)
 
 [Full Changelog](https://github.com/nbuchwitz/icingaweb2-module-map/compare/v1.1.0...2.0.0)
