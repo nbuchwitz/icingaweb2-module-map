@@ -1,16 +1,13 @@
-<a id="Installation"></a>Installation
-=====================================
+# Installation
 
-Requirements
-------------
+## Requirements
 
 * Icinga Web 2 (&gt;= 2.13)
 * Icinga PHP Library - IPL
 * PHP (&gt;= 8.2)
 * The Icinga Web 2 `monitoring` or `icingadb` module
 
-Installation from .tar.gz
--------------------------
+## Installation from .tar.gz
 
 Download the latest version and extract it to a folder named `map`
 in one of your Icinga Web 2 module path directories.
@@ -26,10 +23,9 @@ install -d -m 0755 "${TARGET_DIR}"
 wget -q -O - "$URL" | tar xfz - -C "${TARGET_DIR}" --strip-components 1
 ```
 
-Installation from GIT repository
---------------------------------
+## Installation from Git repository
 
-Another convenient method is the installation directly from our GIT repository.
+Another convenient method is the installation directly from our Git repository.
 Just clone the repository to one of your Icinga Web 2 module path directories.
 It will be immediately ready for use:
 
@@ -42,27 +38,20 @@ git clone "${REPO_URL}" "${TARGET_DIR}"
 
 You can now directly use our current GIT master or check out a specific version.
 
-Enable the newly installed module
----------------------------------
+## Enable the newly installed module
 
-Enable the `map` module either on the CLI by running
+Enable the Map module either on the CLI by running:
 
 ```sh
 icingacli module enable map
 ```
 
-Or go to your Icinga Web 2 frontend, choose `Configuration` -&gt; `Modules`...
+Or go to your Icinga Web 2 frontend, choose `Configuration` -&gt; `Modules`
 
 ![Choose Configuration - Modules](screenshot/01_installation/101_menu-configuration-modules.png)
 
-...choose the `map` module and `enable` it:
+Choose the Map module and `enable` it:
 
 ![Enable the module](screenshot/01_installation/102_enable-module.png)
 
-It might afterwards be necessary to refresh your web browser to be sure that
-newly provided styling is loaded.
-
-Getting started with the map
----------------------------------------------
-
-That's it, *Map* is now ready for use. Please read more on [adding markers to your map](02-Add-Items-to-map.md).
+After enabling the module it might be necessary to refresh your web browser to ensure that newly provided styling is loaded.

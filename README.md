@@ -36,9 +36,7 @@ This module uses Leaflet and several plugins:
 
 ## Documentation
 
-* [Installation and requirements](doc/01-Installation.md)
-* [Adding markers to your map](doc/02-Add-Items-to-map.md)
-* [Exploring the map](doc/03-Exploring-the-map.md)
+Documentation for this module is available at [doc](doc/).
 
 ## Support
 

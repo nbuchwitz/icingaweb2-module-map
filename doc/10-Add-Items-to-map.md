@@ -1,40 +1,45 @@
 # Add markers to your map
 
-## Add coordinates to a host object in Icinga 2
+This section describes how to add markers to the map.
 
-Add a custom attribute called `geolocation` to any host you want to display on the map. Its value consists of WGS84 coordinates in the following format:
+## Add coordinates to a host object in Icinga
+
+To display a host on the map add a custom variable called `geolocation` the host. Its value consists of WGS84 coordinates in the following format:
 
 ```
 vars.geolocation = "<latitude>,<longitude>"
 ```
 
-In order to highlight the host's coordinate, hold the CTRL key and click on the desired map location. A popup will show you the coordinates of the clicked point in the correct geolocation format, so you could just copy & paste the text.
-
-### Example of a host object
+Example:
 
 ```
 object Host "db-in-la" {
-  check_command = "hostalive"
-  address = "192.168.33.5"
+  import "generic-host"
+  address = "127.0.0.1"
+
   vars.geolocation = "34.052234,-118.243685"
 }
 ```
 
-Don't forget to reload your icinga2 daemon after adding items to your config.
+Note: Holding the `CTRL` key and clicking on the map will open a pop-up with the geolocation format that can be copied.
 
-### Assign different marker icons
+Be sure to reload the Icinga daemon after changing the configuration.
 
-Add a custom attribute called `map_icon` to an object already having the custom attribute `geolocation`. Its value must be a name of an icon from the iconfont used in Icinga Web 2 which you can find at /icingaweb2/doc/style/font when you enable the doc module.
+## Assign different marker icons
+
+To change the default icon of a host or service add a custom variable called `map_icon` to the object. Its value must be a name of an icon from the iconfont used in Icinga Web 2.
 
 ```
 vars.map_icon = "print"
 ```
 
-Markers will look like the following example showing the icons sitemap, flapping and wifi.
+Note: With the Icinga Web Doc Module enabled you can find a list of all icons at this URL `/icingaweb2/doc/style/font`.
+
+Example showing the icons sitemap, flapping and wifi:
 
 ![Marker icons](screenshot/02_getting-started/0207_marker-icons.png)
 
-### Assign coordinates in a more generic way
+## Assign coordinates in a more generic way
 
 This is an example on how to add coordinates in a more generic way.
 
@@ -146,8 +151,6 @@ while (num_hosts > 0) {
 
 If you're using the [Icinga Director](https://github.com/icinga/icingaweb2-module-director), you can use the [mapDatatype](https://github.com/nbuchwitz/icingaweb2-module-mapDatatype) plugin. This plugin enables you to directly select the coordinates on a map.
 
+Example:
+
 ![Using the Icinga Director](screenshot/director-plugin.png)
-
-## What's next?
-
-After adding the first markers to your map, you want to [explore the map](03-Exploring-the-map.md).
