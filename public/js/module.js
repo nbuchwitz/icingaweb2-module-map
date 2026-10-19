@@ -116,7 +116,7 @@
                         }
 
                         services = '<div class="map-popup-services">';
-                        services += '<h1><span class="icon-services"></span> Services</h1>';
+                        services += '<h1><i class="icon fa-cogs fa" aria-hidden="1"></i>Services</h1>';
                         services += '<div class="scroll-view">';
                         services += table;
                         services += '<tbody>';
@@ -199,14 +199,14 @@
                         let info = '<div class="map-popup">';
 
                         info += '<h1>';
+                        info += '<i class="icon fa-server fa" aria-hidden="1"></i> ';
                         info += '<a class="detail-link" data-hostname="' + data['host_name'] + '" data-base-target="_next" href="'
                             + icinga.config.baseUrl
                             + hostLink
                             + '">';
-                        info += ' <span class="icon-eye"></span> ';
-                        info += '</a>';
                         info += data['host_display_name'] + '</h1>';
                         info += host_status;
+                        info += '</a>';
 
                         info += services;
                         info += '</div>';
