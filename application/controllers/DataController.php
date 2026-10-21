@@ -2,11 +2,13 @@
 
 namespace Icinga\Module\Map\Controllers;
 
+use Icinga\Module\Map\Common\ModuleConfig;
+use Icinga\Module\Map\Web\Controller\MapController;
+
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
-use Icinga\Module\Map\Web\Controller\MapController;
 use Icinga\Module\Monitoring\DataView\DataView;
 
 use ipl\Orm\Model;
@@ -47,16 +49,15 @@ class DataController extends MapController
         try {
             // Borrowed from monitoring module
             // Handle soft and hard states
-            $config = $this->config();
-            $stateType = strtolower($this->params->shift(
-                'stateType',
-                $config->get('map', 'stateType', 'soft')
-            ));
+            $config = ModuleConfig::getConfigWithDefaults();
+
+            $stateType = strtolower($this->params->shift('stateType', $config->get('map', 'stateType')));
 
             $userPreferences = $this->Auth()->getUser()->getPreferences();
             if ($userPreferences->has("map")) {
                 $stateType = $userPreferences->getValue("map", "stateType", $stateType);
             }
+
             $objectType = strtolower($this->params->shift('objectType', 'all'));
 
             $this->onlyProblems = (bool) $this->params->shift('problems', false);

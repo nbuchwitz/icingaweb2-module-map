@@ -2,10 +2,12 @@
 
 namespace Icinga\Module\Map\Controllers;
 
+use Icinga\Module\Map\Common\ModuleConfig;
+use Icinga\Module\Map\Web\Controller\MapController;
+
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
-use Icinga\Module\Map\Web\Controller\MapController;
 use Icinga\Module\Monitoring\DataView\DataView;
 
 use ipl\Stdlib\Filter as IplFilter;
@@ -24,7 +26,9 @@ class SearchController extends MapController
     {
         parent::init();
 
-        $apiKey = $this->config()->get("map", "opencage_apikey", "");
+        $config = ModuleConfig::getConfig();
+        $apiKey = $config->get("map", "opencage_apikey", "");
+
         if ($apiKey != "") {
             $this->geocoder = $geocoder = new Geocoder($apiKey);
         }
@@ -242,7 +246,6 @@ class SearchController extends MapController
      **/
     public function indexAction()
     {
-        $config = $this->config();
         $query = strtolower($this->params->shift('q', ''));
         $callback = strtolower($this->params->shift('jsonp', ''));
         $this->limit = intval($this->params->shift('limit', 5));

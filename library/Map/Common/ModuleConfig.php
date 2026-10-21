@@ -63,6 +63,7 @@ class ModuleConfig
             'max_native_zoom' => 19,
             'max_zoom' => 19,
             'min_zoom' => 2,
+            'stateType' => 'soft',
             'opencage_apikey' => '',
             'popup_mouseover' => false,
             'tile_url' => '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -90,6 +91,7 @@ class ModuleConfig
         $config['max_native_zoom'] = (int) $moduleConfig->get('map', 'max_native_zoom', $default['max_native_zoom']);
         $config['max_zoom'] = (int) $moduleConfig->get('map', 'max_zoom', $default['max_zoom']);
         $config['min_zoom'] = (int) $moduleConfig->get('map', 'min_zoom', $default['min_zoom']);
+        $config['stateType'] = $moduleConfig->get('map', 'min_zoom', $default['stateType']);
         $config['disable_cluster_at_zoom'] = (int) $moduleConfig->get('map', 'disable_cluster_at_zoom', $default['disable_cluster_at_zoom']);
         $config['opencage_apikey'] = $moduleConfig->get('map', 'opencage_apikey', $default['opencage_apikey']);
         $config['popup_mouseover'] = (bool) $moduleConfig->get('map', 'popup_mouseover', $default['popup_mouseover']);
