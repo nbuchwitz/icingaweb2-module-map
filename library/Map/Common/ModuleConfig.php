@@ -41,4 +41,35 @@ class ModuleConfig
     {
         return Config::module('map');
     }
+
+    /**
+     * getTileURLs returns all configured tileURLs.
+     * This methods is used for the content-security-policy
+     *
+     * @return array
+     */
+    public static function getTileURLs(): array
+    {
+        $config = self::getConfig();
+
+        // Where we store all configured URLs
+        $urls = [];
+        $urls[] = $config->get('map', 'tile_url', self::DEFAULTS['tile_url']);
+
+        $directorTileURL = $config->get('director', 'tile_url');
+        if ($directorTileURL) {
+            $urls[] = $directorTileURL;
+        }
+
+        $mapsConfig = self::getMapsConfig();
+
+        // Add all configured URLs in the maps.ini
+        foreach ($mapsConfig as $storedMap) {
+            if (isset($storedMap['tile_url'])) {
+                $urls[] = $storedMap['tile_url'];
+            }
+        }
+
+        return $urls;
+    }
 }

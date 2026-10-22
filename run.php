@@ -12,6 +12,8 @@ $this->provideHook('cube/Actions', 'IcingaDbCubeLinks');
 $this->provideHook('icingadb/IcingadbSupport');
 $this->provideHook('icingadb/HostActions');
 $this->provideHook('icingadb/ServiceActions');
+// CspHook to provide a custom content-security-policy for the module
+$this->provideHook('Csp');
 
 require_once __DIR__ . '/library/vendor/OpenCage/Loader/CompatLoader.php';
 CompatLoader::delegateLoadingToIcingaWeb($this->app);
