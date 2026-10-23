@@ -2,11 +2,12 @@
 
 namespace Icinga\Module\Map\Forms\Config;
 
-use Icinga\Application\Config;
 use Icinga\Forms\ConfigForm;
 
 /**
  * GeneralConfigForm is the main configuration form used for this module
+ * TODO: Icinga Web 2.14 introduced a new Web\Form\ConfigForm, we can migrate when 2.14 is more prevalent
+ * Then we can also use IPL Validators.
  */
 class GeneralConfigForm extends ConfigForm
 {
