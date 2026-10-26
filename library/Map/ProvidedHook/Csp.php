@@ -44,9 +44,12 @@ class Csp extends CspHook
         return $src;
     }
 
+    /**
+     * Icinga Web builds the header from this method only, so it has to include the global tile URLs too
+     **/
     public function getCspForUser(User $user): CspInstance
     {
-        $csp = new CspInstance();
+        $csp = $this->getCspForAllUsers();
 
         $userPreferences = $user->getPreferences();
         if ($userPreferences->has('map')) {
@@ -54,7 +57,11 @@ class Csp extends CspHook
 
             if (!empty($c['tile_url'])) {
                 $currentScheme = Icinga::app()->getRequest()->getScheme();
-                $csp->add('img-src', $this->prepareTileURL($c['tile_url'] ?? '', $currentScheme));
+                $src = $this->prepareTileURL($c['tile_url'], $currentScheme);
+
+                if ($src !== '') {
+                    $csp->add('img-src', $src);
+                }
             }
         }
 
