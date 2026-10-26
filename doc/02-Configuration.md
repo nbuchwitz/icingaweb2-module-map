@@ -88,6 +88,8 @@ The following parameters can be overridden:
 
 Precedence for the configuration overrides: `Module Config < User Config < Map Config < URL`
 
+**Note:** With Content Security Policy (CSP) enabled, `tile_url` can still be overridden per user and per map, but not via the URL parameter.
+
 ### Map specific config overrides
 
 All config parameters above can be overwritten inside a `maps.ini` file. Each section is named after a map.
