@@ -68,7 +68,7 @@ With a valid API key the Map module's search will include results from the OpenC
 
 **Content Security Policy (CSP)**
 
-The module supports strict content security policy. To enable strict CSP you require Icinga Web v2.14.1.
+CSP requires Icinga Web v2.14.1.
 
 ## Overrides
 
