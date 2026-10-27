@@ -66,6 +66,10 @@ With a valid API key the Map module's search will include results from the OpenC
 
 **Important:** when the OpenCage API key is configured, every search query in the Map module will be sent to the OpenCage API.
 
+**Content Security Policy (CSP)**
+
+CSP requires Icinga Web v2.14.1.
+
 ## Overrides
 
 Besides the central `config.ini` configuration for the module, it is possible to override these settings per user or per each map.

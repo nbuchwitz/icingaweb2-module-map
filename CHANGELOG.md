@@ -9,6 +9,7 @@
 - Update Leaflet to 1.9.4
 - Add support for Icinga Web dark and light mode
 - Add support for CSP
+  - Note: To enable strict CSP you require Icinga Web v2.14.1
 - Improve readability for large cluster markers
 - Modernize PHP and JavaScript
 
